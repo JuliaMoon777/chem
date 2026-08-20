@@ -200,20 +200,11 @@ export const ProjectProcessSection: React.FC<ProjectProcessSectionProps> = ({ cu
       ref={sectionRef}
       className="relative w-full bg-[#FAF9F5] text-slate-900 overflow-hidden border-t border-slate-200/60"
     >
-      {/* Background Architectural Grid Intersections (Extremely subtle 3-5% opacity) */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 select-none">
+      {/* Background Architectural Grid (Subtle border lines on outer edges only, never cutting through central cards) */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
         <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
-          <div className="w-px h-full bg-slate-200/50" />
-          <div className="w-px h-full bg-slate-200/30 hidden md:block" />
-          <div className="w-px h-full bg-slate-200/30 hidden lg:block" />
-          <div className="w-px h-full bg-slate-200/50" />
-        </div>
-        {/* Subtle coordinate ticks */}
-        <div className="absolute top-1/4 left-10 text-[9px] font-mono text-slate-300 select-none">
-          + LAT. 50.0412 // ELEV. 220M
-        </div>
-        <div className="absolute bottom-1/4 right-10 text-[9px] font-mono text-slate-300 select-none">
-          + PROC. ISO 9001 / EN 1090
+          <div className="w-px h-full bg-slate-200" />
+          <div className="w-px h-full bg-slate-200" />
         </div>
       </div>
 
@@ -380,22 +371,22 @@ export const ProjectProcessSection: React.FC<ProjectProcessSectionProps> = ({ cu
             </div>
           </div>
 
-          {/* 3. DEDICATED ARCHITECTURAL ACTIVE DESCRIPTION (Only one short 2-3 line description visible at a time) */}
+          {/* 3. DEDICATED ARCHITECTURAL ACTIVE DESCRIPTION */}
           <div className="hidden lg:block max-w-4xl mx-auto mt-4">
-            <div className="relative p-6 sm:p-7 rounded-lg bg-white/70 backdrop-blur-xs border border-slate-200/80 shadow-2xs transition-all duration-500 flex items-start gap-6">
+            <div className="relative p-6 sm:p-7 rounded-2xl bg-white border border-slate-200/90 shadow-sm transition-all duration-500 flex items-start gap-6">
               {/* Left Accent Node */}
-              <div className="shrink-0 flex flex-col items-center pt-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)]" />
+              <div className="shrink-0 flex flex-col items-center pt-1.5">
+                <span className="w-3 h-3 rounded-full bg-red-600 shadow-xs" />
               </div>
 
               {/* Center Content */}
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-1.5">
-                  <h3 className="text-base font-bold text-slate-950 tracking-tight">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-lg font-bold text-slate-950 tracking-tight">
                     {activeStage.name}
                   </h3>
-                  <span className="text-[11px] font-mono text-slate-400">
-                    // ETAP REALIZACJI
+                  <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/70">
+                    ETAP REALIZACJI
                   </span>
                 </div>
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -404,7 +395,7 @@ export const ProjectProcessSection: React.FC<ProjectProcessSectionProps> = ({ cu
               </div>
 
               {/* Right Click Cue */}
-              <div className="hidden sm:flex shrink-0 items-center text-xs font-mono text-slate-400 pt-1">
+              <div className="hidden sm:flex shrink-0 items-center text-xs font-medium text-slate-400 pt-1.5">
                 <span>{t.hintClick}</span>
               </div>
             </div>

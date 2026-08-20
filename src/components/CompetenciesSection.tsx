@@ -192,23 +192,21 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                   {/* LEFT COLUMN: TEXT & SCOPE & TECHNICAL SPECS (7 cols on desktop) */}
                   <div className="lg:col-span-7 flex flex-col">
-                    {/* Top Quality Compliance Tag */}
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                      <div className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200/70">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>UDT • TÜV • ISO</span>
+                    {/* Top Quality Compliance Tag & Category Icon */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-red-600 flex items-center justify-center shrink-0">
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-600 bg-slate-100/90 px-2.5 py-1.5 rounded-lg border border-slate-200">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span className="font-semibold">UDT • TÜV • ISO</span>
                       </div>
                     </div>
 
                     {/* Competence Title */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-xl bg-red-50 text-red-600">
-                        <IconComp className="w-5 h-5" />
-                      </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold text-slate-950 tracking-tight">
-                        {item.name}
-                      </h3>
-                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-slate-950 tracking-tight mb-3">
+                      {item.name}
+                    </h3>
 
                     {/* Short Description */}
                     <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed mb-6">

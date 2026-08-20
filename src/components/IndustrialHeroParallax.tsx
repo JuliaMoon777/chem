@@ -67,10 +67,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         bgMistRef.current,
         {
-          yPercent: 20,
-          xPercent: -6,
-          scale: 1.06,
-          opacity: 0.25,
+          yPercent: 25,
+          xPercent: -8,
+          scale: 1.08,
+          opacity: 0.75,
           ease: 'sine.inOut',
         },
         0
@@ -79,10 +79,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         bgCloudBankRef.current,
         {
-          yPercent: 25,
-          xPercent: 10,
-          scale: 1.1,
-          opacity: 0.4,
+          yPercent: 30,
+          xPercent: 12,
+          scale: 1.12,
+          opacity: 0.8,
           ease: 'power1.inOut',
         },
         0
@@ -92,10 +92,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         midCloudRightRef.current,
         {
-          yPercent: 40,
-          xPercent: -18,
-          scale: 1.15,
-          opacity: 0.4,
+          yPercent: 45,
+          xPercent: -20,
+          scale: 1.18,
+          opacity: 0.8,
           ease: 'power2.out',
         },
         0
@@ -104,10 +104,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         midCloudLowerRef.current,
         {
-          yPercent: 35,
-          xPercent: 15,
-          scale: 1.12,
-          opacity: 0.35,
+          yPercent: 40,
+          xPercent: 18,
+          scale: 1.15,
+          opacity: 0.75,
           ease: 'power1.out',
         },
         0
@@ -117,10 +117,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         fgCloudLeftRef.current,
         {
-          yPercent: 70,
-          xPercent: -28,
-          scale: 1.3,
-          opacity: 0.1,
+          yPercent: 75,
+          xPercent: -32,
+          scale: 1.35,
+          opacity: 0.65,
           ease: 'power2.inOut',
         },
         0
@@ -129,10 +129,10 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
       tl.to(
         fgCloudRightRef.current,
         {
-          yPercent: 80,
-          xPercent: 32,
-          scale: 1.35,
-          opacity: 0.08,
+          yPercent: 85,
+          xPercent: 36,
+          scale: 1.4,
+          opacity: 0.6,
           ease: 'power3.out',
         },
         0
@@ -244,18 +244,18 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
         ======================================================== */}
         <div
           id="hero-cloud-deep"
-          className="absolute inset-0 w-full h-full pointer-events-none transform-gpu overflow-hidden"
+          className="absolute inset-0 w-full h-full pointer-events-none transform-gpu overflow-hidden z-10"
         >
           {/* Distant soft mist drifting across center */}
           <div
             ref={bgMistRef}
-            className="absolute top-[22%] -left-[8%] w-[950px] max-w-[80vw] opacity-45 mix-blend-screen animate-cloud-pass-mid will-change-transform"
+            className="absolute top-[18%] -left-[10%] w-[1050px] max-w-[85vw] opacity-90 drop-shadow-[0_20px_40px_rgba(0,0,0,0.18)] animate-cloud-pass-mid will-change-transform"
           >
             <img
               src={siteImages.cloud1}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-105"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
@@ -264,13 +264,13 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           {/* Lower-left soft cloud bank */}
           <div
             ref={bgCloudBankRef}
-            className="absolute -bottom-[10%] -left-[8%] w-[850px] max-w-[70vw] opacity-60 mix-blend-screen animate-cloud-drift-3 will-change-transform"
+            className="absolute -bottom-[8%] -left-[5%] w-[950px] max-w-[75vw] opacity-95 drop-shadow-[0_25px_45px_rgba(0,0,0,0.22)] animate-cloud-drift-3 will-change-transform"
           >
             <img
               src={siteImages.cloud2}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-105"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
@@ -283,18 +283,18 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
         ======================================================== */}
         <div
           id="hero-cloud-midground"
-          className="absolute inset-0 w-full h-full pointer-events-none transform-gpu overflow-hidden"
+          className="absolute inset-0 w-full h-full pointer-events-none transform-gpu overflow-hidden z-15"
         >
           {/* Top-Right Soft Drifting Cloud */}
           <div
             ref={midCloudRightRef}
-            className="absolute -top-[12%] -right-[12%] w-[880px] max-w-[70vw] opacity-75 mix-blend-screen animate-cloud-drift-2 will-change-transform"
+            className="absolute -top-[10%] -right-[8%] w-[980px] max-w-[75vw] opacity-95 drop-shadow-[0_25px_45px_rgba(0,0,0,0.2)] animate-cloud-drift-2 will-change-transform"
           >
             <img
               src={siteImages.cloud2}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-105"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
@@ -303,13 +303,13 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           {/* Lower Right Cloud Layer */}
           <div
             ref={midCloudLowerRef}
-            className="absolute bottom-[2%] right-[2%] w-[780px] max-w-[65vw] opacity-70 mix-blend-screen animate-cloud-drift-1 will-change-transform"
+            className="absolute bottom-[0%] right-[0%] w-[880px] max-w-[70vw] opacity-90 drop-shadow-[0_20px_40px_rgba(0,0,0,0.18)] animate-cloud-drift-1 will-change-transform"
           >
             <img
               src={siteImages.cloud1}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-105"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
@@ -327,13 +327,13 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           {/* Top-Left Floating Cloud Billow */}
           <div
             ref={fgCloudLeftRef}
-            className="absolute -top-[12%] -left-[15%] w-[1000px] max-w-[85vw] opacity-85 mix-blend-screen animate-cloud-drift-1 will-change-transform"
+            className="absolute -top-[10%] -left-[10%] w-[1150px] max-w-[90vw] opacity-95 drop-shadow-[0_30px_60px_rgba(0,0,0,0.25)] animate-cloud-drift-1 will-change-transform"
           >
             <img
               src={siteImages.cloud3}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-110"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
@@ -342,13 +342,13 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           {/* Foreground passing cloud wisp */}
           <div
             ref={fgCloudRightRef}
-            className="absolute top-[8%] -right-[22%] w-[1150px] max-w-[95vw] opacity-60 mix-blend-screen animate-cloud-pass-fg will-change-transform"
+            className="absolute top-[5%] -right-[15%] w-[1250px] max-w-[98vw] opacity-90 drop-shadow-[0_30px_60px_rgba(0,0,0,0.22)] animate-cloud-pass-fg will-change-transform"
           >
             <img
               src={siteImages.cloud3}
               alt=""
               role="presentation"
-              className="w-full h-auto object-contain pointer-events-none"
+              className="w-full h-auto object-contain pointer-events-none filter brightness-110"
               draggable={false}
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
