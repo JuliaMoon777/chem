@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Language, translations, CertificateItem } from '../types';
+import siteImages from '../assets/images';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -165,7 +166,7 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({ curren
               <div className="mt-8 lg:mt-10 max-w-sm hidden sm:block">
                 <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-slate-200 border border-slate-300/70 shadow-2xs group">
                   <img
-                    src="/images/jakosc_badania_ndt_1787218672002.jpg"
+                    src={siteImages.jakoscBadaniaNdt}
                     alt="Badania NDT i kontrola jakości spawania Chemorozruch"
                     loading="lazy"
                     className="w-full h-full object-cover grayscale-[25%] contrast-[1.03] group-hover:grayscale-0 group-hover:scale-102 transition-all duration-700"

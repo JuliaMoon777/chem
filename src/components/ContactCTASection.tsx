@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Language, translations } from '../types';
-const contactHeroImg = '/images/kontakt_instalacje_przemyslowe_1787219382832.jpg';
+import siteImages from '../assets/images';
+const contactHeroImg = siteImages.kontaktInstalacje;
 
 gsap.registerPlugin(ScrollTrigger);
 

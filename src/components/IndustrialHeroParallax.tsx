@@ -4,6 +4,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Language, translations } from '../types';
+import siteImages from '../assets/images';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -222,7 +223,7 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           <div className="relative w-full h-full animate-flight-camera transform-gpu">
             {/* Primary High-Resolution Aerial View */}
             <img
-              src="/images/chemorozruch_aerial_plant_1787214305619.jpg"
+              src={siteImages.aerialPlant}
               alt="Chemorozruch aerial industrial plant view"
               className="w-full h-full object-cover object-center brightness-[1.02] contrast-[1.03] scale-[1.04]"
               loading="eager"
@@ -251,10 +252,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute top-[22%] -left-[8%] w-[950px] max-w-[80vw] opacity-45 mix-blend-screen animate-cloud-pass-mid will-change-transform"
           >
             <img
-              src="/clouds/cloud11.png"
-              alt="Distant industrial mist"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud1}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
 
@@ -264,10 +267,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute -bottom-[10%] -left-[8%] w-[850px] max-w-[70vw] opacity-60 mix-blend-screen animate-cloud-drift-3 will-change-transform"
           >
             <img
-              src="/clouds/cloud21.png"
-              alt="Lower atmospheric cloud bank"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud2}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
         </div>
@@ -286,10 +291,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute -top-[12%] -right-[12%] w-[880px] max-w-[70vw] opacity-75 mix-blend-screen animate-cloud-drift-2 will-change-transform"
           >
             <img
-              src="/clouds/cloud21.png"
-              alt="Atmospheric white clouds"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud2}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
 
@@ -299,10 +306,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute bottom-[2%] right-[2%] w-[780px] max-w-[65vw] opacity-70 mix-blend-screen animate-cloud-drift-1 will-change-transform"
           >
             <img
-              src="/clouds/cloud11.png"
-              alt="Industrial atmospheric mist"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud1}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
         </div>
@@ -321,10 +330,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute -top-[12%] -left-[15%] w-[1000px] max-w-[85vw] opacity-85 mix-blend-screen animate-cloud-drift-1 will-change-transform"
           >
             <img
-              src="/clouds/cloud31.png"
-              alt="White cloud billows"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud3}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
 
@@ -334,10 +345,12 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
             className="absolute top-[8%] -right-[22%] w-[1150px] max-w-[95vw] opacity-60 mix-blend-screen animate-cloud-pass-fg will-change-transform"
           >
             <img
-              src="/clouds/cloud31.png"
-              alt="Wispy flight cloud"
-              className="w-full h-auto object-contain"
+              src={siteImages.cloud3}
+              alt=""
+              role="presentation"
+              className="w-full h-auto object-contain pointer-events-none"
               draggable={false}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
         </div>
