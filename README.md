@@ -1,11 +1,35 @@
-<div align="center">
+# CHEMOROZRUCH — Website Redesign
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Premium one-page industrial website for CHEMOROZRUCH.
 
-  <h1>Built with AI Studio</h2>
+## Development
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+```bash
+npm install
+npm run dev
+```
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Production build
 
-</div>
+```bash
+npm run build
+```
+
+## Preview
+
+```bash
+npm run preview
+```
+
+## Stack
+
+* React 19
+* Vite 6
+* TypeScript
+* Tailwind CSS
+* GSAP & ScrollTrigger
+* Lucide Icons
+
+## Deployment
+
+The repository is prepared for deployment on Vercel.

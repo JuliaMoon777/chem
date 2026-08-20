@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.blurslider-gradient {
+  background: linear-gradient(135deg, #ff557c 0%, #f3823c 100%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.blurslider-gradient-alt {
+  background: linear-gradient(135deg, #ff2399 0%, #5c24ff 50%, #24ffe9 100%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.blurslider-gradient-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #ff557c 0%, #f3823c 100%);
+  box-shadow: 0px 12px 28px -4px rgba(243, 130, 60, 0.45), 0px 8px 16px -2px rgba(255, 85, 124, 0.35);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #f3823c 0%, #ff557c 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0px 18px 36px -4px rgba(243, 130, 60, 0.55), 0px 10px 22px -2px rgba(255, 85, 124, 0.45);
+}
+
+.glowborder {
+  position: relative;
+}
+
+.glowborder::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(90deg, #fd6e44, #ff2399, #5c24ff, #3951ff, #24ffe9, #5c24ff, #ff2399, #fd6e44);
+  background-size: 300%;
+  border-radius: 9999px;
+  z-index: -1;
+  animation: glowanim 8s linear infinite;
+  opacity: 0.7;
+  filter: blur(8px);
+  transition: opacity 0.3s ease;
+}
+
+.glowborder:hover::before {
+  opacity: 1;
+  filter: blur(12px);
+}
+
+@keyframes glowanim {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes flightCamera {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.045) translate3d(-10px, -8px, 0);
+  }
+  100% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes cloudDrift1 {
+  0% {
+    transform: translate3d(-4%, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -2%, 0) scale(1.03);
+  }
+  100% {
+    transform: translate3d(-4%, 0, 0) scale(1);
+  }
+}
+
+@keyframes cloudDrift2 {
+  0% {
+    transform: translate3d(5%, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(-7%, 3%, 0) scale(0.98);
+  }
+  100% {
+    transform: translate3d(5%, 0, 0) scale(1.02);
+  }
+}
+
+@keyframes cloudDrift3 {
+  0% {
+    transform: translate3d(-8%, 2%, 0) scale(0.97);
+  }
+  50% {
+    transform: translate3d(8%, -3%, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(-8%, 2%, 0) scale(0.97);
+  }
+}
+
+@keyframes cloudPassForeground {
+  0% {
+    transform: translate3d(-20%, -10%, 0) scale(1);
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(30%, 15%, 0) scale(1.15);
+    opacity: 0.15;
+  }
+}
+
+@keyframes cloudPassMid {
+  0% {
+    transform: translate3d(25%, -5%, 0);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(-35%, 10%, 0);
+    opacity: 0.25;
+  }
+}
+
+.animate-flight-camera {
+  animation: flightCamera 24s ease-in-out infinite;
+}
+
+.animate-cloud-drift-1 {
+  animation: cloudDrift1 26s ease-in-out infinite;
+}
+
+.animate-cloud-drift-2 {
+  animation: cloudDrift2 34s ease-in-out infinite;
+}
+
+.animate-cloud-drift-3 {
+  animation: cloudDrift3 42s ease-in-out infinite;
+}
+
+.animate-cloud-pass-fg {
+  animation: cloudPassForeground 48s ease-in-out infinite alternate;
+}
+
+.animate-cloud-pass-mid {
+  animation: cloudPassMid 58s ease-in-out infinite alternate;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}

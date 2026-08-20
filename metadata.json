@@ -1,0 +1,8 @@
+{
+  "name": "Remix Chemorozruch Industrial Parallax",
+  "description": "Industrial aerial parallax landing page for Chemorozruch with interactive multi-layer parallax hero, multilingual support, technical overlays, and modern enterprise header.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
