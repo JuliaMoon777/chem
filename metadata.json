@@ -1,6 +1,6 @@
 {
-  "name": "Remix Chemorozruch Industrial Parallax",
-  "description": "Premium industrial website for CHEMOROZRUCH featuring aerial parallax hero, fixed quick navigation, interactive competencies and realizations showcase, full legal compliance suite, and department-based contact system.",
+  "name": "CHEMOROZRUCH – Konstrukcje stalowe i instalacje przemysłowe",
+  "description": "CHEMOROZRUCH – Generalny wykonawca konstrukcji stalowych, aparatów ciśnieniowych, rurociągów oraz montażu i remontów instalacji przemysłowych. Ponad 50 lat doświadczenia.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

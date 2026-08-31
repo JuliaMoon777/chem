@@ -712,7 +712,7 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
               {/* RIGHT 55% (7 cols on lg, 6 cols on xl) — Large Industrial Photography */}
               <div className="lg:col-span-7">
-                <div className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-inner group">
+                <div className="aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-xs group">
                   <img
                     src={activeTab.image}
                     alt={activeTab.imageAlt[currentLang]}
@@ -720,15 +720,10 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
                     decoding="async"
                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
                   />
-                  
-                  {/* Subtle Technical Frame Overlay */}
-                  <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none" />
-                  
-                  {/* Bottom Image Tag */}
-                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 px-3 py-1.5 rounded-lg bg-slate-950/75 backdrop-blur-md border border-white/10 text-white text-[11px] font-mono tracking-wider">
-                    CHEMOROZRUCH • {activeTab.tabLabel[currentLang].toUpperCase()}
-                  </div>
                 </div>
+                <p className="mt-2.5 text-xs text-slate-500 font-normal">
+                  {activeTab.heading[currentLang]}
+                </p>
               </div>
 
             </div>

@@ -319,16 +319,14 @@ export const RealizationsSection: React.FC<RealizationsSectionProps> = ({ curren
                         loading={idx === 0 ? 'eager' : 'lazy'}
                         className="w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-[1.02]"
                       />
-
-                      {/* Subtle meta tag badge */}
-                      <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 px-3 py-1.5 rounded-lg bg-slate-950/75 backdrop-blur-xs text-white text-[11px] font-mono tracking-wider flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                        <span>{proj.location}</span>
-                      </div>
                     </div>
                   );
                 })}
               </div>
+              {/* Subtle external caption */}
+              <p className="mt-2.5 text-xs text-slate-500 font-normal">
+                {activeProject.title} – {activeProject.location}
+              </p>
             </div>
           </div>
         </div>

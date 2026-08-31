@@ -229,15 +229,17 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
 
                         {/* Mobile Image preview if expanded on mobile */}
                         <div className="block lg:hidden pt-4">
-                          <div className="relative w-full h-56 rounded-xl overflow-hidden shadow-md">
+                          <div className="w-full h-56 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-slate-200">
                             <img
                               src={item.image}
                               alt={item.imageAlt}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
                           </div>
+                          <p className="mt-2 text-xs text-slate-500 font-normal">
+                            {item.title}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -252,7 +254,7 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
             ref={imageContainerRef}
             className="hidden lg:block lg:col-span-5 sticky top-32"
           >
-            <div className="relative w-full h-[520px] rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-[0_20px_50px_rgba(0,0,0,0.06)]">
+            <div className="relative w-full h-[520px] rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.05)]">
               {/* Parallax inner container */}
               <div
                 ref={imageParallaxRef}
@@ -278,33 +280,16 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                         loading="lazy"
                         draggable={false}
                       />
-                      {/* Subtle Vignette & Industrial Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/40 via-transparent to-white/20 mix-blend-overlay" />
-
-                      {/* Image Caption at bottom */}
-                      <div className="absolute bottom-6 left-6 right-6 text-white z-20">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-mono text-[11px] font-bold text-red-400 uppercase tracking-wider">
-                            CHEMOROZRUCH
-                          </span>
-                        </div>
-                        <h4 className="font-poppins font-bold text-lg text-white leading-tight">
-                          {item.title}
-                        </h4>
-                        <p className="text-xs text-slate-200/90 line-clamp-1 mt-0.5">
-                          {item.tagline}
-                        </p>
-                      </div>
                     </div>
                   );
                 })}
               </div>
-
-              {/* Decorative Corner Engineering Mark */}
-              <div className="absolute top-4 right-4 z-30 font-mono text-[10px] text-white/70 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 uppercase tracking-widest pointer-events-none">
-                PLANT SPEC // 1972
-              </div>
+            </div>
+            {/* Subtle caption outside the image */}
+            <div className="mt-3 px-1">
+              <p className="text-xs text-slate-500 font-normal">
+                {currentItem.title} – {currentItem.tagline}
+              </p>
             </div>
           </div>
         </div>

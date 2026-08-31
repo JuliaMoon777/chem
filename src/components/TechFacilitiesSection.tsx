@@ -245,73 +245,65 @@ export const TechFacilitiesSection: React.FC<TechFacilitiesSectionProps> = ({ cu
                     : 'opacity-95 group-hover:scale-105'
                 }`}
               />
-
-              {/* Natural Industrial Lighting - Minimal Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
-
-              {/* Subtle Corner Caption Tag */}
-              <div className="absolute bottom-4 left-5 z-10 flex items-center gap-2">
-                <span className="text-[11px] font-mono tracking-wider text-white/90 drop-shadow-sm">
-                  CHEMOROZRUCH • {dominantItem.name.toUpperCase()}
-                </span>
-              </div>
             </div>
+            {/* Subtle external caption */}
+            <p className="mt-2.5 text-xs text-slate-500 font-normal">
+              {dominantItem.name}
+            </p>
           </div>
 
           {/* RIGHT: Two Smaller Supporting Detail Images Placed Directly on Page */}
           <div className="lg:col-span-5 xl:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-6 lg:gap-8">
             {/* Supporting Image 1 */}
-            <div
-              ref={subImage1ContainerRef}
-              onClick={() => handleItemClick(supportingItem1.id)}
-              className="relative w-full sm:w-1/2 lg:w-full aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden rounded-sm cursor-pointer group bg-slate-200"
-            >
-              <img
-                ref={subImage1Ref}
-                src={supportingItem1.image}
-                alt={supportingItem1.imageAlt}
-                loading="lazy"
-                className={`w-full h-full object-cover object-center will-change-transform transition-all duration-700 ${
-                  activeItemId === supportingItem1.id
-                    ? 'scale-[1.025] opacity-100'
-                    : activeItemId === dominantItem.id
-                    ? 'opacity-85'
-                    : 'opacity-70 group-hover:opacity-100 group-hover:scale-102'
-                }`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-4 z-10">
-                <span className="text-[10px] font-mono tracking-wider text-white/90 drop-shadow-sm">
-                  {supportingItem1.name.toUpperCase()}
-                </span>
+            <div>
+              <div
+                ref={subImage1ContainerRef}
+                onClick={() => handleItemClick(supportingItem1.id)}
+                className="relative w-full aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden rounded-sm cursor-pointer group bg-slate-200"
+              >
+                <img
+                  ref={subImage1Ref}
+                  src={supportingItem1.image}
+                  alt={supportingItem1.imageAlt}
+                  loading="lazy"
+                  className={`w-full h-full object-cover object-center will-change-transform transition-all duration-700 ${
+                    activeItemId === supportingItem1.id
+                      ? 'scale-[1.025] opacity-100'
+                      : activeItemId === dominantItem.id
+                      ? 'opacity-85'
+                      : 'opacity-70 group-hover:opacity-100 group-hover:scale-102'
+                  }`}
+                />
               </div>
+              <p className="mt-2 text-xs text-slate-500 font-normal">
+                {supportingItem1.name}
+              </p>
             </div>
 
             {/* Supporting Image 2 */}
-            <div
-              ref={subImage2ContainerRef}
-              onClick={() => handleItemClick(supportingItem2.id)}
-              className="relative w-full sm:w-1/2 lg:w-full aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden rounded-sm cursor-pointer group bg-slate-200"
-            >
-              <img
-                ref={subImage2Ref}
-                src={supportingItem2.image}
-                alt={supportingItem2.imageAlt}
-                loading="lazy"
-                className={`w-full h-full object-cover object-center will-change-transform transition-all duration-700 ${
-                  activeItemId === supportingItem2.id
-                    ? 'scale-[1.025] opacity-100'
-                    : activeItemId === dominantItem.id
-                    ? 'opacity-85'
-                    : 'opacity-70 group-hover:opacity-100 group-hover:scale-102'
-                }`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-3 left-4 z-10">
-                <span className="text-[10px] font-mono tracking-wider text-white/90 drop-shadow-sm">
-                  {supportingItem2.name.toUpperCase()}
-                </span>
+            <div>
+              <div
+                ref={subImage2ContainerRef}
+                onClick={() => handleItemClick(supportingItem2.id)}
+                className="relative w-full aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/9] overflow-hidden rounded-sm cursor-pointer group bg-slate-200"
+              >
+                <img
+                  ref={subImage2Ref}
+                  src={supportingItem2.image}
+                  alt={supportingItem2.imageAlt}
+                  loading="lazy"
+                  className={`w-full h-full object-cover object-center will-change-transform transition-all duration-700 ${
+                    activeItemId === supportingItem2.id
+                      ? 'scale-[1.025] opacity-100'
+                      : activeItemId === dominantItem.id
+                      ? 'opacity-85'
+                      : 'opacity-70 group-hover:opacity-100 group-hover:scale-102'
+                  }`}
+                />
               </div>
+              <p className="mt-2 text-xs text-slate-500 font-normal">
+                {supportingItem2.name}
+              </p>
             </div>
           </div>
         </div>

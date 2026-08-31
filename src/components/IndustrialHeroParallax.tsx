@@ -157,15 +157,30 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
           className="absolute inset-0 w-full h-full will-change-transform transform-gpu pointer-events-none"
         >
           <div className="relative w-full h-full animate-flight-camera transform-gpu">
-            {/* Primary High-Resolution Aerial View */}
-            <img
-              src={siteImages.aerialPlant}
-              alt="Chemorozruch aerial industrial plant view"
-              className="w-full h-full object-cover object-[50%_40%] sm:object-center brightness-[1.02] contrast-[1.03] scale-[1.04]"
-              loading="eager"
-              decoding="async"
-              draggable={false}
-            />
+            {/* Primary High-Resolution Aerial View with Responsive WebP/JPG SrcSet */}
+            <picture className="w-full h-full block">
+              <source
+                type="image/webp"
+                srcSet={`${siteImages.aerialPlant800wWebp} 800w, ${siteImages.aerialPlant1600wWebp} 1600w`}
+                sizes="(max-width: 768px) 800px, 100vw"
+              />
+              <source
+                type="image/jpeg"
+                srcSet={`${siteImages.aerialPlant800wJpg} 800w, ${siteImages.aerialPlant1600wJpg} 1600w`}
+                sizes="(max-width: 768px) 800px, 100vw"
+              />
+              <img
+                src={siteImages.aerialPlant1600wJpg}
+                alt="CHEMOROZRUCH – Kompleks przemysłowy, konstrukcje stalowe i instalacje chemiczne"
+                width={1600}
+                height={900}
+                className="w-full h-full object-cover object-[50%_40%] sm:object-center brightness-[1.02] contrast-[1.03] scale-[1.04]"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                draggable={false}
+              />
+            </picture>
 
             {/* Subtle Clean Daylight Sun Flare & Atmosphere */}
             <div className="absolute inset-0 bg-gradient-to-tr from-white/30 via-transparent to-white/20 mix-blend-soft-light" />

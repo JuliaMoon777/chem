@@ -273,16 +273,6 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({ currentLang 
                 referrerPolicy="no-referrer-when-downgrade"
                 onLoad={() => setIsIframeLoaded(true)}
               />
-
-              {/* Bottom Left Floating GPS Coordinates Badge */}
-              <div className="absolute bottom-3 left-3 z-20 pointer-events-none hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-slate-900/85 backdrop-blur-md text-white border border-white/10 text-[11px] font-mono shadow-md">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>
-                  {mapViewMode === 'overview' 
-                    ? 'PL: 50.0385°N, 19.2635°E ↔ 52.5855°N, 19.6890°E' 
-                    : `${activeBranch.city}: ${activeBranch.gpsCoords.lat.toFixed(4)}°N, ${activeBranch.gpsCoords.lng.toFixed(4)}°E`}
-                </span>
-              </div>
             </div>
 
             {/* Bottom Info Strip */}

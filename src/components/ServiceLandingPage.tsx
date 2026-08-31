@@ -207,10 +207,6 @@ export const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({
 
           {/* Primary H1 Heading */}
           <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 font-mono text-[11px] font-bold uppercase tracking-wider mb-4">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              CHEMOROZRUCH • CERTYFIKOWANE WYKONAWSTWO
-            </div>
             <h1 className="font-poppins font-black text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-[1.12] mb-5">
               {meta.h1}
             </h1>

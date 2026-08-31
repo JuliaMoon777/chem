@@ -164,27 +164,31 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({ curren
 
               {/* One Understated Inspection Photo (Subtle visual proof of testing without dominating) */}
               <div className="mt-8 lg:mt-10 max-w-sm hidden sm:block">
-                <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-slate-200 border border-slate-300/70 shadow-2xs group">
+                <div className="aspect-[4/3] rounded-sm overflow-hidden bg-slate-200 border border-slate-300/70 shadow-2xs group">
                   <img
                     src={siteImages.jakoscBadaniaNdt}
-                    alt="Badania NDT i kontrola jakości spawania Chemorozruch"
+                    alt={
+                      currentLang === 'PL'
+                        ? 'Badania NDT i kontrola jakości spawania'
+                        : currentLang === 'EN'
+                        ? 'NDT testing and welding quality control'
+                        : currentLang === 'DE'
+                        ? 'ZfP-Prüfung und Schweißqualitätskontrolle'
+                        : 'Неруйнівний контроль NDT та перевірка зварних з’єднань'
+                    }
                     loading="lazy"
                     className="w-full h-full object-cover grayscale-[25%] contrast-[1.03] group-hover:grayscale-0 group-hover:scale-102 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-3 left-3 right-3 text-white flex items-center justify-between text-[11px] font-mono">
-                    <span className="tracking-wider">
-                      {currentLang === 'PL'
-                        ? 'KONTROLA NDT // 100% SPOIN'
-                        : currentLang === 'EN'
-                        ? 'NDT TESTING // 100% WELDS'
-                        : currentLang === 'DE'
-                        ? 'ZFP-PRÜFUNG // 100% SCHWEISSNÄHTE'
-                        : 'NDT КОНТРОЛЬ // 100% ЗВАРНИХ ШВІВ'}
-                    </span>
-                    <span className="text-red-400 font-bold">QA/QC</span>
-                  </div>
                 </div>
+                <p className="mt-2 text-xs text-slate-500 font-normal">
+                  {currentLang === 'PL'
+                    ? 'Badania nieniszczące (NDT) i kontrola jakości spoin'
+                    : currentLang === 'EN'
+                    ? 'Non-destructive testing (NDT) & weld quality control'
+                    : currentLang === 'DE'
+                    ? 'Zerstörungsfreie Prüfung (ZfP) & Schweißnahtkontrolle'
+                    : 'Неруйнівний контроль (NDT) та перевірка якості зварних швів'}
+                </p>
               </div>
             </div>
 
