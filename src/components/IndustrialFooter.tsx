@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Language, translations } from '../types';
 import { ChemorozruchLogo } from './ChemorozruchLogo';
+import { COMPANY_DATA } from '../data/companyData';
+import { buildLocalizedPath } from '../App';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -140,7 +142,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-poppins font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-tight">
-                {t.companyName}
+                {COMPANY_DATA.brandName}
               </span>
               <span className="text-xs text-slate-500 font-medium tracking-wide">
                 {t.companySub}
@@ -172,13 +174,13 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
           </div>
         </div>
 
-        {/* MAIN 4 BALANCED RESPONSIVE COLUMNS (Adaptive for Mobile, Tablet, Laptop, and Ultrawide) */}
+        {/* MAIN 4 BALANCED RESPONSIVE COLUMNS */}
         <div
           ref={gridRef}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pt-10 sm:pt-14 pb-14 sm:pb-16 border-b border-slate-200/70"
         >
           
-          {/* COLUMN 1: KONTAKT (Main Verified Details) (Span 4 on desktop) */}
+          {/* COLUMN 1: KONTAKT (Main Verified Details from COMPANY_DATA) */}
           <div className="lg:col-span-4 space-y-3.5 pr-0 lg:pr-6">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {t.columns.contactTitle}
@@ -190,41 +192,48 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
                   {t.columns.hqLabel}
                 </span>
                 <p className="font-semibold text-slate-900 leading-snug">
-                  {t.columns.address}
+                  {COMPANY_DATA.registeredAddress.fullString}
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Zakład / Warsztat: {COMPANY_DATA.operationalAddress.streetAddress}, {COMPANY_DATA.operationalAddress.city}
                 </p>
               </div>
 
               <div className="pt-0.5">
                 <span className="text-xs font-mono text-slate-400 block mb-0.5">
-                  {currentLang === 'PL' ? 'Telefon' : currentLang === 'EN' ? 'Phone' : currentLang === 'DE' ? 'Telefon' : 'Телефон'}
+                  {currentLang === 'PL' ? 'Telefon Centrala' : currentLang === 'EN' ? 'HQ Phone' : currentLang === 'DE' ? 'Telefon Zentrale' : 'Телефон'}
                 </span>
                 <a
-                  href={`tel:${t.columns.phone.replace(/\s+/g, '')}`}
+                  href={`tel:${COMPANY_DATA.contacts.generalHQ.phoneClean}`}
                   className="group inline-flex items-center gap-1 text-slate-900 font-bold hover:text-red-600 transition-colors"
                 >
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
-                    {t.columns.phone}
+                    {COMPANY_DATA.contacts.generalHQ.phone}
                   </span>
                 </a>
               </div>
 
               <div>
                 <span className="text-xs font-mono text-slate-400 block mb-0.5">
-                  E-mail
+                  E-mail Biuro / Ofertowanie
                 </span>
                 <a
-                  href={`mailto:${t.columns.email}`}
+                  href={`mailto:${COMPANY_DATA.contacts.generalHQ.email}`}
                   className="group inline-flex items-center gap-1 text-slate-900 font-bold hover:text-red-600 transition-colors"
                 >
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
-                    {t.columns.email}
+                    {COMPANY_DATA.contacts.generalHQ.email}
                   </span>
                 </a>
+              </div>
+
+              <div className="pt-1 text-xs text-slate-500 font-mono">
+                <span>NIP: {COMPANY_DATA.nipFormatted} • REGON: {COMPANY_DATA.regon}</span>
               </div>
             </div>
           </div>
 
-          {/* COLUMN 2: NAWIGACJA — CZĘŚĆ 1 (Span 3 on desktop) */}
+          {/* COLUMN 2: NAWIGACJA — CZĘŚĆ 1 */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {t.columns.navTitle}
@@ -273,7 +282,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </nav>
           </div>
 
-          {/* COLUMN 3: NAWIGACJA — CZĘŚĆ 2 / REALIZACJE & ODDZIAŁY (Span 3 on desktop) */}
+          {/* COLUMN 3: NAWIGACJA — CZĘŚĆ 2 / REALIZACJE & ODDZIAŁY */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {currentLang === 'PL' ? 'STRUKTURA' : currentLang === 'EN' ? 'PORTFOLIO' : currentLang === 'DE' ? 'STRUKTUR' : 'ПОРТФОЛІО'}
@@ -322,7 +331,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </nav>
           </div>
 
-          {/* COLUMN 4: INFORMACJE & LEGAL (Span 2 on desktop) */}
+          {/* COLUMN 4: INFORMACJE & LEGAL */}
           <div className="lg:col-span-2 space-y-3">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {t.columns.infoTitle}
@@ -382,7 +391,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
         </div>
 
-        {/* SEO SERVICE LANDING PAGES INTERNAL LINKING (Natural contextual anchors for Google crawlers & users) */}
+        {/* SEO SERVICE LANDING PAGES INTERNAL LINKING (Clean Localized URLs) */}
         <div className="py-6 sm:py-8 border-b border-slate-200/60">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <span className="text-[11px] font-mono font-bold tracking-[0.18em] text-slate-400 uppercase">
@@ -390,28 +399,28 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </span>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-700">
               <a
-                href="/konstrukcje-stalowe/"
+                href={buildLocalizedPath('konstrukcje-stalowe', currentLang)}
                 className="hover:text-red-600 transition-colors"
               >
                 Konstrukcje stalowe
               </a>
               <span className="text-slate-300 hidden sm:inline">•</span>
               <a
-                href="/montaz-urzadzen-przemyslowych/"
+                href={buildLocalizedPath('montaz-urzadzen-przemyslowych', currentLang)}
                 className="hover:text-red-600 transition-colors"
               >
                 Montaż urządzeń przemysłowych
               </a>
               <span className="text-slate-300 hidden sm:inline">•</span>
               <a
-                href="/aparaty-cisnieniowe/"
+                href={buildLocalizedPath('aparaty-cisnieniowe', currentLang)}
                 className="hover:text-red-600 transition-colors"
               >
                 Aparaty ciśnieniowe
               </a>
               <span className="text-slate-300 hidden sm:inline">•</span>
               <a
-                href="/remonty-modernizacje-instalacji-przemyslowych/"
+                href={buildLocalizedPath('remonty-modernizacje-instalacji-przemyslowych', currentLang)}
                 className="hover:text-red-600 transition-colors"
               >
                 Remonty i modernizacje instalacji
@@ -420,7 +429,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
           </div>
         </div>
 
-        {/* LARGE SUBTLE EDITORIAL WORDMARK (Clean Responsive SVG Text — never clips, perfectly scales across all screen widths) */}
+        {/* LARGE SUBTLE EDITORIAL WORDMARK */}
         <div
           ref={watermarkRef}
           className="w-full overflow-hidden py-6 sm:py-8 pointer-events-none select-none flex justify-center"
@@ -450,7 +459,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
         >
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
             <span>
-              © {new Date().getFullYear()} {t.copyright}
+              © {new Date().getFullYear()} {COMPANY_DATA.brandName} • {COMPANY_DATA.legalName}
             </span>
             <span>•</span>
             <span>{t.allRightsReserved}</span>

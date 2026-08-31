@@ -1,73 +1,28 @@
 {
   "redirects": [
     {
-      "source": "/(o-firmie|o-firmie\\.html|about|about-us)",
+      "source": "/o-firmie",
       "destination": "/#company-discovery-section",
       "permanent": true
     },
     {
-      "source": "/(oferta|oferta\\.html|uslugi|services)",
+      "source": "/oferta",
       "destination": "/#competencies-section",
       "permanent": true
     },
     {
-      "source": "/(konstrukcje|oferta/konstrukcje-stalowe|oferta/konstrukcje)",
-      "destination": "/konstrukcje-stalowe/",
-      "permanent": true
-    },
-    {
-      "source": "/(remonty|modernizacje|oferta/remonty|remonty-i-modernizacje|oferta/modernizacje)",
-      "destination": "/remonty-modernizacje-instalacji-przemyslowych/",
-      "permanent": true
-    },
-    {
-      "source": "/(aparaty|zbiorniki|zbiorniki-cisnieniowe|oferta/aparaty|oferta/aparaty-cisnieniowe)",
-      "destination": "/aparaty-cisnieniowe/",
-      "permanent": true
-    },
-    {
-      "source": "/(montaz|oferta/montaz|montaz-urzadzen|oferta/montaz-urzadzen-przemyslowych)",
-      "destination": "/montaz-urzadzen-przemyslowych/",
-      "permanent": true
-    },
-    {
-      "source": "/(certyfikaty|certyfikaty\\.html|jakosc|iso)",
+      "source": "/certyfikaty",
       "destination": "/#certificates-section",
       "permanent": true
     },
     {
-      "source": "/(realizacje|realizacje\\.html|projekty|portfolio)",
+      "source": "/realizacje",
       "destination": "/#realizations-section",
       "permanent": true
     },
     {
-      "source": "/(kontakt|kontakt\\.html|kontakt-z-nami|dane-kontaktowe)",
+      "source": "/kontakt",
       "destination": "/#kontakt-cta",
-      "permanent": true
-    },
-    {
-      "source": "/(park-maszynowy|zaplecze|zaplecze-technologiczne)",
-      "destination": "/#tech-facilities-section",
-      "permanent": true
-    },
-    {
-      "source": "/(lokalizacje|oddzialy|oddzial-plock)",
-      "destination": "/#locations-section",
-      "permanent": true
-    },
-    {
-      "source": "/(rodo\\.html|klauzula-rodo|klauzula-informacyjna-rodo)",
-      "destination": "/rodo",
-      "permanent": true
-    },
-    {
-      "source": "/(polityka-prywatnosci\\.html|privacy-policy|polityka-cookies)",
-      "destination": "/polityka-prywatnosci",
-      "permanent": true
-    },
-    {
-      "source": "/(sygnalisci\\.html|procedura-sygnalistow)",
-      "destination": "/sygnalisci",
       "permanent": true
     }
   ],

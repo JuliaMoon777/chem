@@ -18,15 +18,17 @@ interface ParallaxSiteProps {
   currentLang?: Language;
   onLanguageChange?: (lang: Language) => void;
   onNavigateService?: (slug: string) => void;
+  onOpenLegal?: (doc: LegalDocType) => void;
 }
 
 export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
   currentLang: externalLang,
   onLanguageChange: externalOnLanguageChange,
   onNavigateService,
+  onOpenLegal: externalOnOpenLegal,
 }) => {
   const [internalLang, setInternalLang] = useState<Language>('PL');
-  const [legalDoc, setLegalDoc] = useState<LegalDocType>(null);
+  const [internalLegalDoc, setInternalLegalDoc] = useState<LegalDocType>(null);
 
   const currentLang = externalLang || internalLang;
   const handleLanguageChange = (lang: Language) => {
@@ -34,6 +36,14 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
       externalOnLanguageChange(lang);
     } else {
       setInternalLang(lang);
+    }
+  };
+
+  const handleOpenLegalDoc = (doc: LegalDocType) => {
+    if (externalOnOpenLegal) {
+      externalOnOpenLegal(doc);
+    } else {
+      setInternalLegalDoc(doc);
     }
   };
 
@@ -103,25 +113,27 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
       {/* 10. EIGHTH PART — KONTAKT (Editorial department-based direct contacts & company information) */}
       <ContactCTASection
         currentLang={currentLang}
-        onOpenLegal={(doc) => setLegalDoc(doc)}
+        onOpenLegal={(doc) => handleOpenLegalDoc(doc)}
       />
 
       {/* 11. FINAL PART — FOOTER (Editorial light ending, brand identity, language switcher, 4 columns, legal triggers) */}
       <IndustrialFooter
         currentLang={currentLang}
         onLanguageChange={handleLanguageChange}
-        onOpenLegal={(doc) => setLegalDoc(doc)}
+        onOpenLegal={(doc) => handleOpenLegalDoc(doc)}
       />
 
       {/* 12. GLOBAL FLOATING NAVIGATION CAPSULE (Translucent organic dock on desktop / pill & sheet on mobile) */}
       <FloatingGlobalNav currentLang={currentLang} />
 
-      {/* 13. OFFICIAL LEGAL MODAL (RODO, Sygnaliści, Polityka prywatności) */}
-      <LegalModal
-        isOpen={legalDoc !== null}
-        docType={legalDoc}
-        onClose={() => setLegalDoc(null)}
-      />
+      {/* 13. OFFICIAL LEGAL MODAL (When rendered standalone without App.tsx wrapper) */}
+      {!externalOnOpenLegal && (
+        <LegalModal
+          isOpen={internalLegalDoc !== null}
+          docType={internalLegalDoc}
+          onClose={() => setInternalLegalDoc(null)}
+        />
+      )}
     </div>
   );
 };

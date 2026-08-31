@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Language } from '../types';
+import { COMPANY_DATA } from '../data/companyData';
 
 export interface SEOProps {
   title: string;
   description: string;
-  keywords?: string;
   canonicalUrl: string;
   currentLang: Language;
+  routeSlug?: string; // e.g. "" for home, or "konstrukcje-stalowe" for a service page
   ogImage?: string;
   ogType?: 'website' | 'article';
   breadcrumbs?: Array<{ name: string; url: string }>;
@@ -20,9 +21,9 @@ export interface SEOProps {
 export const SEOHead: React.FC<SEOProps> = ({
   title,
   description,
-  keywords = 'konstrukcje stalowe, montaż urządzeń przemysłowych, aparaty ciśnieniowe, remont i modernizacja instalacji przemysłowych, rurociągi przemysłowe, CHEMOROZRUCH',
   canonicalUrl,
   currentLang,
+  routeSlug = '',
   ogImage = 'https://chemorozruch.pl/images/chemorozruch_plant_topdown_1787214324065.jpg',
   ogType = 'website',
   breadcrumbs,
@@ -47,9 +48,14 @@ export const SEOHead: React.FC<SEOProps> = ({
       element.setAttribute('content', content);
     };
 
-    // 3. Primary Meta Tags
+    // 3. Primary Meta Tags (meta keywords explicitly removed per SEO best practices)
     setMetaTag('name', 'description', description);
-    setMetaTag('name', 'keywords', keywords);
+
+    // Remove legacy keywords tag if it exists in DOM
+    const existingKeywords = document.querySelector('meta[name="keywords"]');
+    if (existingKeywords) {
+      existingKeywords.remove();
+    }
 
     // 4. Indexing & Environment Guard (Vercel Previews vs Production)
     const hostname = window.location.hostname;
@@ -60,7 +66,7 @@ export const SEOHead: React.FC<SEOProps> = ({
     setMetaTag('name', 'robots', robotsContent);
     setMetaTag('name', 'googlebot', robotsContent);
 
-    // 5. Canonical Link
+    // 5. Canonical Link (Self-referencing for each localized URL)
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonicalLink) {
       canonicalLink = document.createElement('link');
@@ -75,7 +81,7 @@ export const SEOHead: React.FC<SEOProps> = ({
     setMetaTag('property', 'og:url', canonicalUrl);
     setMetaTag('property', 'og:type', ogType);
     setMetaTag('property', 'og:image', ogImage);
-    setMetaTag('property', 'og:site_name', 'CHEMOROZRUCH');
+    setMetaTag('property', 'og:site_name', COMPANY_DATA.brandName);
     
     const localeMap: Record<Language, string> = {
       PL: 'pl_PL',
@@ -91,20 +97,20 @@ export const SEOHead: React.FC<SEOProps> = ({
     setMetaTag('name', 'twitter:description', description);
     setMetaTag('name', 'twitter:image', ogImage);
 
-    // 8. Dynamic Hreflang alternates
-    const baseUrl = canonicalUrl.split('?')[0];
+    // 8. Clean Reciprocal Hreflang Clusters (pl, en, de, uk, x-default)
+    const cleanSlug = routeSlug ? `${routeSlug.replace(/^\//, '').replace(/\/$/, '')}/` : '';
     const hreflangs: Array<{ lang: string; href: string }> = [
-      { lang: 'pl', href: baseUrl },
-      { lang: 'en', href: `${baseUrl}?lang=en` },
-      { lang: 'de', href: `${baseUrl}?lang=de` },
-      { lang: 'uk', href: `${baseUrl}?lang=uk` },
-      { lang: 'x-default', href: baseUrl },
+      { lang: 'pl', href: `https://chemorozruch.pl/${cleanSlug}` },
+      { lang: 'en', href: `https://chemorozruch.pl/en/${cleanSlug}` },
+      { lang: 'de', href: `https://chemorozruch.pl/de/${cleanSlug}` },
+      { lang: 'uk', href: `https://chemorozruch.pl/uk/${cleanSlug}` },
+      { lang: 'x-default', href: `https://chemorozruch.pl/${cleanSlug}` },
     ];
 
     // Remove previous dynamic hreflangs
     document.querySelectorAll('link[data-dynamic-hreflang="true"]').forEach((el) => el.remove());
 
-    // Append current hreflangs
+    // Append clean hreflangs
     hreflangs.forEach(({ lang, href }) => {
       const link = document.createElement('link');
       link.setAttribute('rel', 'alternate');
@@ -114,7 +120,7 @@ export const SEOHead: React.FC<SEOProps> = ({
       document.head.appendChild(link);
     });
 
-    // 9. Structured Data (JSON-LD)
+    // 9. Structured Data (Schema.org JSON-LD) — Consuming Centralized Verified COMPANY_DATA
     const existingJsonLd = document.getElementById('dynamic-jsonld-schema');
     if (existingJsonLd) {
       existingJsonLd.remove();
@@ -124,78 +130,79 @@ export const SEOHead: React.FC<SEOProps> = ({
       '@context': 'https://schema.org',
       '@graph': [
         {
-          '@type': ['Organization', 'GeneralContractor'],
+          '@type': 'Organization',
           '@id': 'https://chemorozruch.pl/#organization',
-          name: 'CHEMOROZRUCH Sp. z o.o.',
-          alternateName: 'CHEMOROZRUCH',
+          name: COMPANY_DATA.legalName,
+          alternateName: COMPANY_DATA.brandName,
           url: 'https://chemorozruch.pl/',
           logo: 'https://chemorozruch.pl/images/chemorozruch_plant_topdown_1787214324065.jpg',
-          description: 'Generalny wykonawca w zakresie konstrukcji stalowych, montażu instalacji przemysłowych, aparatów ciśnieniowych oraz remontów i modernizacji instalacji.',
-          telephone: '+48 33 844 14 00',
-          email: 'biuro@chemorozruch.pl',
-          foundingDate: '1971',
-          vatID: 'PL5490001815',
+          description: 'Inżynieria i wykonawstwo przemysłowe: konstrukcje stalowe, aparaty ciśnieniowe, montaż instalacji przemysłowych oraz remonty technologiczne.',
+          telephone: COMPANY_DATA.contacts.generalHQ.phone,
+          email: COMPANY_DATA.contacts.generalHQ.email,
+          foundingDate: `${COMPANY_DATA.foundingYear}`,
+          vatID: COMPANY_DATA.vatId,
+          taxID: COMPANY_DATA.nip,
           address: {
             '@type': 'PostalAddress',
-            streetAddress: 'ul. Chemików 1',
-            addressLocality: 'Oświęcim',
-            postalCode: '32-600',
+            streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
+            addressLocality: COMPANY_DATA.registeredAddress.city,
+            postalCode: COMPANY_DATA.registeredAddress.postalCode,
             addressCountry: 'PL',
           },
           location: [
             {
               '@type': 'Place',
-              name: 'CHEMOROZRUCH Sp. z o.o. – Siedziba Główna Oświęcim',
+              name: `${COMPANY_DATA.brandName} – Siedziba Główna Oświęcim`,
               address: {
                 '@type': 'PostalAddress',
-                streetAddress: 'ul. Chemików 1',
-                addressLocality: 'Oświęcim',
-                postalCode: '32-600',
+                streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
+                addressLocality: COMPANY_DATA.registeredAddress.city,
+                postalCode: COMPANY_DATA.registeredAddress.postalCode,
                 addressCountry: 'PL',
               },
               geo: {
                 '@type': 'GeoCoordinates',
-                latitude: 50.0385,
-                longitude: 19.2635,
+                latitude: COMPANY_DATA.coordinates.oswiecimHQ.lat,
+                longitude: COMPANY_DATA.coordinates.oswiecimHQ.lng,
               },
-              telephone: '+48 33 844 14 00',
+              telephone: COMPANY_DATA.contacts.generalHQ.phone,
             },
             {
               '@type': 'Place',
-              name: 'CHEMOROZRUCH Sp. z o.o. – Oddział Płock',
+              name: `${COMPANY_DATA.brandName} – Oddział Płock`,
               address: {
                 '@type': 'PostalAddress',
-                streetAddress: 'ul. Zglenickiego 44',
-                addressLocality: 'Płock',
-                postalCode: '09-400',
+                streetAddress: COMPANY_DATA.plockBranchAddress.streetAddress,
+                addressLocality: COMPANY_DATA.plockBranchAddress.city,
+                postalCode: COMPANY_DATA.plockBranchAddress.postalCode,
                 addressCountry: 'PL',
               },
               geo: {
                 '@type': 'GeoCoordinates',
-                latitude: 52.5855,
-                longitude: 19.6890,
+                latitude: COMPANY_DATA.coordinates.plockBranch.lat,
+                longitude: COMPANY_DATA.coordinates.plockBranch.lng,
               },
-              telephone: '+48 24 365 42 10',
+              telephone: COMPANY_DATA.contacts.plockBranch.phone,
             },
           ],
           department: [
             {
               '@type': 'ContactPoint',
-              contactType: 'Dział Ofertowania',
-              email: 'oferty@chemorozruch.pl',
-              telephone: '+48 33 844 14 00',
+              contactType: COMPANY_DATA.contacts.tendering.department,
+              email: COMPANY_DATA.contacts.tendering.email,
+              telephone: COMPANY_DATA.contacts.tendering.phone,
             },
             {
               '@type': 'ContactPoint',
-              contactType: 'Biuro Zarządu',
-              email: 'biuro@chemorozruch.pl',
-              telephone: '+48 33 844 14 00',
+              contactType: COMPANY_DATA.contacts.management.department,
+              email: COMPANY_DATA.contacts.management.email,
+              telephone: COMPANY_DATA.contacts.management.phone,
             },
             {
               '@type': 'ContactPoint',
-              contactType: 'Oddział Płock',
-              email: 'plock@chemorozruch.pl',
-              telephone: '+48 24 365 42 10',
+              contactType: COMPANY_DATA.contacts.plockBranch.department,
+              email: COMPANY_DATA.contacts.plockBranch.email,
+              telephone: COMPANY_DATA.contacts.plockBranch.phone,
             },
           ],
         },
@@ -229,10 +236,6 @@ export const SEOHead: React.FC<SEOProps> = ({
           '@type': 'AdministrativeArea',
           name: 'Polska, Unia Europejska',
         },
-        hasOfferCatalog: {
-          '@type': 'OfferCatalog',
-          name: 'Usługi Przemysłowe CHEMOROZRUCH',
-        },
       });
     }
 
@@ -242,7 +245,7 @@ export const SEOHead: React.FC<SEOProps> = ({
     script.text = JSON.stringify(jsonLdData);
     document.head.appendChild(script);
 
-  }, [title, description, keywords, canonicalUrl, currentLang, ogImage, ogType, breadcrumbs, serviceData]);
+  }, [title, description, canonicalUrl, currentLang, routeSlug, ogImage, ogType, breadcrumbs, serviceData]);
 
   return null;
 };
