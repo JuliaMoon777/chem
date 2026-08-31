@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { COMPANY_DATA } from '../src/data/companyData';
 import { SERVICE_PAGES_DATA, ServicePageData } from '../src/data/servicePagesData';
-import { Language } from '../src/types';
+import { Language, translations } from '../src/types';
 
 interface RouteDefinition {
   routePath: string; // e.g. '/', '/en/', '/konstrukcje-stalowe/', '/rodo'
@@ -46,18 +46,14 @@ function getHreflangs(pageSuffix: string = '') {
 function buildRoutes(): RouteDefinition[] {
   const routes: RouteDefinition[] = [];
 
-  // 1. Homepages (PL, EN, DE, UK)
-  const homeData: Record<Language, { lang: 'pl' | 'en' | 'de' | 'uk'; prefix: string; title: string; desc: string; h1: string; h2: string; lead: string; aboutText: string; sectorsTitle: string }> = {
+  // 1. Homepages (PL, EN, DE, UK) — Consuming Centralized Translations & COMPANY_DATA
+  const homeMeta: Record<Language, { lang: 'pl' | 'en' | 'de' | 'uk'; prefix: string; title: string; desc: string; h1: string }> = {
     PL: {
       lang: 'pl',
       prefix: '',
       title: 'Konstrukcje stalowe i instalacje przemysłowe | CHEMOROZRUCH',
       desc: 'CHEMOROZRUCH – Generalny wykonawca konstrukcji stalowych, aparatów ciśnieniowych, rurociągów oraz montażu i remontów instalacji przemysłowych. Ponad 50 lat doświadczenia.',
       h1: 'Konstrukcje stalowe i instalacje przemysłowe',
-      h2: 'CHEMOROZRUCH – Generalne wykonawstwo i montaż instalacji przemysłowych',
-      lead: 'Ponad 50 lat doświadczenia w prefabrykacji konstrukcji stalowych, budowie rurociągów przesyłowych i procesowych, montażu aparatów ciśnieniowych oraz generalnych remontach instalacji petrochemicznych i energetycznych.',
-      aboutText: 'CHEMOROZRUCH realizuje kompleksowe projekty EPC dla przemysłu chemicznego, rafineryjnego, energetycznego i hutniczego. Nasz park maszynowy obejmuje przecinarki plazmowe HD, walce 4-rolkowe, śrutownice komorowe oraz certyfikowaną spawalnię z uprawnieniami UDT, TDT, EN 1090-2 EXC3 i ISO 3834-2.',
-      sectorsTitle: 'Obsługiwane sektory przemysłu: Chemia i Petrochemia, Energetyka Zawodowa, Hutnictwo i Koksownictwo, Gazownictwo i Paliwa Płynne.',
     },
     EN: {
       lang: 'en',
@@ -65,10 +61,6 @@ function buildRoutes(): RouteDefinition[] {
       title: 'Industrial Steel Structures & Process Piping Assembly | CHEMOROZRUCH',
       desc: 'CHEMOROZRUCH delivers structural steelwork, industrial equipment installation, pressure vessels, and chemical plant turnarounds with over 50 years of engineering excellence.',
       h1: 'Industrial Steel Structures & Process Piping Assembly',
-      h2: 'CHEMOROZRUCH – General Contracting & Industrial Plant Construction',
-      lead: 'Over 50 years of engineering excellence in structural steel fabrication, high-pressure piping networks, process equipment assembly, and plant maintenance turnarounds across Europe.',
-      aboutText: 'CHEMOROZRUCH executes comprehensive industrial projects for chemical, refining, energy, and metallurgical industries with certified production according to EN 1090-2 EXC3, ISO 3834-2, PED 2014/68/EU, and ISO 9001.',
-      sectorsTitle: 'Industrial sectors served: Chemical & Petrochemical, Power Generation, Metallurgy, Gas & Heavy Industry.',
     },
     DE: {
       lang: 'de',
@@ -76,10 +68,6 @@ function buildRoutes(): RouteDefinition[] {
       title: 'Stahlkonstruktionen & Industriemontagen | CHEMOROZRUCH',
       desc: 'CHEMOROZRUCH fertigt Stahlkonstruktionen, montiert Industrieanlagen, Druckapparate und führt Generalreparaturen mit über 50 Jahren Erfahrung durch.',
       h1: 'Stahlkonstruktionen & Industriemontagen',
-      h2: 'CHEMOROZRUCH – Generalunternehmer für Industrieanlagen und Stahlbau',
-      lead: 'Über 50 Jahre Erfahrung im Stahlbau, Rohrleitungsbau, in der Montage von Druckgeräten und verfahrenstechnischen Anlagen sowie bei Generalüberholungen in der Chemie- und Energiebranche.',
-      aboutText: 'CHEMOROZRUCH realisiert anspruchsvolle Industrieprojekte nach EN 1090-2 EXC3, ISO 3834-2 und Druckgeräterichtlinie PED 2014/68/EU mit eigener Fertigungshalle und modernem Maschinenpark.',
-      sectorsTitle: 'Bediente Branchen: Chemie und Petrochemie, Energiewirtschaft, Hüttenwesen und Schwerindustrie.',
     },
     UA: {
       lang: 'uk',
@@ -87,17 +75,14 @@ function buildRoutes(): RouteDefinition[] {
       title: 'Металоконструкції та промисловий монтаж установок | CHEMOROZRUCH',
       desc: 'CHEMOROZRUCH здійснює виготовлення металоконструкцій, монтаж промислового обладнання, апаратів високого тиску та ремонти з понад 50-річним досвідом.',
       h1: 'Металоконструкції та промисловий монтаж установок',
-      h2: 'CHEMOROZRUCH – Генеральний підрядник та монтаж промислових комплексів',
-      lead: 'Понад 50 років досвіду у виготовленні металоконструкцій, монтажі технологічних трубопроводів, посудин під тиском та капітальному ремонті хімічних і енергетичних заводів.',
-      aboutText: 'CHEMOROZRUCH виконує комплексні інженерні проекти за міжнародними стандартами EN 1090-2 EXC3, ISO 3834-2, PED 2014/68/EU та ISO 9001 з власною виробничою базою 12 000 м².',
-      sectorsTitle: 'Галузі промисловості: Хімічна та нафтопереробна, Енергетика, Металургія, Газова промисловість.',
     },
   };
 
   (['PL', 'EN', 'DE', 'UA'] as Language[]).forEach((langKey) => {
-    const data = homeData[langKey];
-    const canonical = data.prefix ? `${BASE_URL}/${data.prefix}` : `${BASE_URL}/`;
-    const outputPath = data.prefix ? path.join('dist', data.prefix, 'index.html') : path.join('dist', 'index.html');
+    const meta = homeMeta[langKey];
+    const t = translations[langKey];
+    const canonical = meta.prefix ? `${BASE_URL}/${meta.prefix}` : `${BASE_URL}/`;
+    const outputPath = meta.prefix ? path.join('dist', meta.prefix, 'index.html') : path.join('dist', 'index.html');
 
     const structuredData = {
       '@context': 'https://schema.org',
@@ -106,108 +91,247 @@ function buildRoutes(): RouteDefinition[] {
           '@type': 'Organization',
           '@id': `${BASE_URL}/#organization`,
           name: COMPANY_DATA.legalName,
-          alternateName: 'CHEMOROZRUCH',
-          url: BASE_URL,
-          logo: `${BASE_URL}/logo.svg`,
-          taxID: COMPANY_DATA.nip,
-          vatID: `PL${COMPANY_DATA.nip}`,
+          alternateName: COMPANY_DATA.brandName,
+          url: `${BASE_URL}/`,
+          logo: `${BASE_URL}/images/chemorozruch_plant_topdown_1787214324065.jpg`,
+          description: 'Inżynieria i wykonawstwo przemysłowe: konstrukcje stalowe, aparaty ciśnieniowe, montaż instalacji przemysłowych oraz remonty technologiczne.',
           telephone: COMPANY_DATA.contacts.generalHQ.phone,
           email: COMPANY_DATA.contacts.generalHQ.email,
+          foundingDate: `${COMPANY_DATA.foundingYear}`,
+          vatID: COMPANY_DATA.vatId,
+          taxID: COMPANY_DATA.nip,
           address: {
             '@type': 'PostalAddress',
             streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
-            postalCode: COMPANY_DATA.registeredAddress.postalCode,
             addressLocality: COMPANY_DATA.registeredAddress.city,
+            postalCode: COMPANY_DATA.registeredAddress.postalCode,
             addressCountry: 'PL',
           },
-          foundingDate: '1970',
-        },
-        {
-          '@type': 'LocalBusiness',
-          '@id': `${BASE_URL}/#headquarters`,
-          name: `${COMPANY_DATA.legalName} – Centrala i Zakład Produkcyjny`,
-          url: BASE_URL,
-          telephone: COMPANY_DATA.contacts.generalHQ.phone,
-          email: COMPANY_DATA.contacts.generalHQ.email,
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: COMPANY_DATA.operationalAddress.streetAddress,
-            postalCode: COMPANY_DATA.operationalAddress.postalCode,
-            addressLocality: COMPANY_DATA.operationalAddress.city,
-            addressCountry: 'PL',
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: COMPANY_DATA.coordinates.oswiecimHQ.lat,
-            longitude: COMPANY_DATA.coordinates.oswiecimHQ.lng,
-          },
+          location: [
+            {
+              '@type': 'Place',
+              name: `${COMPANY_DATA.brandName} – Siedziba Główna Oświęcim`,
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
+                addressLocality: COMPANY_DATA.registeredAddress.city,
+                postalCode: COMPANY_DATA.registeredAddress.postalCode,
+                addressCountry: 'PL',
+              },
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: COMPANY_DATA.coordinates.oswiecimHQ.lat,
+                longitude: COMPANY_DATA.coordinates.oswiecimHQ.lng,
+              },
+              telephone: COMPANY_DATA.contacts.generalHQ.phone,
+            },
+            {
+              '@type': 'Place',
+              name: `${COMPANY_DATA.brandName} – Oddział Płock`,
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: COMPANY_DATA.plockBranchAddress.streetAddress,
+                addressLocality: COMPANY_DATA.plockBranchAddress.city,
+                postalCode: COMPANY_DATA.plockBranchAddress.postalCode,
+                addressCountry: 'PL',
+              },
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: COMPANY_DATA.coordinates.plockBranch.lat,
+                longitude: COMPANY_DATA.coordinates.plockBranch.lng,
+              },
+              telephone: COMPANY_DATA.contacts.plockBranch.phone,
+            },
+          ],
+          department: [
+            {
+              '@type': 'ContactPoint',
+              contactType: COMPANY_DATA.contacts.tendering.department,
+              email: COMPANY_DATA.contacts.tendering.email,
+              telephone: COMPANY_DATA.contacts.tendering.phone,
+            },
+            {
+              '@type': 'ContactPoint',
+              contactType: COMPANY_DATA.contacts.management.department,
+              email: COMPANY_DATA.contacts.management.email,
+              telephone: COMPANY_DATA.contacts.management.phone,
+            },
+            {
+              '@type': 'ContactPoint',
+              contactType: COMPANY_DATA.contacts.plockBranch.department,
+              email: COMPANY_DATA.contacts.plockBranch.email,
+              telephone: COMPANY_DATA.contacts.plockBranch.phone,
+            },
+          ],
         },
       ],
     };
 
+    const metricsHtml = t.numbers.metrics
+      .map((m) => `<span><strong>${m.value}${m.suffix}</strong> ${m.label} – ${m.sub}</span>`)
+      .join(' | ');
+
+    const discoveryHtml = t.discovery.items
+      .map(
+        (item) => `
+        <article class="discovery-item">
+          <h3>${item.title}</h3>
+          <p class="tagline"><strong>${item.tagline}</strong></p>
+          <p>${item.description}</p>
+          <ul>
+            ${item.bulletPoints.map((bp) => `<li>${bp}</li>`).join('')}
+          </ul>
+        </article>
+      `
+      )
+      .join('\n');
+
+    const facilitiesHtml = t.facilities.items
+      .map(
+        (f) => `
+        <div class="facility-item">
+          <h4>${f.name}</h4>
+          <p>${f.description}</p>
+        </div>
+      `
+      )
+      .join('\n');
+
+    const certificatesHtml = t.certificates.standards
+      .map(
+        (c) => `
+        <div class="cert-item">
+          <strong>${c.code} – ${c.name}</strong> (${c.authority})
+          <p>${c.scope}</p>
+        </div>
+      `
+      )
+      .join('\n');
+
+    const realizationsHtml = t.realizations.projects
+      .map(
+        (p) => `
+        <div class="realization-item">
+          <h4>${p.title} (${p.details.year}, ${p.details.location})</h4>
+          <p>${p.summary}</p>
+          <p><small>${t.realizations.scopeLabel}: ${p.details.scope} | ${t.realizations.industryLabel}: ${p.details.industry}</small></p>
+        </div>
+      `
+      )
+      .join('\n');
+
+    const branchesHtml = t.locations.branches
+      .map(
+        (b) => `
+        <div class="branch-item">
+          <h4>${b.city} – ${b.role}</h4>
+          <p>${b.address}, ${b.postalCode} ${b.city}</p>
+          <p>Tel: ${b.phone} | Email: ${b.email}</p>
+          <p><small>${b.industrialFocus}</small></p>
+        </div>
+      `
+      )
+      .join('\n');
+
     routes.push({
-      routePath: data.prefix ? `/${data.prefix}` : '/',
+      routePath: meta.prefix ? `/${meta.prefix}` : '/',
       outputPath,
-      lang: data.lang,
+      lang: meta.lang,
       langKey,
-      title: data.title,
-      description: data.desc,
+      title: meta.title,
+      description: meta.desc,
       canonicalUrl: canonical,
       ogType: 'website',
       hreflangs: getHreflangs(''),
-      h1: data.h1,
-      h2: data.h2,
+      h1: meta.h1,
+      h2: `${COMPANY_DATA.brandName} – ${t.hero.headline} ${t.hero.supporting}`,
       bodyContent: `
         <header class="header-nav">
-          <div class="logo">CHEMOROZRUCH</div>
-          <nav>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#company-discovery-section">O firmie</a>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#competencies-section">Kompetencje</a>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#facilities-section">Zaplecze</a>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#certificates-section">Certyfikaty</a>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#realizations-section">Realizacje</a>
-            <a href="${data.prefix ? `/${data.prefix}` : '/'}#kontakt-cta">Kontakt</a>
+          <div class="logo">${COMPANY_DATA.brandName}</div>
+          <nav aria-label="Nawigacja">
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#company-discovery-section">${t.footer.columns.navLinks.about}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#competencies-section">${t.footer.columns.navLinks.competencies}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#facilities-section">${t.footer.columns.navLinks.facilities}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#certificates-section">${t.footer.columns.navLinks.certificates}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#realizations-section">${t.footer.columns.navLinks.realizations}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#locations-section">${t.footer.columns.navLinks.locations}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#kontakt-cta">${t.footer.columns.navLinks.contact}</a>
           </nav>
         </header>
         <main>
           <section id="hero" class="hero-section">
-            <h1>${data.h1}</h1>
-            <p class="hero-lead">${data.lead}</p>
+            <h1>${meta.h1}</h1>
+            <p class="hero-lead">${t.hero.headline} ${t.hero.supporting}</p>
             <div class="hero-facts">
-              <span>50+ lat na rynku</span>
-              <span>15 000+ t stali rocznie</span>
-              <span>12 000 m² hal produkcyjnych</span>
-              <span>Certyfikaty UDT, PED, EN 1090-2, ISO 3834-2</span>
+              ${metricsHtml}
             </div>
           </section>
+
           <section id="company-discovery-section">
-            <h2>${data.h2}</h2>
-            <p>${data.aboutText}</p>
-            <p>${data.sectorsTitle}</p>
+            <h2>${t.discovery.heading} – ${t.discovery.subheading}</h2>
+            <div class="discovery-grid">
+              ${discoveryHtml}
+            </div>
           </section>
+
           <section id="competencies-section">
-            <h2>Główne linie ofertowe CHEMOROZRUCH</h2>
+            <h2>${t.competencies.heading}</h2>
+            <p>${t.competencies.subheading}</p>
             <div class="services-grid">
               <article>
-                <h3><a href="/${data.prefix}konstrukcje-stalowe/">Konstrukcje stalowe</a></h3>
-                <p>Prefabrykacja i montaż konstrukcji przemysłowych, estakad rurowych, wież i hal technologicznych zgodnie z EN 1090-2 EXC3.</p>
+                <h3><a href="/${meta.prefix}konstrukcje-stalowe/">${SERVICE_PAGES_DATA['konstrukcje-stalowe'].meta[langKey].h1}</a></h3>
+                <p>${SERVICE_PAGES_DATA['konstrukcje-stalowe'].meta[langKey].subtitle}</p>
               </article>
               <article>
-                <h3><a href="/${data.prefix}remonty-modernizacje-instalacji-przemyslowych/">Remonty i modernizacje instalacji przemysłowych</a></h3>
-                <p>Generalne przestoje remontowe (turnaround), wymiana węzłów technologicznych, modernizacja rurociągów pod nadzorem UDT/TUV.</p>
+                <h3><a href="/${meta.prefix}remonty-modernizacje-instalacji-przemyslowych/">${SERVICE_PAGES_DATA['remonty-modernizacje-instalacji-przemyslowych'].meta[langKey].h1}</a></h3>
+                <p>${SERVICE_PAGES_DATA['remonty-modernizacje-instalacji-przemyslowych'].meta[langKey].subtitle}</p>
               </article>
               <article>
-                <h3><a href="/${data.prefix}aparaty-cisnieniowe/">Aparaty ciśnieniowe i zbiorniki technologiczne</a></h3>
-                <p>Projektowanie, wytwarzanie, regeneracja i montaż reaktorów, kolumn, wymienników ciepła i zbiorników ciśnieniowych (PED 2014/68/UE).</p>
+                <h3><a href="/${meta.prefix}aparaty-cisnieniowe/">${SERVICE_PAGES_DATA['aparaty-cisnieniowe'].meta[langKey].h1}</a></h3>
+                <p>${SERVICE_PAGES_DATA['aparaty-cisnieniowe'].meta[langKey].subtitle}</p>
               </article>
               <article>
-                <h3><a href="/${data.prefix}montaz-urzadzen-przemyslowych/">Montaż urządzeń przemysłowych</a></h3>
-                <p>Posadowienie, osiowanie laserowe, montaż pomp, sprężarek, turbin, filtrów i ciągów technologicznych.</p>
+                <h3><a href="/${meta.prefix}montaz-urzadzen-przemyslowych/">${SERVICE_PAGES_DATA['montaz-urzadzen-przemyslowych'].meta[langKey].h1}</a></h3>
+                <p>${SERVICE_PAGES_DATA['montaz-urzadzen-przemyslowych'].meta[langKey].subtitle}</p>
               </article>
             </div>
           </section>
-          <section id="contact-info">
-            <h2>Kontakt i Dane Rejestrowe</h2>
+
+          <section id="facilities-section">
+            <h2>${t.facilities.headingLine1} ${t.facilities.headingLine2}</h2>
+            <p>${t.facilities.supporting}</p>
+            <div class="facilities-list">
+              ${facilitiesHtml}
+            </div>
+          </section>
+
+          <section id="certificates-section">
+            <h2>${t.certificates.heading}</h2>
+            <p>${t.certificates.supporting}</p>
+            <div class="certs-list">
+              ${certificatesHtml}
+            </div>
+          </section>
+
+          <section id="realizations-section">
+            <h2>${t.realizations.heading}</h2>
+            <p>${t.realizations.supporting}</p>
+            <div class="realizations-list">
+              ${realizationsHtml}
+            </div>
+          </section>
+
+          <section id="locations-section">
+            <h2>${t.locations.heading}</h2>
+            <p>${t.locations.supporting}</p>
+            <div class="branches-list">
+              ${branchesHtml}
+            </div>
+          </section>
+
+          <section id="kontakt-cta">
+            <h2>${t.contactCTA.heading}</h2>
+            <p>${t.contactCTA.supporting}</p>
             <p><strong>${COMPANY_DATA.legalName}</strong></p>
             <p>Siedziba: ${COMPANY_DATA.operationalAddress.fullString}</p>
             <p>Oddział Płock: ${COMPANY_DATA.plockBranchAddress.fullString}</p>
@@ -216,11 +340,11 @@ function buildRoutes(): RouteDefinition[] {
           </section>
         </main>
         <footer>
-          <p>© ${new Date().getFullYear()} ${COMPANY_DATA.legalName}. Wszelkie prawa zastrzeżone.</p>
+          <p>© ${new Date().getFullYear()} ${COMPANY_DATA.legalName}. ${t.footer.allRightsReserved}</p>
           <p>
-            <a href="/rodo">Klauzula Informacyjna RODO</a> |
-            <a href="/sygnalisci">Ochrona Sygnalistów</a> |
-            <a href="/polityka-prywatnosci">Polityka Prywatności</a>
+            <a href="/rodo">${t.footer.columns.rodo}</a> |
+            <a href="/sygnalisci">${t.footer.columns.whistleblower}</a> |
+            <a href="/polityka-prywatnosci">${t.footer.columns.privacy}</a>
           </p>
         </footer>
       `,
@@ -268,6 +392,9 @@ function buildRoutes(): RouteDefinition[] {
               '@type': 'Organization',
               name: COMPANY_DATA.legalName,
               url: BASE_URL,
+              foundingDate: `${COMPANY_DATA.foundingYear}`,
+              taxID: COMPANY_DATA.nip,
+              vatID: COMPANY_DATA.vatId,
             },
             areaServed: ['Polska', 'Niemcy', 'Unia Europejska'],
             serviceType: meta.h1,
@@ -296,15 +423,15 @@ function buildRoutes(): RouteDefinition[] {
         h1: meta.h1,
         bodyContent: `
           <header class="header-nav">
-            <div class="logo"><a href="/${prefix}">CHEMOROZRUCH</a></div>
+            <div class="logo"><a href="/${prefix}">${COMPANY_DATA.brandName}</a></div>
             <nav aria-label="Nawigacja">
-              <a href="/${prefix}">Powrót do strony głównej</a>
-              <a href="/${prefix}#kontakt-cta">Zapytanie ofertowe</a>
+              <a href="/${prefix}">${service.breadcrumbs[langKey]?.home || 'Strona główna'}</a>
+              <a href="/${prefix}#kontakt-cta">${service.cta[langKey]?.btnText || 'Zapytanie ofertowe'}</a>
             </nav>
           </header>
           <main class="service-page-container">
             <nav aria-label="Breadcrumb" class="breadcrumb">
-              <a href="/${prefix}">Strona główna</a> &gt;
+              <a href="/${prefix}">${service.breadcrumbs[langKey]?.home || 'Strona główna'}</a> &gt;
               <span>${meta.title.split('|')[0].trim()}</span>
             </nav>
             <article>
@@ -312,19 +439,19 @@ function buildRoutes(): RouteDefinition[] {
               <p class="service-lead">${meta.subtitle}</p>
               
               <section class="service-description">
-                <h2>Opis i charakterystyka inżynieryjna</h2>
+                <h2>${service.scopeOfWork[langKey]?.title || 'Opis i charakterystyka inżynieryjna'}</h2>
                 ${overviewText}
               </section>
 
               <section class="service-scope">
-                <h2>Zakres prac i technologii</h2>
+                <h2>${service.scopeOfWork[langKey]?.subtitle || 'Zakres prac i technologii'}</h2>
                 <ul>
                   ${scopeItems}
                 </ul>
               </section>
 
               <section class="service-specs">
-                <h2>Parametry techniczne i możliwości produkcyjne</h2>
+                <h2>${service.technicalCapabilities[langKey]?.title || 'Parametry techniczne'}</h2>
                 <table>
                   <thead>
                     <tr>
@@ -339,15 +466,15 @@ function buildRoutes(): RouteDefinition[] {
               </section>
 
               <section class="service-materials">
-                <h2>Gatunki stali i normy wykonawcze</h2>
+                <h2>${service.materialsAndNorms[langKey]?.title || 'Gatunki stali i normy wykonawcze'}</h2>
                 <p><strong>Materiały:</strong> ${materialsList}</p>
                 <p><strong>Certyfikowane normy:</strong> ${standardsList}</p>
               </section>
 
               <section class="service-cta">
-                <h2>Skonsultuj projekt z działem inżynieryjnym</h2>
-                <p>Zapraszamy do kontaktu z Działem Ofertowania CHEMOROZRUCH. Przygotujemy profesjonalną wycenę i harmonogram realizacji.</p>
-                <p>Telefon: <strong>${COMPANY_DATA.contacts.tendering.phone}</strong> | Email: <strong>${COMPANY_DATA.contacts.tendering.email}</strong></p>
+                <h2>${service.cta[langKey]?.title || 'Skonsultuj projekt z działem inżynieryjnym'}</h2>
+                <p>${service.cta[langKey]?.description || 'Zapraszamy do kontaktu z Działem Ofertowania CHEMOROZRUCH.'}</p>
+                <p>Telefon: <strong>${service.cta[langKey]?.phone || COMPANY_DATA.contacts.tendering.phone}</strong> | Email: <strong>${service.cta[langKey]?.email || COMPANY_DATA.contacts.tendering.email}</strong></p>
               </section>
             </article>
           </main>
@@ -437,8 +564,8 @@ function buildRoutes(): RouteDefinition[] {
       h1: legal.h1,
       bodyContent: `
         <header class="header-nav">
-          <div class="logo"><a href="/">CHEMOROZRUCH</a></div>
-          <nav><a href="/">Powrót do strony głównej</a></nav>
+          <div class="logo"><a href="/">${COMPANY_DATA.brandName}</a></div>
+          <nav aria-label="Nawigacja"><a href="/">Powrót do strony głównej</a></nav>
         </header>
         <main class="legal-document-container">
           <article>
@@ -525,13 +652,13 @@ async function prerender() {
     <meta property="og:type" content="${route.ogType}" />
     <meta property="og:url" content="${route.canonicalUrl}" />
     <meta property="og:locale" content="${route.lang === 'pl' ? 'pl_PL' : route.lang === 'en' ? 'en_US' : route.lang === 'de' ? 'de_DE' : 'uk_UA'}" />
-    <meta property="og:image" content="${BASE_URL}/og-image.jpg" />
+    <meta property="og:image" content="${BASE_URL}/images/chemorozruch_plant_topdown_1787214324065.jpg" />
 
     <!-- Twitter Card Meta -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${route.title}" />
     <meta name="twitter:description" content="${route.description}" />
-    <meta name="twitter:image" content="${BASE_URL}/og-image.jpg" />
+    <meta name="twitter:image" content="${BASE_URL}/images/chemorozruch_plant_topdown_1787214324065.jpg" />
 
     <!-- Structured Data JSON-LD -->
     ${jsonLdTag}

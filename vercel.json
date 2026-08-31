@@ -1,4 +1,6 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": true,
   "redirects": [
     {
       "source": "/o-firmie",
@@ -63,6 +65,21 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }
