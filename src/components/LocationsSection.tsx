@@ -2,6 +2,21 @@ import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Language, translations, BranchLocationItem } from '../types';
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Navigation, 
+  ExternalLink, 
+  Copy, 
+  Check, 
+  Layers, 
+  Compass,
+  Building2,
+  Factory,
+  Plus,
+  Minus
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,614 +24,488 @@ interface LocationsSectionProps {
   currentLang: Language;
 }
 
-// Highly authentic, high-fidelity outline of Poland (viewBox 0 0 800 760)
-// Includes Baltic Sea coast, Hel peninsula, Szczecin lagoon, Vistula lagoon,
-// Carpathian mountain arc (Bieszczady, Tatras, Sudetes), Odra and Bug river borders.
-const POLAND_DETAILED_PATH = `
-  M 205,98 
-  L 230,85 L 268,76 L 312,71 L 360,65 L 400,64 L 438,72 L 468,70 
-  L 485,60 L 512,88 L 498,96 L 472,94 L 465,108 L 485,115 L 530,122
-  L 555,142 L 565,178 L 590,205 L 610,230 L 612,260 L 628,285 L 635,330
-  L 645,365 L 662,400 L 678,440 L 675,475 L 655,510 L 620,555 L 600,580
-  L 582,610 L 565,650 L 540,685 L 505,710 L 468,690 L 440,682 L 405,670
-  L 375,695 L 340,698 L 305,675 L 275,650 L 245,630 L 220,622 L 185,580
-  L 160,560 L 140,530 L 128,490 L 138,450 L 152,410 L 140,370 L 130,330
-  L 125,290 L 118,240 L 122,190 L 135,150 L 160,120 L 182,108 Z
-`;
-
-// Regional internal voivodeship separation lines for unmistakable real map feel
-const POLAND_REGIONS = [
-  // Pomorskie / Zachodniopomorskie boundary
-  "M 268,76 Q 285,160 300,230",
-  // Warmińsko-Mazurskie
-  "M 438,72 Q 470,160 520,220",
-  // Mazowieckie center loop
-  "M 380,210 Q 510,260 540,380",
-  // Dolnośląskie / Śląskie / Małopolskie south belt
-  "M 140,450 Q 280,480 440,520",
-  "M 440,520 Q 540,550 620,555",
-  // Central Poland vertical axis
-  "M 300,230 Q 370,360 410,500"
-];
-
-// Major Rivers: Wisła & Odra
-const WISLA_RIVER = `
-  M 435,680
-  Q 450,590 445,530
-  Q 485,460 515,395
-  Q 510,340 440,290
-  Q 380,260 365,200
-  Q 360,140 465,108
-`;
-
-const ODRA_RIVER = `
-  M 320,670
-  Q 260,560 210,480
-  Q 175,410 145,340
-  Q 125,280 120,180
-`;
-
-// Exact coordinates calibrated to SVG 800x760
-const BRANCH_COORDINATES: Record<string, { x: number; y: number }> = {
-  oswiecim: { x: 420, y: 585 }, // Oświęcim (Silesia/Małopolska industrial hub)
-  plock: { x: 418, y: 285 },    // Płock (Central Mazovia on Wisła)
-  gdansk: { x: 445, y: 112 },   // Gdańsk (Baltic coast / Gulf of Gdańsk)
-  pulawy: { x: 558, y: 418 },   // Puławy (Eastern chemical basin on Wisła)
-};
+type MapViewMode = 'oswiecim' | 'plock' | 'overview';
+type MapLayerType = 'm' | 'k'; // 'm' = roadmap, 'k' = satellite/hybrid
 
 export const LocationsSection: React.FC<LocationsSectionProps> = ({ currentLang }) => {
   const t = translations[currentLang].locations;
   const branches: BranchLocationItem[] = t.branches;
 
+  // Active accordion location (default: Oświęcim)
   const [activeBranchId, setActiveBranchId] = useState<string>('oswiecim');
-  const [hoveredBranchId, setHoveredBranchId] = useState<string | null>(null);
+  const [mapViewMode, setMapViewMode] = useState<MapViewMode>('oswiecim');
+  const [mapLayer, setMapLayer] = useState<MapLayerType>('m');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isIframeLoaded, setIsIframeLoaded] = useState<boolean>(false);
 
   const sectionRef = useRef<HTMLElement>(null);
-  const mapSvgRef = useRef<SVGSVGElement>(null);
-  const mapWrapRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const accordionContainerRef = useRef<HTMLDivElement>(null);
 
-  const effectiveActiveId = hoveredBranchId || activeBranchId;
-  const activeBranch = branches.find((b) => b.id === effectiveActiveId) || branches[0];
+  // Active branch object
+  const activeBranch = branches.find((b) => b.id === activeBranchId) || branches[0];
 
+  // Handle location selection
+  const handleSelectLocation = (id: string) => {
+    setActiveBranchId(id);
+    setMapViewMode(id as MapViewMode);
+    setIsIframeLoaded(false);
+  };
+
+  // Handle Overview mode
+  const handleSelectOverview = () => {
+    setMapViewMode('overview');
+    setIsIframeLoaded(false);
+  };
+
+  // Handle copy address
+  const handleCopyAddress = (branch: BranchLocationItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const fullAddress = `${branch.address}, ${branch.postalCode} ${branch.city}`;
+    navigator.clipboard.writeText(fullAddress);
+    setCopiedId(branch.id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 2500);
+  };
+
+  // Construct dynamic Google Maps embed URL
+  const getMapEmbedUrl = () => {
+    if (mapViewMode === 'overview') {
+      return `https://maps.google.com/maps?q=CHEMOROZRUCH+O%C5%9Bwi%C4%99cim+P%C5%82ock+Polska&t=${mapLayer}&z=7&ie=UTF8&iwloc=&output=embed`;
+    }
+    const current = branches.find((b) => b.id === mapViewMode) || branches[0];
+    return `https://maps.google.com/maps?q=${encodeURIComponent(current.embedQuery)}&t=${mapLayer}&z=15&ie=UTF8&iwloc=&output=embed`;
+  };
+
+  // Entrance animation
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      if (!sectionRef.current || !mapSvgRef.current) return;
-
-      // 1. Map Outline draw & fill reveal on scroll enter
-      const polandPath = mapSvgRef.current.querySelector('#poland-main-land');
-      const regions = mapSvgRef.current.querySelectorAll('.poland-region-line');
-      const rivers = mapSvgRef.current.querySelectorAll('.poland-river-line');
-      const markers = mapSvgRef.current.querySelectorAll('.map-interactive-pin');
+      if (!sectionRef.current) return;
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%',
+          start: 'top 75%',
           once: true,
         },
       });
 
-      tl.fromTo(
-        polandPath,
-        { opacity: 0, scale: 0.95, transformOrigin: 'center center' },
-        { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' }
-      )
-      .fromTo(
-        [...regions, ...rivers],
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power2.out' },
-        '-=0.4'
-      )
-      .fromTo(
-        markers,
-        { scale: 0, opacity: 0, transformOrigin: 'center bottom' },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.12,
-          ease: 'back.out(2)',
-        },
-        '-=0.3'
-      );
-
-      // 2. TRUE CONTINUOUS SCROLL PARALLAX (Interactive dynamic shift of pins across the map on scroll)
-      const pinOswiecim = mapSvgRef.current.querySelector('#pin-oswiecim');
-      const pinPlock = mapSvgRef.current.querySelector('#pin-plock');
-      const pinGdansk = mapSvgRef.current.querySelector('#pin-gdansk');
-      const pinPulawy = mapSvgRef.current.querySelector('#pin-pulawy');
-      const mapBgGrid = mapSvgRef.current.querySelector('#map-topo-grid');
-
-      if (pinOswiecim && pinPlock && pinGdansk && pinPulawy) {
-        // Pins dynamically breathe and float with depth disparity during user scroll
-        gsap.to(pinGdansk, {
-          y: -22,
-          x: 6,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-        });
-
-        gsap.to(pinPlock, {
-          y: -10,
-          x: -8,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        });
-
-        gsap.to(pinPulawy, {
-          y: 16,
-          x: 10,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.8,
-          },
-        });
-
-        gsap.to(pinOswiecim, {
-          y: 20,
-          x: -5,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.1,
-          },
-        });
+      if (headerRef.current) {
+        tl.fromTo(
+          headerRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }
+        );
       }
 
-      if (mapBgGrid) {
-        gsap.to(mapBgGrid, {
-          y: 18,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 2,
-          },
-        });
+      if (mapContainerRef.current) {
+        tl.fromTo(
+          mapContainerRef.current,
+          { opacity: 0, scale: 1.015 },
+          { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' },
+          '-=0.4'
+        );
       }
 
+      if (accordionContainerRef.current) {
+        tl.fromTo(
+          accordionContainerRef.current.children,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' },
+          '-=0.5'
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [currentLang]);
+  }, []);
 
   return (
     <section
-      id="oddzialy-lokalizacje"
       ref={sectionRef}
-      className="relative w-full bg-[#F5F5F0] text-slate-900 overflow-hidden py-24 sm:py-32 lg:py-36 border-t border-slate-200"
+      id="oddzialy-lokalizacje"
+      aria-label="Lokalizacje firmy CHEMOROZRUCH"
+      className="relative w-full py-20 sm:py-28 lg:py-32 bg-[#FAF9F5] border-t border-slate-200/80 overflow-hidden"
     >
-      {/* Background Architectural Grid Lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-25 select-none">
-        <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
-          <div className="w-px h-full bg-slate-400" />
-          <div className="w-px h-full bg-slate-400/40 hidden md:block" />
-          <div className="w-px h-full bg-slate-400/40 hidden lg:block" />
-          <div className="w-px h-full bg-slate-400" />
-        </div>
-      </div>
+      {/* Anchor for 'nasze-lokalizacje' navigation alias */}
+      <div id="nasze-lokalizacje" className="absolute -top-20 left-0 w-px h-px opacity-0 pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Section Intro */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
-          <div className="mb-3">
-            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] text-slate-500 uppercase">
+      {/* Subtle background technical grid accent */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.025] select-none"
+        style={{
+          backgroundImage: `radial-gradient(#0f172a 1px, transparent 1px)`,
+          backgroundSize: '24px 24px',
+        }}
+        aria-hidden="true"
+      />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* =========================================================================
+            1. SECTION HEADER (Minimal, Industrial, High Contrast)
+        ========================================================================= */}
+        <div ref={headerRef} className="max-w-3xl mb-12 sm:mb-16 lg:mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs mb-4">
+            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-700 uppercase">
               {t.eyebrow}
             </span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-slate-950 tracking-tight leading-[1.12]">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15]">
             {t.heading}
           </h2>
 
-          <p className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
             {t.supporting}
           </p>
         </div>
 
-        {/* 2-Column Responsive Layout */}
-        <div className="grid grid-cols-12 gap-10 lg:gap-16 items-center">
+        {/* =========================================================================
+            2. MAIN COMPOSITION: 55-60% LEFT (Map) | 40-45% RIGHT (Location Rows)
+        ========================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* LEFT: REAL AUTHENTIC MAP OF POLAND WITH PIN BADGES (~60%) */}
-          <div className="col-span-12 lg:col-span-7 flex justify-center items-center relative">
-            <div
-              ref={mapWrapRef}
-              className="relative w-full max-w-[620px] aspect-[800/760] bg-[#ECECE5] rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-300/80 select-none"
-            >
-              {/* Compass Rose & Geographic Coordinates Overlay */}
-              <div className="absolute top-4 left-6 pointer-events-none flex items-center gap-2 font-mono text-[10px] sm:text-[11px] text-slate-500 tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-                <span>POLSKA / INDUSTRIAL REGIONS</span>
-              </div>
-              <div className="absolute top-4 right-6 pointer-events-none font-mono text-[10px] text-slate-400">
-                52°13'N 21°00'E
-              </div>
-
-              <svg
-                ref={mapSvgRef}
-                viewBox="0 0 800 760"
-                className="w-full h-full overflow-visible"
-                aria-label="Interaktywna mapa Polski z oddziałami Chemorozruch"
-              >
-                <defs>
-                  {/* Drop Shadow for Landmass */}
-                  <filter id="poland-shadow" x="-10%" y="-10%" width="125%" height="125%">
-                    <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#0F172A" floodOpacity="0.08" />
-                  </filter>
-
-                  {/* Pin Glow Filter */}
-                  <filter id="pin-glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#DC2626" floodOpacity="0.35" />
-                  </filter>
-                  
-                  {/* Subtle terrain dot pattern */}
-                  <pattern id="dot-pattern" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-                    <circle cx="2" cy="2" r="1" fill="#CBD5E1" fillOpacity="0.4" />
-                  </pattern>
-                </defs>
-
-                {/* Topographic Background Coordinate Grid */}
-                <g id="map-topo-grid" className="opacity-40" stroke="#CBD5E1" strokeWidth="0.8" strokeDasharray="3,6">
-                  <line x1="100" y1="60" x2="100" y2="720" />
-                  <line x1="250" y1="60" x2="250" y2="720" />
-                  <line x1="400" y1="60" x2="400" y2="720" />
-                  <line x1="550" y1="60" x2="550" y2="720" />
-                  <line x1="700" y1="60" x2="700" y2="720" />
-                  <line x1="60" y1="180" x2="740" y2="180" />
-                  <line x1="60" y1="340" x2="740" y2="340" />
-                  <line x1="60" y1="500" x2="740" y2="500" />
-                  <line x1="60" y1="660" x2="740" y2="660" />
-                </g>
-
-                {/* Baltic Sea Label */}
-                <text x="280" y="55" className="fill-slate-400 font-mono text-[13px] tracking-widest uppercase font-semibold">
-                  MORZE BAŁTYCKIE
-                </text>
-
-                {/* Main Authentic Poland Territory SVG */}
-                <g filter="url(#poland-shadow)">
-                  <path
-                    id="poland-main-land"
-                    d={POLAND_DETAILED_PATH}
-                    fill="#FCFCFA"
-                    stroke="#C5C2B8"
-                    strokeWidth="2.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  />
-                  {/* Subtle internal texture */}
-                  <path
-                    d={POLAND_DETAILED_PATH}
-                    fill="url(#dot-pattern)"
-                    stroke="none"
-                  />
-                </g>
-
-                {/* Regional Dividing Borders (Województwa boundaries) */}
-                {POLAND_REGIONS.map((d, i) => (
-                  <path
-                    key={`region-${i}`}
-                    d={d}
-                    fill="none"
-                    stroke="#D8D4CA"
-                    strokeWidth="1.2"
-                    strokeDasharray="4,4"
-                    className="poland-region-line"
-                  />
-                ))}
-
-                {/* Major Rivers (Wisła, Odra) */}
-                <path
-                  d={WISLA_RIVER}
-                  fill="none"
-                  stroke="#94A3B8"
-                  strokeWidth="1.8"
-                  strokeOpacity="0.6"
-                  strokeLinecap="round"
-                  className="poland-river-line"
-                />
-                <path
-                  d={ODRA_RIVER}
-                  fill="none"
-                  stroke="#94A3B8"
-                  strokeWidth="1.5"
-                  strokeOpacity="0.5"
-                  strokeLinecap="round"
-                  className="poland-river-line"
-                />
-
-                {/* River Labels */}
-                <text x="440" y="315" className="fill-slate-400 font-mono text-[9px] tracking-wider italic">
-                  Wisła
-                </text>
-                <text x="175" y="420" className="fill-slate-400 font-mono text-[9px] tracking-wider italic">
-                  Odra
-                </text>
-
-                {/* Connecting Industrial Route Corridors */}
+          {/* ─────────────────────────────────────────────────────────────────────
+              LEFT COLUMN: REAL GOOGLE MAP CONTAINER (Span 7 on desktop ~58%)
+          ───────────────────────────────────────────────────────────────────── */}
+          <div
+            ref={mapContainerRef}
+            className="lg:col-span-7 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+          >
+            {/* Map Top Control Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 bg-slate-50/90 border-b border-slate-200/80 text-xs">
+              
+              {/* Location Switcher Pills */}
+              <div className="flex items-center gap-1 sm:gap-1.5 p-1 bg-white rounded-lg border border-slate-200/80 shadow-2xs">
                 {branches.map((branch) => {
-                  const hqCoords = BRANCH_COORDINATES['oswiecim'];
-                  const targetCoords = BRANCH_COORDINATES[branch.id];
-                  if (!targetCoords || branch.id === 'oswiecim') return null;
-
-                  const isConnectedActive = effectiveActiveId === branch.id || effectiveActiveId === 'oswiecim';
-
+                  const isActive = mapViewMode === branch.id;
                   return (
-                    <g key={`route-line-${branch.id}`}>
-                      <line
-                        x1={hqCoords.x}
-                        y1={hqCoords.y}
-                        x2={targetCoords.x}
-                        y2={targetCoords.y}
-                        stroke={isConnectedActive ? '#DC2626' : '#CBD5E1'}
-                        strokeWidth={isConnectedActive ? '2' : '1'}
-                        strokeDasharray={isConnectedActive ? 'none' : '4,4'}
-                        strokeOpacity={isConnectedActive ? 0.8 : 0.5}
-                        className="transition-all duration-300"
-                      />
-                      {/* Animated data pulse on active connection */}
-                      {isConnectedActive && (
-                        <circle r="3.5" fill="#DC2626">
-                          <animate
-                            attributeName="cx"
-                            from={hqCoords.x}
-                            to={targetCoords.x}
-                            dur="2s"
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="cy"
-                            from={hqCoords.y}
-                            to={targetCoords.y}
-                            dur="2s"
-                            repeatCount="indefinite"
-                          />
-                        </circle>
-                      )}
-                    </g>
-                  );
-                })}
-
-                {/* HIGH-PRECISION LOCATION PINS (Real map pin design with badges) */}
-                {branches.map((branch) => {
-                  const coords = BRANCH_COORDINATES[branch.id] || { x: 400, y: 400 };
-                  const isCurrent = effectiveActiveId === branch.id;
-                  const isHq = branch.id === 'oswiecim';
-
-                  return (
-                    <g
+                    <button
                       key={branch.id}
-                      id={`pin-${branch.id}`}
-                      className="map-interactive-pin cursor-pointer group"
-                      onClick={() => setActiveBranchId(branch.id)}
-                      onMouseEnter={() => setHoveredBranchId(branch.id)}
-                      onMouseLeave={() => setHoveredBranchId(null)}
-                      style={{ transformOrigin: `${coords.x}px ${coords.y}px` }}
+                      type="button"
+                      onClick={() => handleSelectLocation(branch.id)}
+                      className={`px-3 py-1.5 rounded-md font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                        isActive
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                      aria-label={`Pokaż na mapie: ${branch.city}`}
                     >
-                      {/* Radar Pulse Wave for active pin */}
-                      {isCurrent && (
-                        <circle
-                          cx={coords.x}
-                          cy={coords.y}
-                          r={isHq ? 24 : 18}
-                          fill="none"
-                          stroke="#DC2626"
-                          strokeWidth="2"
-                          className="animate-ping opacity-35"
-                        />
-                      )}
-
-                      {/* Wide clickable zone */}
-                      <circle cx={coords.x} cy={coords.y} r="32" fill="transparent" />
-
-                      {/* Map Pin Teardrop Shape */}
-                      <g
-                        transform={`translate(${coords.x}, ${coords.y}) scale(${isCurrent ? 1.25 : 1})`}
-                        className="transition-transform duration-300 ease-out"
-                        filter={isCurrent ? 'url(#pin-glow)' : 'none'}
-                      >
-                        {/* Pin body (Teardrop vector pointing at coordinates) */}
-                        <path
-                          d="M 0,0 C -6,-6 -10,-14 -10,-20 C -10,-28 -4,-34 0,-34 C 4,-34 10,-28 10,-20 C 10,-14 6,-6 0,0 Z"
-                          fill={isCurrent ? '#DC2626' : isHq ? '#991B1B' : '#1E293B'}
-                          stroke="#FFFFFF"
-                          strokeWidth="1.5"
-                        />
-                        {/* Pin Center Pip */}
-                        <circle cx="0" cy="-20" r="3.5" fill="#FFFFFF" />
-                      </g>
-
-                      {/* Architectural Floating Label Badge */}
-                      <g
-                        transform={`translate(${coords.x + (branch.id === 'pulawy' ? -10 : 16)}, ${coords.y - 12})`}
-                        className="transition-transform duration-300"
-                      >
-                        <rect
-                          x={branch.id === 'pulawy' ? -105 : 0}
-                          y="-14"
-                          width={isHq ? 115 : 95}
-                          height="24"
-                          rx="4"
-                          fill={isCurrent ? '#0F172A' : '#FFFFFF'}
-                          stroke={isCurrent ? '#DC2626' : '#CBD5E1'}
-                          strokeWidth={isCurrent ? '1.5' : '1'}
-                          className="shadow-sm transition-colors duration-300"
-                        />
-                        <text
-                          x={branch.id === 'pulawy' ? -105 + 10 : 10}
-                          y="2"
-                          className={`font-mono text-[11px] font-bold select-none transition-colors duration-300 ${
-                            isCurrent ? 'fill-white' : 'fill-slate-900'
-                          }`}
-                        >
-                          {branch.city}
-                          {isHq && <tspan className="fill-red-500 ml-1"> [HQ]</tspan>}
-                        </text>
-                      </g>
-                    </g>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-red-500' : 'bg-slate-300'}`} />
+                      <span>{branch.city}</span>
+                    </button>
                   );
                 })}
-              </svg>
 
-              {/* Bottom Interactive Legend */}
-              <div className="mt-2 pt-2 border-t border-slate-300/60 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-500">
-                <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-600" />
-                    <strong>HQ</strong> Oświęcim
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-slate-800" />
-                    Oddziały regionalne
-                  </span>
-                </div>
-                <div className="text-slate-400">
-                  Kliknij pin lub miasto z listy
-                </div>
+                {/* Overview Button */}
+                <button
+                  type="button"
+                  onClick={handleSelectOverview}
+                  className={`px-2.5 py-1.5 rounded-md font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 ${
+                    mapViewMode === 'overview'
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                  aria-label="Pokaż oba punkty na mapie Polski"
+                  title="Widok ogólny Polski"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t.viewOverviewLabel}</span>
+                  <span className="sm:hidden">Polska</span>
+                </button>
               </div>
+
+              {/* Map Layer Toggle (Roadmap / Satellite) & External Direct Link */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMapLayer(mapLayer === 'm' ? 'k' : 'm')}
+                  className="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title={mapLayer === 'm' ? 'Przełącz na widok satelitarny' : 'Przełącz na mapę drogową'}
+                  aria-label="Zmień warstwę mapy"
+                >
+                  <Layers className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden md:inline font-mono text-[11px]">
+                    {mapLayer === 'm' ? 'Satelita' : 'Mapa'}
+                  </span>
+                </button>
+
+                <a
+                  href={activeBranch.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 rounded-lg bg-white border border-slate-200/80 hover:bg-slate-100 text-slate-700 hover:text-red-600 transition-colors flex items-center justify-center cursor-pointer"
+                  title={t.openMapsBtn}
+                  aria-label={`${t.openMapsBtn} — ${activeBranch.city}`}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Map Frame Viewport */}
+            <div className="relative w-full h-[320px] sm:h-[400px] lg:h-[480px] bg-slate-100">
+              {/* Skeleton loading animation while iframe refreshes */}
+              {!isIframeLoaded && (
+                <div className="absolute inset-0 bg-slate-100 flex items-center justify-center z-10 animate-pulse">
+                  <div className="flex flex-col items-center gap-2 text-slate-400">
+                    <MapPin className="w-8 h-8 text-red-500 animate-bounce" />
+                    <span className="text-xs font-mono tracking-wider uppercase">Ładowanie Google Maps...</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Real Google Maps Interactive iframe embed */}
+              <iframe
+                key={`${mapViewMode}-${mapLayer}`}
+                title={`Google Maps — CHEMOROZRUCH ${mapViewMode === 'overview' ? 'Polska' : activeBranch.city}`}
+                src={getMapEmbedUrl()}
+                className="w-full h-full border-0 filter contrast-[1.02]"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                onLoad={() => setIsIframeLoaded(true)}
+              />
+
+              {/* Bottom Left Floating GPS Coordinates Badge */}
+              <div className="absolute bottom-3 left-3 z-20 pointer-events-none hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-slate-900/85 backdrop-blur-md text-white border border-white/10 text-[11px] font-mono shadow-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>
+                  {mapViewMode === 'overview' 
+                    ? 'PL: 50.0385°N, 19.2635°E ↔ 52.5855°N, 19.6890°E' 
+                    : `${activeBranch.city}: ${activeBranch.gpsCoords.lat.toFixed(4)}°N, ${activeBranch.gpsCoords.lng.toFixed(4)}°E`}
+                </span>
+              </div>
+            </div>
+
+            {/* Bottom Info Strip */}
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-50/70 border-t border-slate-200/80 text-[11px] font-mono text-slate-500">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                <span>CHEMOROZRUCH S.A. — {activeBranch.role}</span>
+              </span>
+              <a
+                href={activeBranch.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-700 hover:text-red-600 font-semibold underline underline-offset-2 transition-colors inline-flex items-center gap-1"
+              >
+                <span>{t.routeBtn}</span>
+                <Navigation className="w-3 h-3" />
+              </a>
             </div>
           </div>
 
-          {/* RIGHT: INTERACTIVE CITY INDEX & DETAILS EXPANSION (~40%) */}
-          <div ref={listRef} className="col-span-12 lg:col-span-5">
-            <div className="space-y-0">
-              <div className="w-full h-px bg-slate-300" />
+          {/* ─────────────────────────────────────────────────────────────────────
+              RIGHT COLUMN: LOCATION ACCORDION ROWS (Span 5 on desktop ~42%)
+          ───────────────────────────────────────────────────────────────────── */}
+          <div
+            ref={accordionContainerRef}
+            className="lg:col-span-5 flex flex-col space-y-0"
+          >
+            {branches.map((branch, index) => {
+              const isExpanded = activeBranchId === branch.id;
+              const isHQ = branch.id === 'oswiecim';
 
-              {branches.map((branch) => {
-                const isSelected = activeBranchId === branch.id;
-                const isHovered = hoveredBranchId === branch.id;
-                const isItemActive = isSelected || isHovered;
-                const isHq = branch.id === 'oswiecim';
-
-                return (
-                  <div
-                    key={branch.id}
-                    className="location-list-row group"
-                    onMouseEnter={() => setHoveredBranchId(branch.id)}
-                    onMouseLeave={() => setHoveredBranchId(null)}
+              return (
+                <div
+                  key={branch.id}
+                  className={`group relative transition-all duration-300 ${
+                    index > 0 ? 'border-t border-slate-200/80' : ''
+                  }`}
+                >
+                  {/* Location Header Row (Click to toggle & focus map) */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectLocation(branch.id)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`location-details-${branch.id}`}
+                    className={`w-full py-6 sm:py-7 flex items-center justify-between text-left transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-lg px-2 -mx-2 ${
+                      isExpanded ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900'
+                    }`}
                   >
-                    {/* Clickable Header Row */}
-                    <div
-                      onClick={() => setActiveBranchId(branch.id)}
-                      className="py-5 sm:py-6 flex items-center justify-between cursor-pointer select-none transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-3 sm:gap-4 transition-transform duration-300 group-hover:translate-x-1.5">
-                        {/* Status Light */}
-                        <span
-                          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                            isItemActive ? 'bg-red-600 scale-125' : 'bg-slate-300 group-hover:bg-slate-500'
-                          }`}
-                        />
-
-                        {/* City Name */}
-                        <span
-                          className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-300 ${
-                            isItemActive ? 'text-slate-950' : 'text-slate-700'
-                          }`}
-                        >
-                          {branch.city}
-                        </span>
-
-                        {/* HQ Tag */}
-                        {isHq && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-200">
-                            HQ
-                          </span>
+                    <div className="flex items-start gap-3 sm:gap-4 pr-4">
+                      {/* Industrial Icon / Marker indicator */}
+                      <div
+                        className={`mt-1 flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
+                          isExpanded
+                            ? 'bg-red-600 text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                        }`}
+                      >
+                        {isHQ ? (
+                          <Building2 className="w-4 h-4" />
+                        ) : (
+                          <Factory className="w-4 h-4" />
                         )}
                       </div>
 
-                      {/* Direction Arrow */}
-                      <svg
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isSelected
-                            ? 'text-red-600 rotate-90 translate-x-1'
-                            : isHovered
-                            ? 'text-red-600 translate-x-1'
-                            : 'text-slate-400 group-hover:text-slate-700'
-                        }`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-
-                    {/* Smooth Expandable In-Place Contact Details */}
-                    <div
-                      className={`overflow-hidden transition-all duration-500 ease-out ${
-                        isSelected ? 'max-h-80 opacity-100 pb-6' : 'max-h-0 opacity-0 pb-0'
-                      }`}
-                    >
-                      <div className="pl-5 sm:pl-6 pr-2 space-y-3 border-l-2 border-red-600 ml-1 bg-white/50 py-3 rounded-r-lg">
-                        <div>
-                          <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500 block mb-0.5 font-bold">
-                            {isHq ? t.hqBadge : t.branchBadge}
+                      {/* City Name & Role Badge */}
+                      <div>
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+                            {branch.city}
+                          </h3>
+                          <span
+                            className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase tracking-wider ${
+                              isExpanded
+                                ? 'bg-red-50 text-red-700 border border-red-200/60'
+                                : 'bg-slate-100 text-slate-600 border border-slate-200/60'
+                            }`}
+                          >
+                            {isHQ ? t.hqBadge : t.branchBadge}
                           </span>
-                          <h4 className="text-sm sm:text-base font-bold text-slate-950">
-                            {branch.address}, {branch.postalCode}
-                          </h4>
                         </div>
 
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                          {branch.industrialFocus}
-                        </p>
+                        {/* Short address preview when collapsed */}
+                        {!isExpanded && (
+                          <p className="mt-1 text-sm text-slate-500 font-normal">
+                            {branch.address}, {branch.postalCode} {branch.city}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-                        <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono border-t border-slate-200">
-                          <div>
-                            <span className="text-[10px] uppercase text-slate-400 block mb-0.5">
+                    {/* Expand/Collapse Icon (+ / −) */}
+                    <div
+                      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-transform duration-300 border ${
+                        isExpanded
+                          ? 'bg-slate-900 text-white border-slate-900'
+                          : 'bg-white text-slate-500 border-slate-200 group-hover:border-slate-300 group-hover:text-slate-900'
+                      }`}
+                    >
+                      {isExpanded ? (
+                        <Minus className="w-4 h-4" />
+                      ) : (
+                        <Plus className="w-4 h-4" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Expandable Location Details */}
+                  {isExpanded && (
+                    <div
+                      id={`location-details-${branch.id}`}
+                      role="region"
+                      aria-label={`Szczegóły lokalizacji ${branch.city}`}
+                      className="pb-8 pt-1 px-2 animate-in fade-in slide-in-from-top-2 duration-300"
+                    >
+                      {/* SEO-optimized Semantic HTML Address */}
+                      <address className="not-italic space-y-4">
+                        
+                        {/* Address Box with Copy Button */}
+                        <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
+                          <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
+                            {t.addressLabel}
+                          </span>
+                          
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="text-sm font-semibold text-slate-900 leading-snug">
+                              <p>{branch.address}</p>
+                              <p className="text-slate-600">{branch.postalCode} {branch.city}, Polska</p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => handleCopyAddress(branch, e)}
+                              className="px-2.5 py-1.5 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200/80 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                              title={t.copyAddressBtn}
+                            >
+                              {copiedId === branch.id ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span className="text-emerald-700 font-bold">{t.copiedLabel}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3.5 h-3.5 text-slate-400" />
+                                  <span className="hidden sm:inline">{t.copyAddressBtn}</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Contact Information (Phone & Email) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Phone Link */}
+                          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
+                            <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
                               {t.phoneLabel}
                             </span>
                             <a
                               href={`tel:${branch.phone.replace(/\s+/g, '')}`}
-                              className="text-slate-900 font-bold hover:text-red-600 transition-colors"
+                              className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors"
                             >
-                              {branch.phone}
+                              <Phone className="w-3.5 h-3.5 text-red-600" />
+                              <span>{branch.phone}</span>
                             </a>
                           </div>
-                          <div>
-                            <span className="text-[10px] uppercase text-slate-400 block mb-0.5">
+
+                          {/* Email Link */}
+                          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
+                            <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
                               {t.emailLabel}
                             </span>
                             <a
                               href={`mailto:${branch.email}`}
-                              className="text-slate-900 font-bold hover:text-red-600 transition-colors truncate block"
+                              className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors truncate"
                             >
-                              {branch.email}
+                              <Mail className="w-3.5 h-3.5 text-red-600" />
+                              <span className="truncate">{branch.email}</span>
                             </a>
                           </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="w-full h-px bg-slate-300" />
-                  </div>
-                );
-              })}
-            </div>
+                        {/* Operational Scope / Industrial Profile Description */}
+                        <div className="p-4 rounded-xl bg-slate-100/70 border border-slate-200/70">
+                          <span className="text-[11px] font-mono font-bold tracking-wider text-slate-500 uppercase block mb-1.5">
+                            {t.focusLabel}
+                          </span>
+                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            {branch.industrialFocus}
+                          </p>
+                        </div>
+
+                        {/* Primary & Secondary Route Actions */}
+                        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                          <a
+                            href={branch.directionsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-all duration-200 shadow-xs hover:shadow-sm cursor-pointer"
+                          >
+                            <Navigation className="w-4 h-4" />
+                            <span>{t.routeBtn} →</span>
+                          </a>
+
+                          <a
+                            href={branch.googleMapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 border border-slate-200 font-medium text-sm transition-colors cursor-pointer"
+                          >
+                            <ExternalLink className="w-4 h-4 text-slate-400" />
+                            <span>{t.openMapsBtn}</span>
+                          </a>
+                        </div>
+                      </address>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
         </div>
+
       </div>
     </section>
   );

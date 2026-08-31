@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Production Sitemap
+Sitemap: https://chemorozruch.pl/sitemap.xml

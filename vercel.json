@@ -1,4 +1,117 @@
 {
+  "redirects": [
+    {
+      "source": "/(o-firmie|o-firmie\\.html|about|about-us)",
+      "destination": "/#company-discovery-section",
+      "permanent": true
+    },
+    {
+      "source": "/(oferta|oferta\\.html|uslugi|services)",
+      "destination": "/#competencies-section",
+      "permanent": true
+    },
+    {
+      "source": "/(konstrukcje|oferta/konstrukcje-stalowe|oferta/konstrukcje)",
+      "destination": "/konstrukcje-stalowe/",
+      "permanent": true
+    },
+    {
+      "source": "/(remonty|modernizacje|oferta/remonty|remonty-i-modernizacje|oferta/modernizacje)",
+      "destination": "/remonty-modernizacje-instalacji-przemyslowych/",
+      "permanent": true
+    },
+    {
+      "source": "/(aparaty|zbiorniki|zbiorniki-cisnieniowe|oferta/aparaty|oferta/aparaty-cisnieniowe)",
+      "destination": "/aparaty-cisnieniowe/",
+      "permanent": true
+    },
+    {
+      "source": "/(montaz|oferta/montaz|montaz-urzadzen|oferta/montaz-urzadzen-przemyslowych)",
+      "destination": "/montaz-urzadzen-przemyslowych/",
+      "permanent": true
+    },
+    {
+      "source": "/(certyfikaty|certyfikaty\\.html|jakosc|iso)",
+      "destination": "/#certificates-section",
+      "permanent": true
+    },
+    {
+      "source": "/(realizacje|realizacje\\.html|projekty|portfolio)",
+      "destination": "/#realizations-section",
+      "permanent": true
+    },
+    {
+      "source": "/(kontakt|kontakt\\.html|kontakt-z-nami|dane-kontaktowe)",
+      "destination": "/#kontakt-cta",
+      "permanent": true
+    },
+    {
+      "source": "/(park-maszynowy|zaplecze|zaplecze-technologiczne)",
+      "destination": "/#tech-facilities-section",
+      "permanent": true
+    },
+    {
+      "source": "/(lokalizacje|oddzialy|oddzial-plock)",
+      "destination": "/#locations-section",
+      "permanent": true
+    },
+    {
+      "source": "/(rodo\\.html|klauzula-rodo|klauzula-informacyjna-rodo)",
+      "destination": "/rodo",
+      "permanent": true
+    },
+    {
+      "source": "/(polityka-prywatnosci\\.html|privacy-policy|polityka-cookies)",
+      "destination": "/polityka-prywatnosci",
+      "permanent": true
+    },
+    {
+      "source": "/(sygnalisci\\.html|procedura-sygnalistow)",
+      "destination": "/sygnalisci",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

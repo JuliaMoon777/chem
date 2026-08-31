@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Strona Główna / Homepage -->
+  <url>
+    <loc>https://chemorozruch.pl/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://chemorozruch.pl/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://chemorozruch.pl/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://chemorozruch.pl/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://chemorozruch.pl/?lang=uk" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chemorozruch.pl/" />
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Usługa 1: Konstrukcje Stalowe -->
+  <url>
+    <loc>https://chemorozruch.pl/konstrukcje-stalowe/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://chemorozruch.pl/konstrukcje-stalowe/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://chemorozruch.pl/konstrukcje-stalowe/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://chemorozruch.pl/konstrukcje-stalowe/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://chemorozruch.pl/konstrukcje-stalowe/?lang=uk" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chemorozruch.pl/konstrukcje-stalowe/" />
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Usługa 2: Remonty i Modernizacje Instalacji Przemysłowych -->
+  <url>
+    <loc>https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/?lang=uk" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chemorozruch.pl/remonty-modernizacje-instalacji-przemyslowych/" />
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Usługa 3: Aparaty Ciśnieniowe i Zbiorniki Przemysłowe -->
+  <url>
+    <loc>https://chemorozruch.pl/aparaty-cisnieniowe/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://chemorozruch.pl/aparaty-cisnieniowe/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://chemorozruch.pl/aparaty-cisnieniowe/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://chemorozruch.pl/aparaty-cisnieniowe/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://chemorozruch.pl/aparaty-cisnieniowe/?lang=uk" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chemorozruch.pl/aparaty-cisnieniowe/" />
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Usługa 4: Montaż Urządzeń Przemysłowych -->
+  <url>
+    <loc>https://chemorozruch.pl/montaz-urzadzen-przemyslowych/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://chemorozruch.pl/montaz-urzadzen-przemyslowych/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://chemorozruch.pl/montaz-urzadzen-przemyslowych/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://chemorozruch.pl/montaz-urzadzen-przemyslowych/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://chemorozruch.pl/montaz-urzadzen-przemyslowych/?lang=uk" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://chemorozruch.pl/montaz-urzadzen-przemyslowych/" />
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+</urlset>

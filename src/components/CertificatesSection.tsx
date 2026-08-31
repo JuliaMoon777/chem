@@ -173,7 +173,15 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({ curren
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute bottom-3 left-3 right-3 text-white flex items-center justify-between text-[11px] font-mono">
-                    <span className="tracking-wider">KONTROLA NDT // 100% SPOIN</span>
+                    <span className="tracking-wider">
+                      {currentLang === 'PL'
+                        ? 'KONTROLA NDT // 100% SPOIN'
+                        : currentLang === 'EN'
+                        ? 'NDT TESTING // 100% WELDS'
+                        : currentLang === 'DE'
+                        ? 'ZFP-PRÜFUNG // 100% SCHWEISSNÄHTE'
+                        : 'NDT КОНТРОЛЬ // 100% ЗВАРНИХ ШВІВ'}
+                    </span>
                     <span className="text-red-400 font-bold">QA/QC</span>
                   </div>
                 </div>

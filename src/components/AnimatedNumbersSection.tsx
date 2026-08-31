@@ -163,20 +163,23 @@ export const AnimatedNumbersSection: React.FC<AnimatedNumbersSectionProps> = ({ 
           className="w-full h-px bg-slate-300 will-change-transform mb-0"
         />
 
-        {/* Metrics Grid: 4 Columns with Clean Vertical Dividers */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 relative">
+        {/* Metrics Grid: 3 Balanced Columns with Clean Vertical Dividers */}
+        <div className="grid grid-cols-1 md:grid-cols-3 relative">
           {t.metrics.map((metric, index) => (
             <div
               key={metric.id}
               ref={(el) => (metricRefs.current[index] = el)}
-              className="relative px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16 flex flex-col justify-between group"
+              className="relative px-6 sm:px-8 lg:px-12 py-10 sm:py-12 lg:py-16 flex flex-col justify-between group"
             >
               {/* Vertical Divider for desktop (Draws top -> bottom) */}
               {index > 0 && (
-                <div
-                  ref={(el) => (vertDividerRefs.current[index] = el)}
-                  className="hidden lg:block absolute left-0 top-6 bottom-6 w-px bg-slate-200/90 will-change-transform"
-                />
+                <>
+                  <div
+                    ref={(el) => (vertDividerRefs.current[index] = el)}
+                    className="hidden md:block absolute left-0 top-6 bottom-6 w-px bg-slate-200/90 will-change-transform"
+                  />
+                  <div className="md:hidden absolute top-0 left-6 right-6 h-px bg-slate-200/80" />
+                </>
               )}
 
               {/* Number display */}

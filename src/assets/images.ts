@@ -6,10 +6,10 @@
 import aerialPlant from './images/chemorozruch_aerial_plant_1787214305619.jpg';
 import plantTopdown from './images/chemorozruch_plant_topdown_1787214324065.jpg';
 
-// Cloud Layers for Hero Parallax
-import cloud1 from './images/clouds/cloud11.png';
-import cloud2 from './images/clouds/cloud21.png';
-import cloud3 from './images/clouds/cloud31.png';
+// Cloud Layers for Hero Parallax (True Alpha Transparent Daylight Clouds)
+import cloud1 from './images/clouds/cloud_alpha_1.png';
+import cloud2 from './images/clouds/cloud_alpha_2.png';
+import cloud3 from './images/clouds/cloud_alpha_3.png';
 
 // Discovery / Overview Section
 import discoveryAbout from './images/chemorozruch_discovery_about_1787215366069.jpg';

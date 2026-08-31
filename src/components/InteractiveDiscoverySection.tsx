@@ -286,7 +286,7 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                       <div className="absolute bottom-6 left-6 right-6 text-white z-20">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-mono text-[11px] font-bold text-red-400 uppercase tracking-wider">
-                            CHEMOROZRUCH {item.index}
+                            CHEMOROZRUCH
                           </span>
                         </div>
                         <h4 className="font-poppins font-bold text-lg text-white leading-tight">

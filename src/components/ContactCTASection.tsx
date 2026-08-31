@@ -1,50 +1,315 @@
 import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Language, translations } from '../types';
-import siteImages from '../assets/images';
-const contactHeroImg = siteImages.kontaktInstalacje;
+import { Language } from '../types';
+import { 
+  Building2, 
+  Phone, 
+  Mail, 
+  Clock, 
+  ArrowRight,
+  ChevronDown,
+  Copy, 
+  Check, 
+  Briefcase, 
+  FileSpreadsheet, 
+  Wrench, 
+  Truck
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface ContactCTASectionProps {
   currentLang: Language;
+  onOpenLegal?: (doc: 'rodo' | 'sygnalisci' | 'polityka-prywatnosci') => void;
 }
 
+interface SpecialistContact {
+  role: Record<Language, string>;
+  name?: string;
+  email: string;
+  phone?: string;
+}
+
+interface DepartmentItem {
+  id: string;
+  name: Record<Language, string>;
+  description: Record<Language, string>;
+  email: string;
+  phone: string;
+  phoneDisplay: string;
+  hours: Record<Language, string>;
+  icon: React.ComponentType<{ className?: string }>;
+  tag: Record<Language, string>;
+  specialists?: SpecialistContact[];
+}
+
+const DEPARTMENTS: DepartmentItem[] = [
+  {
+    id: 'handlowy',
+    name: {
+      PL: 'Dział Handlowy i Ofertowanie',
+      EN: 'Commercial & Tendering Department',
+      DE: 'Vertrieb & Angebotserstellung',
+      UA: 'Комерційний відділ та Тендери',
+    },
+    description: {
+      PL: 'Wyceny, zapytania ofertowe, przetargi i kalkulacje nowych realizacji.',
+      EN: 'Project estimations, RFQs, commercial tenders and new industrial realizations.',
+      DE: 'Kalkulationen, Ausschreibungen, Angebote und neue Industrieanlagen.',
+      UA: 'Розрахунки вартості, запити комерційних пропозицій, тендери та нові реалізації.',
+    },
+    email: 'oferty@chemorozruch.pl',
+    phone: '+48338474320',
+    phoneDisplay: '+48 33 847 43 20',
+    hours: {
+      PL: 'Pn – Pt: 07:00 – 15:00',
+      EN: 'Mon – Fri: 07:00 – 15:00',
+      DE: 'Mo – Fr: 07:00 – 15:00',
+      UA: 'Пн – Пт: 07:00 – 15:00',
+    },
+    icon: FileSpreadsheet,
+    tag: {
+      PL: 'WYCENY & OFERTY',
+      EN: 'TENDERS & RFQ',
+      DE: 'ANGEBOTE & VERTRIEB',
+      UA: 'ТЕНДЕРИ ТА ОЦІНКА',
+    },
+    specialists: [
+      {
+        role: {
+          PL: 'Kierownik Działu Handlowego',
+          EN: 'Commercial Department Manager',
+          DE: 'Leiter Vertrieb & Kalkulation',
+          UA: 'Керівник комерційного відділу',
+        },
+        email: 'oferty@chemorozruch.pl',
+        phone: '+48 33 847 43 20',
+      },
+      {
+        role: {
+          PL: 'Specjalista ds. Ofertowania i Kosztorysowania',
+          EN: 'Cost Estimation & Bidding Specialist',
+          DE: 'Kalkulations- und Angebotsspezialist',
+          UA: 'Спеціаліст з кошторисів та пропозицій',
+        },
+        email: 'oferty@chemorozruch.pl',
+        phone: '+48 33 847 43 22',
+      },
+    ],
+  },
+  {
+    id: 'techniczny',
+    name: {
+      PL: 'Dział Techniczny i Realizacji',
+      EN: 'Technical & Project Execution Department',
+      DE: 'Technische Abteilung & Montage',
+      UA: 'Технічний відділ та Реалізація',
+    },
+    description: {
+      PL: 'Sprawy techniczne dotyczące realizowanych instalacji, montażu aparatury i rurociągów oraz odbiorów UDT.',
+      EN: 'Technical engineering, mechanical assembly, process piping and technical inspections.',
+      DE: 'Technische Betreuung von Industrieanlagen, Rohrleitungsbau, Apparate und TÜV/UDT-Abnahmen.',
+      UA: 'Технічні питання щодо монтажу обладнання, трубопроводів та нагляду UDT.',
+    },
+    email: 'realizacje@chemorozruch.pl',
+    phone: '+48338474340',
+    phoneDisplay: '+48 33 847 43 40',
+    hours: {
+      PL: 'Pn – Pt: 07:00 – 15:00',
+      EN: 'Mon – Fri: 07:00 – 15:00',
+      DE: 'Mo – Fr: 07:00 – 15:00',
+      UA: 'Пн – Пт: 07:00 – 15:00',
+    },
+    icon: Wrench,
+    tag: {
+      PL: 'INŻYNIERIA & MONTAŻ',
+      EN: 'ENGINEERING & ASSEMBLY',
+      DE: 'ENGINEERING & MONTAGE',
+      UA: 'ІНЖЕНЕРІЯ ТА МОНТАЖ',
+    },
+    specialists: [
+      {
+        role: {
+          PL: 'Główny Inżynier / Kierownik Realizacji',
+          EN: 'Chief Engineer / Project Execution Manager',
+          DE: 'Chefingenieur / Montageleiter',
+          UA: 'Головний інженер / Керівник реалізації',
+        },
+        email: 'realizacje@chemorozruch.pl',
+        phone: '+48 33 847 43 40',
+      },
+      {
+        role: {
+          PL: 'Inżynieria Spawalnictwa i Kontrola NDT',
+          EN: 'Welding Engineering & NDT Quality Control',
+          DE: 'Schweißfachingenieur & ZfP-Prüfung',
+          UA: 'Інженерія зварювання та контроль NDT',
+        },
+        email: 'techniczny@chemorozruch.pl',
+        phone: '+48 33 847 43 45',
+      },
+    ],
+  },
+  {
+    id: 'centrala',
+    name: {
+      PL: 'Sekretariat / Centrala Zarządu',
+      EN: 'Secretariat / Executive Office',
+      DE: 'Sekretariat / Hauptverwaltung',
+      UA: 'Секретаріат / Головний офіс',
+    },
+    description: {
+      PL: 'Sprawy ogólne, kontakt z firmą, zarząd, kancelaria i korespondencja.',
+      EN: 'General corporate matters, board affairs, registry and correspondence.',
+      DE: 'Allgemeine Angelegenheiten, Unternehmensleitung, Vorstand und Korrespondenz.',
+      UA: 'Загальні питання, зв’язок з компанією, керівництво та канцелярія.',
+    },
+    email: 'biuro@chemorozruch.pl',
+    phone: '+48338474300',
+    phoneDisplay: '+48 33 847 43 00',
+    hours: {
+      PL: 'Pn – Pt: 07:00 – 15:00',
+      EN: 'Mon – Fri: 07:00 – 15:00',
+      DE: 'Mo – Fr: 07:00 – 15:00',
+      UA: 'Пн – Пт: 07:00 – 15:00',
+    },
+    icon: Building2,
+    tag: {
+      PL: 'CENTRALA & ZARZĄD',
+      EN: 'HQ & BOARD',
+      DE: 'HAUPTSITZ & VORSTAND',
+      UA: 'ГОЛОВНИЙ ОФІС',
+    },
+    specialists: [
+      {
+        role: {
+          PL: 'Sekretariat Zarządu & Kancelaria',
+          EN: 'Executive Secretariat & General Registry',
+          DE: 'Vorstandssekretariat & Poststelle',
+          UA: 'Секретаріат керівництва та канцелярія',
+        },
+        email: 'biuro@chemorozruch.pl',
+        phone: '+48 33 847 43 00',
+      },
+      {
+        role: {
+          PL: 'Dział Finansowo-Księgowy',
+          EN: 'Finance & Accounting Department',
+          DE: 'Finanz- und Rechnungswesen',
+          UA: 'Фінансово-бухгалтерський відділ',
+        },
+        email: 'ksiegowosc@chemorozruch.pl',
+        phone: '+48 33 847 43 10',
+      },
+    ],
+  },
+  {
+    id: 'zaopatrzenie',
+    name: {
+      PL: 'Dział Zaopatrzenia i Logistyki',
+      EN: 'Procurement & Logistics Department',
+      DE: 'Einkauf & Materiallogistik',
+      UA: 'Відділ постачання та Логістики',
+    },
+    description: {
+      PL: 'Dostawy certyfikowanych materiałów hutniczych, armatury przemysłowej i transport wielkogabarytowy.',
+      EN: 'Certified metallurgical supplies, industrial valves, heavy haulage and freight.',
+      DE: 'Einkauf von Stahlwerkstoffen, Industriearmaturen und Schwerlasttransporte.',
+      UA: 'Постачання сертифікованого металу, промислової арматури та спецтранспорт.',
+    },
+    email: 'zaopatrzenie@chemorozruch.pl',
+    phone: '+48338474330',
+    phoneDisplay: '+48 33 847 43 30',
+    hours: {
+      PL: 'Pn – Pt: 07:00 – 14:30',
+      EN: 'Mon – Fri: 07:00 – 14:30',
+      DE: 'Mo – Fr: 07:00 – 14:30',
+      UA: 'Пн – Пт: 07:00 – 14:30',
+    },
+    icon: Truck,
+    tag: {
+      PL: 'DOSTAWY & SPEDYCJA',
+      EN: 'SUPPLY & LOGISTICS',
+      DE: 'EINKAUF & LOGISTIK',
+      UA: 'ПОСТАЧАННЯ ТА ЛОГІСТИКА',
+    },
+    specialists: [
+      {
+        role: {
+          PL: 'Dział Zakupów i Kontraktacji Materiałów',
+          EN: 'Material Purchasing & Contracting',
+          DE: 'Einkauf & Materialdisposition',
+          UA: 'Відділ закупівель та контрактування',
+        },
+        email: 'zaopatrzenie@chemorozruch.pl',
+        phone: '+48 33 847 43 30',
+      },
+      {
+        role: {
+          PL: 'Magazyn Główny & Przyjęcia Dostaw',
+          EN: 'Central Warehouse & Inbound Logistics',
+          DE: 'Hauptlager & Warenannahme',
+          UA: 'Головний склад та прийом вантажів',
+        },
+        email: 'magazyn@chemorozruch.pl',
+        phone: '+48 33 847 43 35',
+      },
+    ],
+  },
+  {
+    id: 'plock',
+    name: {
+      PL: 'Oddział Realizacyjny Płock',
+      EN: 'Płock Operational Branch',
+      DE: 'Niederlassung Płock',
+      UA: 'Відділення Плоцьк',
+    },
+    description: {
+      PL: 'Realizacja projektów i montażu przemysłowego na terenie kompleksu rafineryjnego PKN ORLEN i Polski centralnej.',
+      EN: 'Industrial and petrochemical installation works within the PKN ORLEN refining complex and Central Poland.',
+      DE: 'Montage- und Instandhaltungsprojekte auf dem Gelände des Raffineriekomplexes PKN ORLEN und Zentralpolen.',
+      UA: 'Промисловий монтаж на території нафтопереробного комплексу PKN ORLEN та центральної Польщі.',
+    },
+    email: 'plock@chemorozruch.pl',
+    phone: '+48243652400',
+    phoneDisplay: '+48 24 365 24 00',
+    hours: {
+      PL: 'Pn – Pt: 07:00 – 15:00',
+      EN: 'Mon – Fri: 07:00 – 15:00',
+      DE: 'Mo – Fr: 07:00 – 15:00',
+      UA: 'Пн – Пт: 07:00 – 15:00',
+    },
+    icon: Building2,
+    tag: {
+      PL: 'ODDZIAŁ PŁOCK',
+      EN: 'PŁOCK BRANCH',
+      DE: 'FILIALE PŁOCK',
+      UA: 'ВІДДІЛЕННЯ ПЛОЦЬК',
+    },
+    specialists: [
+      {
+        role: {
+          PL: 'Kierownik Oddziału Płock',
+          EN: 'Płock Branch Operations Manager',
+          DE: 'Niederlassungsleiter Płock',
+          UA: 'Керівник відділення Плоцьк',
+        },
+        email: 'plock@chemorozruch.pl',
+        phone: '+48 24 365 24 00',
+      },
+    ],
+  },
+];
+
 export const ContactCTASection: React.FC<ContactCTASectionProps> = ({ currentLang }) => {
-  const t = translations[currentLang].contactCTA;
+  const [expandedDept, setExpandedDept] = useState<string | null>(null);
+  const [copiedText, setCopiedText] = useState<string | null>(null);
 
-  // Form state
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // Form inputs
-  const [formData, setFormData] = useState({
-    name: '',
-    company: '',
-    email: '',
-    phone: '',
-    message: '',
-    rodo: true,
-  });
-
-  // Focus tracking for minimal input underline animations
-  const [focusedField, setFocusedField] = useState<string | null>(null);
-
-  // References
   const sectionRef = useRef<HTMLElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const imageInnerRef = useRef<HTMLImageElement>(null);
-  const contentColRef = useRef<HTMLDivElement>(null);
-  const eyebrowRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const supportingRef = useRef<HTMLParagraphElement>(null);
-  const ctaBtnRef = useRef<HTMLDivElement>(null);
-  const directContactRef = useRef<HTMLDivElement>(null);
-  const formWrapRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
-  // Scroll entrance animation
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
@@ -52,7 +317,6 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({ currentLan
     const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
 
-      // 1. Entrance timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -61,76 +325,20 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({ currentLan
         },
       });
 
-      // Image container reveal
-      if (imageContainerRef.current) {
+      if (headerRef.current) {
         tl.fromTo(
-          imageContainerRef.current,
-          { opacity: 0, scale: 1.025 },
-          { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' }
+          headerRef.current.children,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: 'power2.out' }
         );
       }
 
-      // Content column stagger
-      if (eyebrowRef.current) {
+      if (listRef.current) {
         tl.fromTo(
-          eyebrowRef.current,
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' },
-          '-=0.6'
-        );
-      }
-
-      if (headingRef.current) {
-        tl.fromTo(
-          headingRef.current,
+          listRef.current.children,
           { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' },
-          '-=0.35'
-        );
-      }
-
-      if (supportingRef.current) {
-        tl.fromTo(
-          supportingRef.current,
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' },
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out' },
           '-=0.3'
-        );
-      }
-
-      if (ctaBtnRef.current) {
-        tl.fromTo(
-          ctaBtnRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' },
-          '-=0.25'
-        );
-      }
-
-      if (directContactRef.current) {
-        tl.fromTo(
-          directContactRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.6, ease: 'power2.out' },
-          '-=0.2'
-        );
-      }
-
-      // 2. Subtle inside-image vertical parallax during scroll (translateY -3% to +3%)
-      if (imageInnerRef.current) {
-        gsap.fromTo(
-          imageInnerRef.current,
-          { yPercent: -3, scale: 1.06 },
-          {
-            yPercent: 3,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1.2,
-            },
-          }
         );
       }
     }, sectionRef);
@@ -138,361 +346,292 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({ currentLan
     return () => ctx.revert();
   }, [currentLang]);
 
-  // Form expansion animation
-  useEffect(() => {
-    if (!formWrapRef.current) return;
-
-    if (isFormOpen) {
-      gsap.fromTo(
-        formWrapRef.current,
-        { height: 0, opacity: 0, y: 16 },
-        {
-          height: 'auto',
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power3.out',
-        }
-      );
+  const handleCopy = (text: string, label: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-  }, [isFormOpen]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
-
-    setIsSubmitting(true);
-    // Simulate swift server response
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 600);
+    navigator.clipboard.writeText(text);
+    setCopiedText(label);
+    setTimeout(() => setCopiedText(null), 2200);
   };
 
-  const handleReset = () => {
-    setFormData({
-      name: '',
-      company: '',
-      email: '',
-      phone: '',
-      message: '',
-      rodo: true,
-    });
-    setIsSubmitted(false);
+  const toggleExpand = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedDept((prev) => (prev === id ? null : id));
+  };
+
+  const labels = {
+    eyebrow: {
+      PL: 'KONTAKT & DZIAŁY',
+      EN: 'CONTACT & DEPARTMENTS',
+      DE: 'KONTAKT & ABTEILUNGEN',
+      UA: 'КОНТАКТИ ТА ВІДДІЛИ',
+    },
+    heading: {
+      PL: 'Bezpośredni kontakt z działami',
+      EN: 'Direct contact with our departments',
+      DE: 'Direkter Kontakt zu den Fachabteilungen',
+      UA: 'Прямий зв’язок з відділами',
+    },
+    subheading: {
+      PL: 'Wybierz właściwy dział, aby nawiązać bezpośredni kontakt inżynierski. Kliknięcie adresu e-mail uruchamia program pocztowy.',
+      EN: 'Select the relevant department to establish direct engineering contact. Clicking the email opens your email application.',
+      DE: 'Wählen Sie die zuständige Abteilung für den direkten Kontakt. Ein Klick auf die E-Mail öffnet Ihr E-Mail-Programm.',
+      UA: 'Оберіть відповідний відділ для прямого інженерного зв’язку. Натискання на e-mail відкриває поштовий клієнт.',
+    },
+    writeEmailBtn: {
+      PL: 'Napisz e-mail',
+      EN: 'Write email',
+      DE: 'E-Mail schreiben',
+      UA: 'Написати e-mail',
+    },
+    phoneLabel: {
+      PL: 'Telefon',
+      EN: 'Phone',
+      DE: 'Telefon',
+      UA: 'Телефон',
+    },
+    detailsBtn: {
+      PL: 'Szczegóły działu',
+      EN: 'Department details',
+      DE: 'Abteilungsdetails',
+      UA: 'Деталі відділу',
+    },
+    closeDetailsBtn: {
+      PL: 'Zwiń szczegóły',
+      EN: 'Hide details',
+      DE: 'Details ausblenden',
+      UA: 'Згорнути деталі',
+    },
   };
 
   return (
     <section
       id="kontakt-cta"
       ref={sectionRef}
-      className="relative w-full bg-[#FAF9F5] text-slate-900 overflow-hidden py-24 sm:py-32 lg:py-36 border-t border-slate-200"
+      className="relative w-full bg-[#FAF9F5] text-slate-900 overflow-hidden py-16 sm:py-20 lg:py-24 border-t border-slate-200"
     >
-      {/* Background Architectural Grid Lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-25 select-none">
+      {/* Background Architectural Subtle Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-30 select-none">
         <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
-          <div className="w-px h-full bg-slate-400" />
-          <div className="w-px h-full bg-slate-400/40 hidden md:block" />
-          <div className="w-px h-full bg-slate-400/40 hidden lg:block" />
-          <div className="w-px h-full bg-slate-400" />
+          <div className="w-px h-full bg-slate-300/60" />
+          <div className="w-px h-full bg-slate-300/40 hidden md:block" />
+          <div className="w-px h-full bg-slate-300/40 hidden lg:block" />
+          <div className="w-px h-full bg-slate-300/60" />
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="relative max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
         
-        {/* Main Desktop Grid: LEFT (~55-60%) Image Scene + RIGHT (~40-45%) Minimal CTA Content */}
-        <div className="grid grid-cols-12 gap-10 lg:gap-14 xl:gap-20 items-start">
-
-          {/* LEFT: Large Premium Industrial Photograph with Subtle Parallax (~58%) */}
-          <div className="col-span-12 lg:col-span-7 order-2 lg:order-1">
-            <div
-              ref={imageContainerRef}
-              className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/3] overflow-hidden rounded-xl sm:rounded-2xl shadow-sm border border-slate-200/90 bg-slate-100 select-none"
-            >
-              <img
-                ref={imageInnerRef}
-                src={contactHeroImg}
-                alt="Nowoczesne instalacje przemysłowe Chemorozruch"
-                className="w-full h-full object-cover will-change-transform"
-                loading="lazy"
-              />
-
-              {/* Delicate daylight contrast vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent pointer-events-none" />
-
-              {/* Understated bottom badge */}
-              <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between pointer-events-none">
-                <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-white/90 bg-slate-950/50 backdrop-blur-xs px-2.5 py-1 rounded">
-                  CHEMOROZRUCH • ZAKŁAD & INSTALACJE
-                </span>
-                <span className="text-[10px] font-mono text-white/80 hidden sm:inline-block">
-                  READY FOR EXECUTION
-                </span>
-              </div>
-            </div>
+        {/* 1. SECTION HEADER (Spacious, clean typographic hierarchy) */}
+        <div ref={headerRef} className="max-w-3xl mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/70 text-red-700 text-xs font-mono font-bold tracking-widest uppercase mb-4">
+            <Briefcase className="w-3.5 h-3.5" />
+            <span>{labels.eyebrow[currentLang]}</span>
           </div>
 
-          {/* RIGHT: Editorial Headline, Primary CTA & In-Place Minimal Underline Form (~42%) */}
-          <div ref={contentColRef} className="col-span-12 lg:col-span-5 order-1 lg:order-2 flex flex-col justify-between">
-            
-            {/* Header & Typography */}
-            <div>
-              <div ref={eyebrowRef} className="mb-3">
-                <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] text-slate-500 uppercase">
-                  {t.eyebrow}
-                </span>
-              </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-slate-950 tracking-tight leading-[1.12] font-poppins">
+            {labels.heading[currentLang]}
+          </h2>
 
-              <h2
-                ref={headingRef}
-                className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-slate-950 tracking-tight leading-[1.14]"
+          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+            {labels.subheading[currentLang]}
+          </p>
+        </div>
+
+        {/* 2. EDITORIAL DEPARTMENT CONTACT LIST */}
+        <div
+          ref={listRef}
+          className="border-t border-slate-200 divide-y divide-slate-200/90 mb-16 sm:mb-20"
+        >
+          {DEPARTMENTS.map((dept) => {
+            const isExpanded = expandedDept === dept.id;
+            const hasSpecialists = Boolean(dept.specialists && dept.specialists.length > 0);
+
+            return (
+              <div
+                key={dept.id}
+                className="group relative transition-colors duration-200 hover:bg-white/70"
               >
-                {t.heading}
-              </h2>
-
-              <p
-                ref={supportingRef}
-                className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-relaxed"
-              >
-                {t.supporting}
-              </p>
-            </div>
-
-            {/* Primary Action Button (Default State) */}
-            {!isFormOpen && (
-              <div ref={ctaBtnRef} className="mt-8 sm:mt-10">
-                <button
-                  type="button"
-                  onClick={() => setIsFormOpen(true)}
-                  className="group inline-flex items-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold text-base rounded-md shadow-xs transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
-                >
-                  <span>{t.primaryCtaBtn}</span>
-                  <svg
-                    className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
-            {/* In-Place Smooth Expandable Minimal Underline Form */}
-            {isFormOpen && (
-              <div ref={formWrapRef} className="mt-8 sm:mt-10 pt-4 overflow-hidden">
-                {!isSubmitted ? (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Header bar of open form with close toggle */}
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">
-                        {t.form.submitBtn.replace('→', '').trim()}
+                {/* Main Row */}
+                <div className="py-6 sm:py-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                  
+                  {/* Left Column: Department info & Credentials */}
+                  <div className="flex-1 min-w-0 pr-0 lg:pr-8">
+                    
+                    {/* Tag badge & hours */}
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                      <span className="text-[11px] font-mono font-bold tracking-wider uppercase px-2.5 py-0.5 rounded bg-slate-100 group-hover:bg-red-50 text-slate-600 group-hover:text-red-700 transition-colors">
+                        {dept.tag[currentLang]}
                       </span>
+                      <span className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-400">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{dept.hours[currentLang]}</span>
+                      </span>
+                    </div>
+
+                    {/* Department Title (Shifts 3-5px on desktop hover) */}
+                    <h3 className="font-poppins font-bold text-xl sm:text-2xl lg:text-[26px] text-slate-950 tracking-tight transition-transform duration-200 transform group-hover:translate-x-1.5">
+                      <a
+                        href={`mailto:${dept.email}`}
+                        className="hover:text-red-600 transition-colors"
+                        aria-label={`${labels.writeEmailBtn[currentLang]} - ${dept.name[currentLang]}`}
+                      >
+                        {dept.name[currentLang]}
+                      </a>
+                    </h3>
+
+                    {/* Short Description */}
+                    <p className="mt-2 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-3xl">
+                      {dept.description[currentLang]}
+                    </p>
+
+                    {/* Contact Credentials (Email & Phone) */}
+                    <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-mono">
+                      
+                      {/* Email Link */}
+                      <div className="inline-flex items-center gap-2 min-h-[44px]">
+                        <a
+                          href={`mailto:${dept.email}`}
+                          className="inline-flex items-center gap-2 text-slate-900 group-hover:text-red-600 font-bold hover:underline transition-colors py-1"
+                          aria-label={`Email: ${dept.email}`}
+                        >
+                          <Mail className="w-4 h-4 text-red-600 flex-shrink-0" />
+                          <span>{dept.email}</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={(e) => handleCopy(dept.email, `${dept.id}-email`, e)}
+                          className="p-1.5 text-slate-400 hover:text-slate-800 rounded transition-colors cursor-pointer"
+                          title="Kopiuj email"
+                          aria-label="Kopiuj email"
+                        >
+                          {copiedText === `${dept.id}-email` ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Phone Link */}
+                      <div className="inline-flex items-center gap-2 min-h-[44px]">
+                        <a
+                          href={`tel:${dept.phone}`}
+                          className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-950 font-medium transition-colors py-1"
+                          aria-label={`Telefon: ${dept.phoneDisplay}`}
+                        >
+                          <Phone className="w-4 h-4 text-slate-400 group-hover:text-red-500 transition-colors flex-shrink-0" />
+                          <span>{dept.phoneDisplay}</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={(e) => handleCopy(dept.phoneDisplay, `${dept.id}-phone`, e)}
+                          className="p-1.5 text-slate-400 hover:text-slate-800 rounded transition-colors cursor-pointer"
+                          title="Kopiuj telefon"
+                          aria-label="Kopiuj telefon"
+                        >
+                          {copiedText === `${dept.id}-phone` ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Right Column: Actions (Mailto button + Optional Expand) */}
+                  <div className="flex items-center gap-3 self-start lg:self-center flex-shrink-0 pt-2 lg:pt-0">
+                    
+                    {/* Action button: Napisz e-mail → */}
+                    <a
+                      href={`mailto:${dept.email}`}
+                      className="inline-flex items-center justify-center gap-2.5 px-6 py-3 min-h-[46px] rounded-xl bg-slate-900 hover:bg-red-600 text-white text-sm font-semibold tracking-wide transition-all duration-200 group-hover:shadow-md active:scale-[0.98]"
+                      aria-label={`${labels.writeEmailBtn[currentLang]} - ${dept.name[currentLang]}`}
+                    >
+                      <span>{labels.writeEmailBtn[currentLang]}</span>
+                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                    </a>
+
+                    {/* Optional Expand Toggle (if specialists exist) */}
+                    {hasSpecialists && (
                       <button
                         type="button"
-                        onClick={() => setIsFormOpen(false)}
-                        className="text-xs font-mono text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                        onClick={(e) => toggleExpand(dept.id, e)}
+                        className={`inline-flex items-center justify-center p-3 min-h-[46px] min-w-[46px] rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-all cursor-pointer ${
+                          isExpanded ? 'bg-slate-100 text-slate-900 border-slate-300' : ''
+                        }`}
+                        title={isExpanded ? labels.closeDetailsBtn[currentLang] : labels.detailsBtn[currentLang]}
+                        aria-label={isExpanded ? labels.closeDetailsBtn[currentLang] : labels.detailsBtn[currentLang]}
+                        aria-expanded={isExpanded}
                       >
-                        {t.hideFormBtn} ✕
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-200 ${
+                            isExpanded ? 'rotate-180 text-red-600' : ''
+                          }`}
+                        />
                       </button>
-                    </div>
+                    )}
 
-                    {/* Field: Name */}
-                    <div className="relative">
-                      <label
-                        className={`block text-xs font-mono transition-colors duration-200 mb-1 ${
-                          focusedField === 'name' ? 'text-red-600 font-bold' : 'text-slate-500'
-                        }`}
-                      >
-                        {t.form.nameLabel} *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        onFocus={() => setFocusedField('name')}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder={t.form.namePlaceholder}
-                        className="w-full bg-transparent py-2.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 border-0 border-b border-slate-300 focus:border-red-600 focus:outline-none transition-colors"
-                      />
-                    </div>
+                  </div>
 
-                    {/* Field: Company */}
-                    <div className="relative">
-                      <label
-                        className={`block text-xs font-mono transition-colors duration-200 mb-1 ${
-                          focusedField === 'company' ? 'text-red-600 font-bold' : 'text-slate-500'
-                        }`}
-                      >
-                        {t.form.companyLabel}
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.company}
-                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        onFocus={() => setFocusedField('company')}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder={t.form.companyPlaceholder}
-                        className="w-full bg-transparent py-2.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 border-0 border-b border-slate-300 focus:border-red-600 focus:outline-none transition-colors"
-                      />
-                    </div>
+                </div>
 
-                    {/* Grid for Email & Phone */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="relative">
-                        <label
-                          className={`block text-xs font-mono transition-colors duration-200 mb-1 ${
-                            focusedField === 'email' ? 'text-red-600 font-bold' : 'text-slate-500'
-                          }`}
-                        >
-                          {t.form.emailLabel} *
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          onFocus={() => setFocusedField('email')}
-                          onBlur={() => setFocusedField(null)}
-                          placeholder={t.form.emailPlaceholder}
-                          className="w-full bg-transparent py-2.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 border-0 border-b border-slate-300 focus:border-red-600 focus:outline-none transition-colors"
-                        />
-                      </div>
-
-                      <div className="relative">
-                        <label
-                          className={`block text-xs font-mono transition-colors duration-200 mb-1 ${
-                            focusedField === 'phone' ? 'text-red-600 font-bold' : 'text-slate-500'
-                          }`}
-                        >
-                          {t.form.phoneLabel}
-                        </label>
-                        <input
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          onFocus={() => setFocusedField('phone')}
-                          onBlur={() => setFocusedField(null)}
-                          placeholder={t.form.phonePlaceholder}
-                          className="w-full bg-transparent py-2.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 border-0 border-b border-slate-300 focus:border-red-600 focus:outline-none transition-colors"
-                        />
+                {/* Collapsible Specialists Section */}
+                {hasSpecialists && isExpanded && (
+                  <div className="pb-6 pt-2 pl-0 sm:pl-4 border-t border-slate-100 animate-fade-in">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3">
+                      <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
+                        {currentLang === 'PL'
+                          ? 'Bezpośrednie kontakty specjalistyczne:'
+                          : currentLang === 'EN'
+                          ? 'Direct specialist contacts:'
+                          : currentLang === 'DE'
+                          ? 'Direkte Fachkontakte:'
+                          : 'Прямі контакти спеціалістів:'}
+                      </span>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {dept.specialists?.map((spec, idx) => (
+                          <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200/60 text-xs font-mono space-y-1.5">
+                            <span className="font-bold text-slate-900 font-sans block text-sm">
+                              {spec.role[currentLang]}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+                              <a
+                                href={`mailto:${spec.email}`}
+                                className="text-slate-700 hover:text-red-600 underline font-semibold transition-colors"
+                              >
+                                {spec.email}
+                              </a>
+                            </div>
+                            {spec.phone && (
+                              <div className="flex items-center gap-2">
+                                <Phone className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                                <a
+                                  href={`tel:${spec.phone.replace(/\s+/g, '')}`}
+                                  className="text-slate-600 hover:text-slate-900 transition-colors"
+                                >
+                                  {spec.phone}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
-
-                    {/* Field: Message */}
-                    <div className="relative">
-                      <label
-                        className={`block text-xs font-mono transition-colors duration-200 mb-1 ${
-                          focusedField === 'message' ? 'text-red-600 font-bold' : 'text-slate-500'
-                        }`}
-                      >
-                        {t.form.messageLabel} *
-                      </label>
-                      <textarea
-                        rows={3}
-                        required
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        onFocus={() => setFocusedField('message')}
-                        onBlur={() => setFocusedField(null)}
-                        placeholder={t.form.messagePlaceholder}
-                        className="w-full bg-transparent py-2.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 border-0 border-b border-slate-300 focus:border-red-600 focus:outline-none transition-colors resize-none"
-                      />
-                    </div>
-
-                    {/* RODO Consent Checkbox */}
-                    <div className="flex items-start gap-2.5 pt-1">
-                      <input
-                        type="checkbox"
-                        id="rodo-checkbox"
-                        required
-                        checked={formData.rodo}
-                        onChange={(e) => setFormData({ ...formData, rodo: e.target.checked })}
-                        className="mt-1 h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500"
-                      />
-                      <label htmlFor="rodo-checkbox" className="text-xs text-slate-500 leading-snug cursor-pointer select-none">
-                        {t.form.rodoConsent}
-                      </label>
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:bg-slate-400 text-white font-semibold text-sm rounded-md shadow-xs transition-all duration-200 cursor-pointer"
-                      >
-                        <span>{isSubmitting ? t.form.submitting : t.form.submitBtn}</span>
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  /* Success Confirmation State (Clean, Understated) */
-                  <div className="py-6 px-5 bg-white/70 border border-slate-200/90 rounded-lg">
-                    <div className="flex items-center gap-2.5 text-red-600 mb-2">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <h4 className="text-base font-bold text-slate-950">
-                        {t.form.successHeading}
-                      </h4>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed mb-4">
-                      {t.form.successMessage}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="text-xs font-mono font-bold text-red-600 hover:text-red-700 underline underline-offset-4 cursor-pointer"
-                    >
-                      {t.form.backBtn}
-                    </button>
                   </div>
                 )}
+
               </div>
-            )}
-
-            {/* Direct Company Contact Details (Quietly Displayed Below CTA) */}
-            <div
-              ref={directContactRef}
-              className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200 text-xs font-mono"
-            >
-              <span className="text-[10px] uppercase text-slate-400 tracking-wider block mb-3 font-semibold">
-                {t.directContact.label} • {t.directContact.hqLabel}
-              </span>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <span className="text-slate-400 block mb-0.5">Adres</span>
-                  <span className="text-slate-800 font-medium">{t.directContact.address}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block mb-0.5">Telefon & Email</span>
-                  <div className="space-y-0.5">
-                    <a
-                      href={`tel:${t.directContact.phone.replace(/\s+/g, '')}`}
-                      className="group flex items-center gap-1.5 text-slate-800 font-bold hover:text-red-600 transition-colors"
-                    >
-                      <span className="transition-transform duration-200 group-hover:translate-x-0.5">
-                        {t.directContact.phone}
-                      </span>
-                    </a>
-                    <a
-                      href={`mailto:${t.directContact.email}`}
-                      className="group flex items-center gap-1.5 text-slate-800 font-bold hover:text-red-600 transition-colors"
-                    >
-                      <span className="transition-transform duration-200 group-hover:translate-x-0.5">
-                        {t.directContact.email}
-                      </span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
+            );
+          })}
         </div>
 
       </div>

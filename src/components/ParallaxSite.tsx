@@ -6,23 +6,48 @@ import { AnimatedNumbersSection } from './AnimatedNumbersSection';
 import { InteractiveDiscoverySection } from './InteractiveDiscoverySection';
 import { CompetenciesSection } from './CompetenciesSection';
 import { TechFacilitiesSection } from './TechFacilitiesSection';
-import { ProjectProcessSection } from './ProjectProcessSection';
 import { RealizationsSection } from './RealizationsSection';
 import { CertificatesSection } from './CertificatesSection';
 import { LocationsSection } from './LocationsSection';
 import { ContactCTASection } from './ContactCTASection';
 import { IndustrialFooter } from './IndustrialFooter';
 import { FloatingGlobalNav } from './FloatingGlobalNav';
-import { ContactModal } from './ContactModal';
+import { LegalModal, LegalDocType } from './LegalModal';
 
-export const ParallaxSite: React.FC = () => {
-  const [currentLang, setCurrentLang] = useState<Language>('PL');
-  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
-  const [inquirySubject, setInquirySubject] = useState<string | undefined>(undefined);
+interface ParallaxSiteProps {
+  currentLang?: Language;
+  onLanguageChange?: (lang: Language) => void;
+  onNavigateService?: (slug: string) => void;
+}
+
+export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
+  currentLang: externalLang,
+  onLanguageChange: externalOnLanguageChange,
+  onNavigateService,
+}) => {
+  const [internalLang, setInternalLang] = useState<Language>('PL');
+  const [legalDoc, setLegalDoc] = useState<LegalDocType>(null);
+
+  const currentLang = externalLang || internalLang;
+  const handleLanguageChange = (lang: Language) => {
+    if (externalOnLanguageChange) {
+      externalOnLanguageChange(lang);
+    } else {
+      setInternalLang(lang);
+    }
+  };
 
   const handleOpenInquiry = (subject?: string) => {
-    setInquirySubject(subject);
-    setIsInquiryOpen(true);
+    const target = document.getElementById('kontakt-cta');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      const email = 'oferty@chemorozruch.pl';
+      const mailtoUrl = subject
+        ? `mailto:${email}?subject=${encodeURIComponent(`Zapytanie ofertowe: ${subject}`)}`
+        : `mailto:${email}?subject=${encodeURIComponent('Zapytanie ofertowe — CHEMOROZRUCH')}`;
+      window.location.href = mailtoUrl;
+    }
   };
 
   const handleExploreScroll = () => {
@@ -37,11 +62,11 @@ export const ParallaxSite: React.FC = () => {
       {/* 1. HEADER (Minimal, light, elegant, transparent over hero) */}
       <IndustrialHeader
         currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
+        onLanguageChange={handleLanguageChange}
         onOpenInquiry={() => handleOpenInquiry()}
       />
 
-      {/* 2. HERO / FIRST SCREEN (Aerial plant from above, moving clouds, staggered parallax) */}
+      {/* 2. HERO / FIRST SCREEN (Aerial plant from above, pure white fluffy moving clouds, staggered parallax) */}
       <IndustrialHeroParallax
         currentLang={currentLang}
         onOpenInquiry={() => handleOpenInquiry()}
@@ -51,7 +76,7 @@ export const ParallaxSite: React.FC = () => {
       {/* 3. FIRST PART — ANIMATED COMPANY NUMBERS (Verified facts, smooth counter reveal & engineering lines) */}
       <AnimatedNumbersSection currentLang={currentLang} />
 
-      {/* 4. SECOND PART — INTERACTIVE COMPANY DISCOVERY (Editorial accordion & dynamic single image) */}
+      {/* 4. SECOND PART — INTERACTIVE COMPANY DISCOVERY / O FIRMIE (Editorial accordion & dynamic single image) */}
       <InteractiveDiscoverySection
         currentLang={currentLang}
         onOpenInquiry={() => handleOpenInquiry()}
@@ -66,43 +91,39 @@ export const ParallaxSite: React.FC = () => {
       {/* 6. FOURTH PART — ZAPLECZE TECHNOLOGICZNE (Editorial composition, dominant image, supporting equipment & click reveals) */}
       <TechFacilitiesSection currentLang={currentLang} />
 
-      {/* 7. FIFTH PART — OD PROJEKTU DO URUCHOMIENIA (Continuous architectural process line, 6 stages, scroll drawing & click reveal) */}
-      <ProjectProcessSection currentLang={currentLang} />
-
-      {/* 8. SIXTH PART — REALIZACJE (Cinematic project showcase, one dominant project at a time, scroll transitions & minimal info) */}
+      {/* 7. FIFTH PART — REALIZACJE (Cinematic project showcase, one dominant project at a time, scroll transitions & minimal info) */}
       <RealizationsSection currentLang={currentLang} />
 
-      {/* 9. SEVENTH PART — CERTYFIKATY / JAKOŚĆ (Editorial standards index, calm rhythm, animated dividers & expand details) */}
+      {/* 8. SIXTH PART — CERTYFIKATY / JAKOŚĆ (Editorial standards index, calm rhythm, animated dividers & expand details) */}
       <CertificatesSection currentLang={currentLang} />
 
-      {/* 10. EIGHTH PART — ODDZIAŁY / LOKALIZACJE (Minimal Poland map, synchronized markers & city list, expand contacts) */}
+      {/* 9. SEVENTH PART — LOKALIZACJE / ODDZIAŁY (Interactive Google Maps, Oświęcim HQ & Płock branch) */}
       <LocationsSection currentLang={currentLang} />
 
-      {/* 11. NINTH PART — KONTAKT / FINAL CTA (Large premium industrial scene, editorial headline, minimal underline form reveal & direct contacts) */}
-      <ContactCTASection currentLang={currentLang} />
-
-      {/* 12. FINAL PART — FOOTER (Editorial light ending, brand identity, language switcher, 3 columns, large subtle watermark & back to top) */}
-      <IndustrialFooter
+      {/* 10. EIGHTH PART — KONTAKT (Editorial department-based direct contacts & company information) */}
+      <ContactCTASection
         currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
+        onOpenLegal={(doc) => setLegalDoc(doc)}
       />
 
-      {/* 13. GLOBAL FLOATING NAVIGATION CAPSULE (Translucent organic dock on desktop / pill & sheet on mobile) */}
+      {/* 11. FINAL PART — FOOTER (Editorial light ending, brand identity, language switcher, 4 columns, legal triggers) */}
+      <IndustrialFooter
+        currentLang={currentLang}
+        onLanguageChange={handleLanguageChange}
+        onOpenLegal={(doc) => setLegalDoc(doc)}
+      />
+
+      {/* 12. GLOBAL FLOATING NAVIGATION CAPSULE (Translucent organic dock on desktop / pill & sheet on mobile) */}
       <FloatingGlobalNav currentLang={currentLang} />
 
-      {/* 14. INQUIRY MODAL */}
-      <ContactModal
-        isOpen={isInquiryOpen}
-        onClose={() => {
-          setIsInquiryOpen(false);
-          setInquirySubject(undefined);
-        }}
-        currentLang={currentLang}
-        initialSubject={inquirySubject}
+      {/* 13. OFFICIAL LEGAL MODAL (RODO, Sygnaliści, Polityka prywatności) */}
+      <LegalModal
+        isOpen={legalDoc !== null}
+        docType={legalDoc}
+        onClose={() => setLegalDoc(null)}
       />
     </div>
   );
 };
 
 export default ParallaxSite;
-

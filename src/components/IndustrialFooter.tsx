@@ -9,11 +9,13 @@ gsap.registerPlugin(ScrollTrigger);
 interface IndustrialFooterProps {
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
+  onOpenLegal?: (doc: 'rodo' | 'sygnalisci' | 'polityka-prywatnosci') => void;
 }
 
 export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
   currentLang,
   onLanguageChange,
+  onOpenLegal,
 }) => {
   const t = translations[currentLang].footer;
   const languages: Language[] = ['PL', 'EN', 'DE', 'UA'];
@@ -194,7 +196,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
               <div className="pt-0.5">
                 <span className="text-xs font-mono text-slate-400 block mb-0.5">
-                  Telefon
+                  {currentLang === 'PL' ? 'Telefon' : currentLang === 'EN' ? 'Phone' : currentLang === 'DE' ? 'Telefon' : 'Телефон'}
                 </span>
                 <a
                   href={`tel:${t.columns.phone.replace(/\s+/g, '')}`}
@@ -328,25 +330,37 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
             <ul className="space-y-2.5 text-sm text-slate-700">
               <li>
-                <span className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onOpenLegal && onOpenLegal('polityka-prywatnosci')}
+                  className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer text-left"
+                >
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
                     {t.columns.privacy}
                   </span>
-                </span>
+                </button>
               </li>
               <li>
-                <span className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onOpenLegal && onOpenLegal('rodo')}
+                  className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer text-left"
+                >
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
                     {t.columns.rodo}
                   </span>
-                </span>
+                </button>
               </li>
               <li>
-                <span className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onOpenLegal && onOpenLegal('sygnalisci')}
+                  className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors cursor-pointer text-left"
+                >
                   <span className="transition-transform duration-200 group-hover:translate-x-1">
                     {t.columns.whistleblower}
                   </span>
-                </span>
+                </button>
               </li>
               <li className="pt-1">
                 <a
@@ -366,6 +380,44 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </ul>
           </div>
 
+        </div>
+
+        {/* SEO SERVICE LANDING PAGES INTERNAL LINKING (Natural contextual anchors for Google crawlers & users) */}
+        <div className="py-6 sm:py-8 border-b border-slate-200/60">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <span className="text-[11px] font-mono font-bold tracking-[0.18em] text-slate-400 uppercase">
+              {currentLang === 'PL' ? 'SPECJALIZACJE PRZEMYSŁOWE:' : currentLang === 'EN' ? 'INDUSTRIAL SPECIALIZATIONS:' : currentLang === 'DE' ? 'INDUSTRIELLE SPEZIALISIERUNGEN:' : 'ПРОМИСЛОВІ СПЕЦІАЛІЗАЦІЇ:'}
+            </span>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-700">
+              <a
+                href="/konstrukcje-stalowe/"
+                className="hover:text-red-600 transition-colors"
+              >
+                Konstrukcje stalowe
+              </a>
+              <span className="text-slate-300 hidden sm:inline">•</span>
+              <a
+                href="/montaz-urzadzen-przemyslowych/"
+                className="hover:text-red-600 transition-colors"
+              >
+                Montaż urządzeń przemysłowych
+              </a>
+              <span className="text-slate-300 hidden sm:inline">•</span>
+              <a
+                href="/aparaty-cisnieniowe/"
+                className="hover:text-red-600 transition-colors"
+              >
+                Aparaty ciśnieniowe
+              </a>
+              <span className="text-slate-300 hidden sm:inline">•</span>
+              <a
+                href="/remonty-modernizacje-instalacji-przemyslowych/"
+                className="hover:text-red-600 transition-colors"
+              >
+                Remonty i modernizacje instalacji
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* LARGE SUBTLE EDITORIAL WORDMARK (Clean Responsive SVG Text — never clips, perfectly scales across all screen widths) */}
