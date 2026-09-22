@@ -163,28 +163,40 @@ export const AnimatedNumbersSection: React.FC<AnimatedNumbersSectionProps> = ({ 
           className="w-full h-px bg-slate-300 will-change-transform mb-0"
         />
 
-        {/* Metrics Grid: 3 Balanced Columns with Clean Vertical Dividers */}
-        <div className="grid grid-cols-1 md:grid-cols-3 relative">
+        {/* Metrics Grid: 4 Balanced Columns on desktop, 2x2 on tablet, 1 col on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 relative">
           {t.metrics.map((metric, index) => (
             <div
               key={metric.id}
               ref={(el) => (metricRefs.current[index] = el)}
-              className="relative px-6 sm:px-8 lg:px-12 py-10 sm:py-12 lg:py-16 flex flex-col justify-between group"
+              className="relative px-6 sm:px-6 lg:px-6 xl:px-8 py-8 sm:py-10 lg:py-12 flex flex-col justify-between group"
             >
-              {/* Vertical Divider for desktop (Draws top -> bottom) */}
+              {/* Dividers for clean architectural structure */}
               {index > 0 && (
                 <>
+                  {/* Vertical Divider for lg desktop (4 cols) */}
                   <div
-                    ref={(el) => (vertDividerRefs.current[index] = el)}
-                    className="hidden md:block absolute left-0 top-6 bottom-6 w-px bg-slate-200/90 will-change-transform"
+                    ref={(el) => {
+                      if (el) vertDividerRefs.current[index] = el;
+                    }}
+                    className="hidden lg:block absolute left-0 top-6 bottom-6 w-px bg-slate-200/90 will-change-transform"
                   />
-                  <div className="md:hidden absolute top-0 left-6 right-6 h-px bg-slate-200/80" />
+                  {/* Vertical Divider for sm/md tablet (2 cols: items 1 and 3) */}
+                  {index % 2 === 1 && (
+                    <div className="hidden sm:block lg:hidden absolute left-0 top-6 bottom-6 w-px bg-slate-200/90" />
+                  )}
+                  {/* Horizontal Divider for sm/md tablet (row 2: items 2 and 3) */}
+                  {index >= 2 && (
+                    <div className="hidden sm:block lg:hidden absolute top-0 left-6 right-6 h-px bg-slate-200/80" />
+                  )}
+                  {/* Horizontal Divider for mobile (1 col) */}
+                  <div className="sm:hidden absolute top-0 left-6 right-6 h-px bg-slate-200/80" />
                 </>
               )}
 
               {/* Number display */}
               <div>
-                <div className="flex items-baseline gap-1 font-poppins font-black text-5xl sm:text-6xl lg:text-7xl tracking-tighter text-slate-950">
+                <div className="flex items-baseline gap-1 font-poppins font-black text-5xl sm:text-5xl lg:text-5xl xl:text-6xl tracking-tighter text-slate-950">
                   <span
                     ref={(el) => (numberRefs.current[index] = el)}
                     className="tabular-nums"
@@ -192,7 +204,7 @@ export const AnimatedNumbersSection: React.FC<AnimatedNumbersSectionProps> = ({ 
                     {animated ? metric.value : 0}
                   </span>
                   {metric.suffix && (
-                    <span className="text-red-600 font-bold text-3xl sm:text-4xl lg:text-5xl ml-0.5">
+                    <span className="text-red-600 font-bold text-3xl sm:text-4xl lg:text-3xl xl:text-4xl ml-0.5">
                       {metric.suffix}
                     </span>
                   )}

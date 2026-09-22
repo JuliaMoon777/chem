@@ -1,10 +1,15 @@
-import React, { useRef, useEffect, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Language, translations, CertificateItem } from '../types';
-import siteImages from '../assets/images';
-
-gsap.registerPlugin(ScrollTrigger);
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  X,
+  FileCheck,
+  ShieldCheck,
+  Award,
+} from 'lucide-react';
+import { Language, translations } from '../types';
+import { CERTIFICATES_DATA, CertificateDataItem } from '../data/certificatesData';
 
 interface CertificatesSectionProps {
   currentLang: Language;
@@ -12,119 +17,95 @@ interface CertificatesSectionProps {
 
 export const CertificatesSection: React.FC<CertificatesSectionProps> = ({ currentLang }) => {
   const t = translations[currentLang].certificates;
-  const standards: CertificateItem[] = t.standards;
+  const certificates: CertificateDataItem[] = CERTIFICATES_DATA;
 
-  // Single expanded item state (default open first item or null)
-  const [expandedId, setExpandedId] = useState<string | null>('iso-9001');
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
 
-  // References
-  const sectionRef = useRef<HTMLElement>(null);
-  const introEyebrowRef = useRef<HTMLDivElement>(null);
-  const introHeadingRef = useRef<HTMLHeadingElement>(null);
-  const introSupportingRef = useRef<HTMLParagraphElement>(null);
-  const trustNoteRef = useRef<HTMLDivElement>(null);
-  const rowsContainerRef = useRef<HTMLDivElement>(null);
+  // Touch gesture coordinates for mobile swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
-  // Scroll reveal animation
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+  const activeCert = certificates[currentIndex] || certificates[0];
 
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? certificates.length - 1 : prev - 1));
+  }, [certificates.length]);
 
-      // 1. Intro Reveal Timeline
-      const introTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-          once: true,
-        },
-      });
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === certificates.length - 1 ? 0 : prev + 1));
+  }, [certificates.length]);
 
-      if (introEyebrowRef.current) {
-        introTl.fromTo(
-          introEyebrowRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-        );
-      }
-
-      if (introHeadingRef.current) {
-        introTl.fromTo(
-          introHeadingRef.current,
-          { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-          '-=0.25'
-        );
-      }
-
-      if (introSupportingRef.current) {
-        introTl.fromTo(
-          introSupportingRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-          '-=0.3'
-        );
-      }
-
-      // 2. Animate list rows & divider lines with precise stagger
-      if (rowsContainerRef.current) {
-        const rows = rowsContainerRef.current.querySelectorAll('.cert-row-item');
-        const lines = rowsContainerRef.current.querySelectorAll('.cert-divider-line');
-
-        // Staggered row fade in
-        gsap.fromTo(
-          rows,
-          { opacity: 0, y: 18 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.09,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: rowsContainerRef.current,
-              start: 'top 80%',
-              once: true,
-            },
-          }
-        );
-
-        // Staggered line drawing (width 0 -> 100%)
-        gsap.fromTo(
-          lines,
-          { scaleX: 0, transformOrigin: 'left center' },
-          {
-            scaleX: 1,
-            duration: 0.8,
-            stagger: 0.09,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: rowsContainerRef.current,
-              start: 'top 80%',
-              once: true,
-            },
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [currentLang]);
-
-  const handleToggle = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
+  const openLightbox = () => {
+    setIsLightboxOpen(true);
   };
+
+  const closeLightbox = useCallback(() => {
+    setIsLightboxOpen(false);
+  }, []);
+
+  // Keyboard navigation & body scroll management
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isLightboxOpen) {
+        if (e.key === 'Escape') {
+          closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+          handlePrev();
+        } else if (e.key === 'ArrowRight') {
+          handleNext();
+        }
+      }
+    };
+
+    if (isLightboxOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isLightboxOpen, closeLightbox, handlePrev, handleNext]);
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 45;
+    const isRightSwipe = distance < -45;
+
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  const currentNumLabel = String(currentIndex + 1).padStart(2, '0');
+  const totalNumLabel = String(certificates.length).padStart(2, '0');
 
   return (
     <section
       id="certyfikaty-jakosc"
-      ref={sectionRef}
-      className="relative w-full bg-[#F6F6F3] text-slate-900 overflow-hidden py-24 sm:py-32 lg:py-36 border-t border-slate-200/60"
+      aria-label="Certyfikaty i uprawnienia"
+      className="relative w-full bg-[#F6F6F3] text-slate-900 overflow-hidden py-16 sm:py-24 lg:py-28 border-t border-slate-200/80"
     >
-      {/* Background Architectural Framing Lines (Extremely subtle 3-4% opacity) */}
-      <div className="absolute inset-0 pointer-events-none opacity-30 select-none">
+      {/* Background Architectural Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-25 select-none">
         <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
           <div className="w-px h-full bg-slate-300/40" />
           <div className="w-px h-full bg-slate-300/20 hidden md:block" />
@@ -134,168 +115,364 @@ export const CertificatesSection: React.FC<CertificatesSectionProps> = ({ curren
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-start">
+        {/* Main Grid: Left Column (Intro & Certificate Metadata) / Right Column (Document Viewport & Slider) */}
+        <div className="grid grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-start">
           
-          {/* LEFT COLUMN: Section Heading, Intro, Subtle Quality Inspection Element & Trust Note */}
-          <div className="col-span-12 lg:col-span-5 flex flex-col justify-between h-full">
+          {/* LEFT COLUMN: Section Title, Supporting Info, Certificate Title & Interactive Controls */}
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-between h-full space-y-8">
             <div>
               {/* Eyebrow */}
-              <div ref={introEyebrowRef} className="mb-3">
-                <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
+              <div className="mb-3">
+                <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-red-600 uppercase">
                   {t.eyebrow}
                 </span>
               </div>
 
-              {/* Main Heading */}
-              <h2
-                ref={introHeadingRef}
-                className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-slate-950 tracking-tight leading-[1.14]"
-              >
+              {/* Main Heading (Preserved Exact Title) */}
+              <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-slate-950 tracking-tight leading-[1.15]">
                 {t.heading}
               </h2>
 
-              {/* Short Supporting Line */}
-              <p
-                ref={introSupportingRef}
-                className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-md"
-              >
+              {/* Supporting Line (Preserved Exact Description) */}
+              <p className="mt-3 sm:mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
                 {t.supporting}
               </p>
 
-              {/* One Understated Inspection Photo (Subtle visual proof of testing without dominating) */}
-              <div className="mt-8 lg:mt-10 max-w-sm hidden sm:block">
-                <div className="aspect-[4/3] rounded-sm overflow-hidden bg-slate-200 border border-slate-300/70 shadow-2xs group">
-                  <img
-                    src={siteImages.jakoscBadaniaNdt}
-                    alt={
-                      currentLang === 'PL'
-                        ? 'Badania NDT i kontrola jakości spawania'
-                        : currentLang === 'EN'
-                        ? 'NDT testing and welding quality control'
-                        : currentLang === 'DE'
-                        ? 'ZfP-Prüfung und Schweißqualitätskontrolle'
-                        : 'Неруйнівний контроль NDT та перевірка зварних з’єднань'
-                    }
-                    loading="lazy"
-                    className="w-full h-full object-cover grayscale-[25%] contrast-[1.03] group-hover:grayscale-0 group-hover:scale-102 transition-all duration-700"
-                  />
-                </div>
-                <p className="mt-2 text-xs text-slate-500 font-normal">
+              {/* Direct Certificate Navigation Tabs */}
+              <div className="mt-6 sm:mt-8 pt-6 border-t border-slate-200/80">
+                <span className="text-[11px] font-mono font-semibold tracking-wider text-slate-500 uppercase block mb-3">
                   {currentLang === 'PL'
-                    ? 'Badania nieniszczące (NDT) i kontrola jakości spoin'
+                    ? 'Wybierz dokument:'
                     : currentLang === 'EN'
-                    ? 'Non-destructive testing (NDT) & weld quality control'
+                    ? 'Select document:'
                     : currentLang === 'DE'
-                    ? 'Zerstörungsfreie Prüfung (ZfP) & Schweißnahtkontrolle'
-                    : 'Неруйнівний контроль (NDT) та перевірка якості зварних швів'}
-                </p>
+                    ? 'Dokument auswählen:'
+                    : 'Оберіть документ:'}
+                </span>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
+                  {certificates.map((cert, idx) => {
+                    const isActive = idx === currentIndex;
+                    return (
+                      <button
+                        key={cert.id}
+                        type="button"
+                        id={`cert-tab-${cert.id}`}
+                        onClick={() => setCurrentIndex(idx)}
+                        aria-pressed={isActive}
+                        className={`min-h-[44px] px-3.5 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all text-left flex items-center justify-between border cursor-pointer ${
+                          isActive
+                            ? 'bg-slate-950 text-white border-slate-950 shadow-sm'
+                            : 'bg-white/80 hover:bg-white text-slate-700 hover:text-slate-950 border-slate-200/90'
+                        }`}
+                      >
+                        <span className="truncate">{cert.type}</span>
+                        <span
+                          className={`font-mono text-[10px] ml-2 px-1.5 py-0.5 rounded ${
+                            isActive
+                              ? 'bg-red-600 text-white font-bold'
+                              : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Document Details Card (HTML Text Titles for SEO & Clarity) */}
+              <div
+                id="active-certificate-info"
+                className="mt-6 bg-white rounded-xl border border-slate-200/90 p-5 shadow-xs transition-all duration-300"
+              >
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-50 border border-red-200/60 text-red-700 text-xs font-mono font-semibold">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    <span>{activeCert.type}</span>
+                  </div>
+
+                  <span className="font-mono text-xs font-medium text-slate-400">
+                    {currentNumLabel} / {totalNumLabel}
+                  </span>
+                </div>
+
+                {/* HTML Text Title of the Certificate */}
+                <h3 className="text-base sm:text-lg font-bold text-slate-950 leading-snug">
+                  {activeCert.title[currentLang]}
+                </h3>
+
+                {/* Short true description if available */}
+                {activeCert.description[currentLang] && (
+                  <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {activeCert.description[currentLang]}
+                  </p>
+                )}
+
+                {/* Action Buttons: Prev / Next / Zoom */}
+                <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                  {/* Slider Arrow Controls */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      id="cert-prev-btn"
+                      onClick={handlePrev}
+                      aria-label={t.prevCertLabel || 'Poprzedni certyfikat'}
+                      className="min-h-[44px] min-w-[44px] w-11 h-11 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 flex items-center justify-center transition-colors cursor-pointer border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      id="cert-next-btn"
+                      onClick={handleNext}
+                      aria-label={t.nextCertLabel || 'Następny certyfikat'}
+                      className="min-h-[44px] min-w-[44px] w-11 h-11 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 flex items-center justify-center transition-colors cursor-pointer border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Zoom Fullscreen Trigger */}
+                  <button
+                    type="button"
+                    id="cert-zoom-btn"
+                    onClick={openLightbox}
+                    aria-label={t.zoomCertLabel || 'Powiększ skan dokumentu'}
+                    className="min-h-[44px] px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>
+                      {currentLang === 'PL'
+                        ? 'Powiększ skan'
+                        : currentLang === 'EN'
+                        ? 'Enlarge scan'
+                        : currentLang === 'DE'
+                        ? 'Scan vergrößern'
+                        : 'Збільшити скан'}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Quiet Trust Note at Bottom of Column */}
-            <div ref={trustNoteRef} className="mt-10 lg:mt-14 pt-6 border-t border-slate-200/80">
+            <div className="pt-5 border-t border-slate-200/80">
               <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
                 {t.trustNote}
               </p>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Large Editorial Standards Index with Thin Divider Lines */}
-          <div ref={rowsContainerRef} className="col-span-12 lg:col-span-7">
-            <div className="space-y-0">
-              {/* Top boundary line */}
-              <div className="cert-divider-line w-full h-px bg-slate-300/80" />
+          {/* RIGHT COLUMN: Document Showcase Viewport (Contain mode, no clipping) */}
+          <div className="col-span-12 lg:col-span-7">
+            <div
+              id="certificate-viewer-frame"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="relative w-full rounded-2xl bg-white border border-slate-200/90 shadow-sm p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center"
+            >
+              {/* Document Header Bar */}
+              <div className="w-full flex items-center justify-between pb-4 mb-4 border-b border-slate-100 text-xs text-slate-500">
+                <div className="flex items-center gap-2 font-mono">
+                  <FileCheck className="w-4 h-4 text-red-600 shrink-0" />
+                  <span className="font-semibold text-slate-800">
+                    {activeCert.title[currentLang]}
+                  </span>
+                </div>
+                <span className="font-mono text-[11px] text-slate-400">
+                  {currentNumLabel} / {totalNumLabel}
+                </span>
+              </div>
 
-              {standards.map((cert) => {
-                const isExpanded = expandedId === cert.id;
+              {/* Main Document Frame with object-fit: contain (Guarantees zero cropping of document) */}
+              <div
+                onClick={openLightbox}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openLightbox();
+                  }
+                }}
+                aria-label={`Otwórz pełny podgląd: ${activeCert.title[currentLang]}`}
+                className="group relative w-full h-[380px] sm:h-[480px] lg:h-[540px] bg-slate-50/80 rounded-xl border border-slate-200/70 p-3 sm:p-4 flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-slate-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+              >
+                {/* Document Scan with object-fit: contain */}
+                <img
+                  key={activeCert.id}
+                  src={activeCert.src}
+                  alt={activeCert.alt[currentLang] || activeCert.title[currentLang]}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-contain rounded-sm transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+                />
 
-                return (
-                  <div key={cert.id} className="cert-row-item group">
-                    <div
-                      onClick={() => handleToggle(cert.id)}
-                      className="py-6 sm:py-7 flex items-center justify-between cursor-pointer select-none transition-all duration-300"
-                    >
-                      {/* Standard Name & Code */}
-                      <div className="flex items-baseline gap-4 sm:gap-6">
-                        <span
-                          className={`text-2xl sm:text-3xl lg:text-[32px] font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-1.5 ${
-                            isExpanded ? 'text-slate-950' : 'text-slate-800'
-                          }`}
-                        >
-                          {cert.code}
-                        </span>
-
-                        {/* Quiet subtitle on desktop */}
-                        <span className="hidden md:inline text-xs font-mono text-slate-400 truncate max-w-xs transition-colors duration-300 group-hover:text-slate-600">
-                          // {cert.name}
-                        </span>
-                      </div>
-
-                      {/* Expanding Trigger Symbol (+ / −) */}
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border transition-all duration-300 ${
-                            isExpanded
-                              ? 'border-red-600 bg-red-50 text-red-600 rotate-45'
-                              : 'border-slate-300 text-slate-500 group-hover:border-red-500 group-hover:text-red-600'
-                          }`}
-                        >
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Smooth Expandable In-Place Content Panel */}
-                    <div
-                      className={`overflow-hidden transition-all duration-500 ease-out ${
-                        isExpanded ? 'max-h-72 opacity-100 pb-7' : 'max-h-0 opacity-0 pb-0'
-                      }`}
-                    >
-                      <div className="pl-1 sm:pl-2 pr-2 text-slate-600 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                          <h4 className="text-sm font-semibold text-slate-900">
-                            {cert.name}
-                          </h4>
-                        </div>
-
-                        <p className="text-sm sm:text-[15px] leading-relaxed text-slate-600">
-                          {cert.scope}
-                        </p>
-
-                        <div className="pt-2 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-500 border-t border-slate-200/60">
-                          <span className="text-slate-600 font-medium">
-                            {cert.authority}
-                          </span>
-                          <span className="text-slate-400">
-                            {cert.normSummary}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Row Divider Line */}
-                    <div className="cert-divider-line w-full h-px bg-slate-300/80 transition-colors duration-300 group-hover:bg-slate-400/90" />
+                {/* Hover Zoom Badge Overlay */}
+                <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950/85 text-white text-xs font-mono backdrop-blur-sm shadow-md">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>
+                      {currentLang === 'PL'
+                        ? 'Kliknij, aby powiększyć'
+                        : currentLang === 'EN'
+                        ? 'Click to enlarge'
+                        : currentLang === 'DE'
+                        ? 'Zum Vergrößern klicken'
+                        : 'Натисніть для збільшення'}
+                    </span>
                   </div>
-                );
-              })}
+                </div>
+              </div>
+
+              {/* Bottom Quick Indicator Strip */}
+              <div className="w-full mt-4 pt-3 flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center gap-1.5">
+                  {certificates.map((_, idx) => (
+                    <button
+                      key={`indicator-${idx}`}
+                      type="button"
+                      onClick={() => setCurrentIndex(idx)}
+                      aria-label={`Przejdź do certyfikatu ${idx + 1}`}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        idx === currentIndex
+                          ? 'w-6 bg-red-600'
+                          : 'w-2 bg-slate-300 hover:bg-slate-400'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <span className="text-[11px] font-mono text-slate-400">
+                  CHEMOROZRUCH • QUALITY ASSURANCE
+                </span>
+              </div>
             </div>
           </div>
 
         </div>
       </div>
+
+      {/* LIGHTBOX FULLSCREEN PREVIEW MODAL */}
+      {isLightboxOpen && (
+        <div
+          id="certificates-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Podgląd certyfikatu"
+          onClick={closeLightbox}
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 animate-[fadeIn_0.2s_ease-out]"
+        >
+          {/* Top Bar */}
+          <div
+            className="w-full max-w-6xl mx-auto flex items-center justify-between text-white z-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-xs sm:text-sm tracking-widest text-slate-400 uppercase font-medium">
+                {currentNumLabel} / {totalNumLabel}
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-white truncate max-w-xs sm:max-w-md">
+                {activeCert.title[currentLang]}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="hidden md:inline text-[11px] text-slate-400 font-mono mr-2">
+                [ESC] Zamknij | [← / →] Nawigacja
+              </span>
+              <button
+                type="button"
+                id="cert-lightbox-close-btn"
+                onClick={closeLightbox}
+                aria-label="Zamknij podgląd certyfikatu"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Center Document Area */}
+          <div
+            className="relative flex-1 w-full max-w-6xl mx-auto flex items-center justify-center my-2 sm:my-4"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Prev Button */}
+            <button
+              type="button"
+              id="cert-lightbox-prev-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
+              aria-label="Poprzedni certyfikat"
+              className="absolute left-0 sm:left-2 lg:-left-12 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white border border-white/10 flex items-center justify-center transition-all cursor-pointer shadow-lg outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Document Image in Fullscreen Modal */}
+            <div className="relative max-h-[75vh] sm:max-h-[80vh] w-full flex items-center justify-center select-none">
+              <img
+                key={`modal-${activeCert.id}`}
+                src={activeCert.src}
+                alt={activeCert.alt[currentLang] || activeCert.title[currentLang]}
+                decoding="async"
+                className="max-h-[75vh] sm:max-h-[80vh] max-w-[92vw] sm:max-w-[85vw] object-contain rounded-lg shadow-2xl bg-white p-2 sm:p-3 border border-white/10"
+              />
+            </div>
+
+            {/* Next Button */}
+            <button
+              type="button"
+              id="cert-lightbox-next-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              aria-label="Następny certyfikat"
+              className="absolute right-0 sm:right-2 lg:-right-12 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white border border-white/10 flex items-center justify-center transition-all cursor-pointer shadow-lg outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Bottom Thumbnails */}
+          <div
+            className="w-full max-w-4xl mx-auto z-20 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 scrollbar-none max-w-full">
+              {certificates.map((cert, idx) => {
+                const isActive = idx === currentIndex;
+                return (
+                  <button
+                    key={`modal-thumb-${cert.id}`}
+                    type="button"
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Przejdź do: ${cert.type}`}
+                    className={`relative px-3 py-1.5 rounded-lg text-xs font-mono font-medium shrink-0 transition-all cursor-pointer border ${
+                      isActive
+                        ? 'bg-red-600 text-white border-red-500 shadow-md ring-2 ring-red-500/50'
+                        : 'bg-white/10 hover:bg-white/20 text-slate-300 border-white/10'
+                    }`}
+                  >
+                    {cert.type}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

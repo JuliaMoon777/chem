@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Check, Compass, Layers, Wrench, ShieldCheck, Flame, Factory, HardHat, RefreshCw, Cpu, Activity } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowRight, CheckCircle2, Compass } from 'lucide-react';
 import { Language } from '../types';
 import siteImages from '../assets/images';
 
@@ -22,465 +22,383 @@ interface CompetenceTabContent {
 
 const COMPETENCE_TABS: CompetenceTabContent[] = [
   {
-    id: 'projektowanie',
+    id: 'aparaty-zbiorniki',
     tabLabel: {
-      PL: 'Projektowanie',
-      EN: 'Engineering',
-      DE: 'Projektierung',
-      UA: 'Проєктування',
+      PL: 'Aparaty i zbiorniki',
+      EN: 'Process Vessels & Tanks',
+      DE: 'Apparate & Behälter',
+      UA: 'Апарати та ємності',
     },
     stageBadge: {
-      PL: 'PROJEKTOWANIE I INŻYNIERIA',
-      EN: 'ENGINEERING & TECHNICAL DESIGN',
-      DE: 'PROJEKTIERUNG & INGENIEURWESEN',
-      UA: 'ПРОЄКТУВАННЯ ТА ІНЖЕНЕРІЯ',
+      PL: 'PRODUKCJA APARATURY PROCESOWEJ',
+      EN: 'PROCESS EQUIPMENT MANUFACTURING',
+      DE: 'FERTIGUNG VON PROZESSAPPARATEN',
+      UA: 'ВИРОБНИЦТВО ПРОЦЕСНИХ АПАРАТІВ',
     },
     heading: {
-      PL: 'Dobre wykonanie zaczyna się od dobrego rozwiązania.',
-      EN: 'Flawless execution begins with the right engineering solution.',
-      DE: 'Eine fehlerfreie Ausführung beginnt mit der richtigen technischen Lösung.',
-      UA: 'Якісне виконання починається з правильного технічного рішення.',
+      PL: 'Wytwarzanie aparatów i zbiorników procesowych',
+      EN: 'Fabrication of Process Vessels and Industrial Tanks',
+      DE: 'Fertigung von verfahrenstechnischen Apparaten und Behältern',
+      UA: 'Виготовлення технологічних апаратів та ємностей',
     },
     description: {
-      PL: 'Wspieramy klientów już na etapie przygotowania technicznego inwestycji. Pomagamy przełożyć potrzeby zakładu na rozwiązania możliwe do wykonania, montażu i późniejszej eksploatacji.',
-      EN: 'We support clients from the early technical preparation stage, translating industrial operational requirements into solutions ready for fabrication, assembly, and long-term service.',
-      DE: 'Wir unterstützen Kunden bereits in der technischen Vorbereitungsphase und übersetzen betriebliche Anforderungen in montage- und fertigungsgerechte Industrielösungen.',
-      UA: 'Ми підтримуємо клієнтів уже на етапі технічної підготовки, допомагаючи трансформувати потреби підприємства у надійні рішення для виготовлення, монтажу та експлуатації.',
+      PL: 'W oparciu o zaplecze warsztatowe w Oświęcimiu oraz sprawdzonych partnerów projektowych realizujemy produkcję urządzeń ciśnieniowych i bezciśnieniowych – zarówno z dokumentacji własnej, jak i powierzonej przez Inwestora.',
+      EN: 'Leveraging our manufacturing facility in Oświęcim and trusted engineering partners, we produce pressurized and atmospheric vessels from both internal and client-supplied technical documentation.',
+      DE: 'Auf Basis unseres Fertigungswerks in Oświęcim und bewährter Projektierungspartner fertigen wir Druck- und drucklose Geräte sowohl nach eigener als auch nach vom Auftraggeber beigestellter Dokumentation.',
+      UA: 'На базі виробничого цеху в Освенцимі та перевірених проєктних партнерів виготовляємо ємнісне та технологічне обладнання за власною або наданою замовником документацією.',
     },
     keyPoints: {
       PL: [
-        'Weryfikacja założeń technologicznych i specyfikacji instalacji',
-        'Analiza wykonalności montażowej na czynnych obiektach',
-        'Optymalizacja materiałowa i dobór sprawdzonych stopów stali',
-        'Opracowanie dokumentacji wykonawczej i technologicznej',
+        'Aparaty procesowe i ciśnieniowe: reaktory, kolumny, wymienniki ciepła, filtry, mieszalniki.',
+        'Zbiorniki przemysłowe: zbiorniki magazynowe, buforowe, procesowe oraz technologiczne.',
+        'Certyfikacja i odbiory: pełne wykonawstwo pod nadzorem jednostek notyfikowanych wraz z wydaniem kompletnej deklaracji zgodności.',
       ],
       EN: [
-        'Verification of technological assumptions and installation specs',
-        'Constructability analysis within operating industrial plants',
-        'Material optimization and alloy selection for aggressive media',
-        'Preparation of fabrication and assembly documentation',
+        'Process and pressure equipment: reactors, distillation columns, heat exchangers, filters, and mixers.',
+        'Industrial tanks: storage, buffer, process, and utility tanks.',
+        'Certification and inspection: full execution under notified body surveillance with a comprehensive declaration of conformity.',
       ],
       DE: [
-        'Prüfung technologischer Vorgaben und Anlagenspezifikationen',
-        'Montagebarkeitsanalyse in bestehenden Industrieanlagen',
-        'Werkstoffoptimierung und Auswahl beständiger Stahlgüten',
-        'Erstellung von Ausführungs- und Fertigungsunterlagen',
+        'Verfahrens- und Druckapparate: Reaktoren, Kolonnen, Wärmetauscher, Filter und Mischer.',
+        'Industriebehälter: Lager-, Puffer-, Prozess- und Technologiebehälter.',
+        'Zertifizierung und Abnahmen: vollständige Fertigung unter Aufsicht benannter Stellen inklusive Konformitätserklärung.',
       ],
       UA: [
-        'Перевірка технологічних вимог та специфікацій установки',
-        'Аналіз технологічності монтажу на діючих підприємствах',
-        'Оптимізація матеріалів та підбір стійких марок сталі',
-        'Розробка робочої та технологічної документації',
+        'Процесні та напірні апарати: реактори, колони, теплообмінники, фільтри, змішувачі.',
+        'Промислові резервуари: ємності для зберігання, буферні, процесні та технологічні резервуари.',
+        'Сертифікація та приймання: повне виготовлення під наглядом нотифікованих органів з видачею декларації відповідності.',
       ],
     },
-    image: siteImages.discoveryAbout,
+    image: siteImages.ofertaAparatyZbiorniki,
     imageAlt: {
-      PL: 'Projektowanie i inżynieria przemysłowa CHEMOROZRUCH',
-      EN: 'Industrial engineering and technical design CHEMOROZRUCH',
-      DE: 'Industrielle Projektierung und Engineering CHEMOROZRUCH',
-      UA: 'Промислове проєктування та інженерія CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Wytwarzanie aparatów i zbiorników procesowych',
+      EN: 'CHEMOROZRUCH – Fabrication of Process Vessels and Industrial Tanks',
+      DE: 'CHEMOROZRUCH – Fertigung von verfahrenstechnischen Apparaten und Behältern',
+      UA: 'CHEMOROZRUCH – Виготовлення технологічних апаратів та ємностей',
     },
     ctaSubject: {
-      PL: 'Projektowanie i inżynieria instalacji',
-      EN: 'Industrial Engineering and Technical Design',
-      DE: 'Projektierung und Engineering von Industrieanlagen',
-      UA: 'Проєктування та інженерія установок',
+      PL: 'Wytwarzanie aparatów i zbiorników procesowych',
+      EN: 'Process Vessels and Industrial Tanks Fabrication',
+      DE: 'Fertigung von Apparaten und Prozessbehältern',
+      UA: 'Виготовлення технологічних апаратів та ємностей',
     },
   },
   {
-    id: 'produkcja',
+    id: 'montaz-remonty-rozruchy',
     tabLabel: {
-      PL: 'Produkcja',
-      EN: 'Fabrication',
-      DE: 'Fertigung',
-      UA: 'Виробництво',
+      PL: 'Montaż, remonty i rozruchy',
+      EN: 'Assembly, Overhauls & Start-up',
+      DE: 'Montage, Instandhaltung & Inbetriebnahme',
+      UA: 'Монтаж, ремонти та пусконалагодження',
     },
     stageBadge: {
-      PL: 'PREFABRYKACJA I PRODUKCJA',
-      EN: 'PREFABRICATION & MANUFACTURING',
-      DE: 'VORFERTIGUNG & PRODUKTION',
-      UA: 'ПРЕФАБРИКАЦІЯ ТА ВИРОБНИЦТВО',
+      PL: 'KOMPLEKSOWA OBSŁUGA OBIEKTOWA',
+      EN: 'FIELD SERVICES & MECHANICAL ASSEMBLY',
+      DE: 'INDUSTRIEMONTAGE & ANLAGENSERVICE',
+      UA: 'КОМПЛЕКСНЕ ОБСЛУГОВУВАННЯ ОБ’ЄКТІВ',
     },
     heading: {
-      PL: 'Zaplecze, które pozwala przejść od projektu do wykonania.',
-      EN: 'In-house manufacturing capabilities to turn designs into reality.',
-      DE: 'Eigene Fertigungskapazitäten für den direkten Übergang von der Planung zur Umsetzung.',
-      UA: 'Власні виробничі потужності для переходу від проєкту до виготовлення.',
+      PL: 'Kompleksowy montaż, prace remontowe i rozruchy',
+      EN: 'Comprehensive Assembly, Maintenance Overhauls and Commissioning',
+      DE: 'Komplexe Industriemontage, Instandhaltung und Inbetriebnahme',
+      UA: 'Комплексний монтаж, ремонтні роботи та пусконалагодження',
     },
     description: {
-      PL: 'Realizujemy prefabrykację elementów instalacji przemysłowych, konstrukcji stalowych, rurociągów technologicznych oraz aparatury zgodnie z wymaganiami technicznymi projektu i obowiązującymi normami.',
-      EN: 'We fabricate process piping spools, heavy steel structures, pressure vessels, and industrial heat exchangers according to precise project requirements, ISO 3834-2, and EN/ASME standards.',
-      DE: 'Wir fertigen Rohrleitungsspools, schwere Stahlkonstruktionen, Druckbehälter und industrielle Wärmetauscher nach strengen Projektspezifikationen, ISO 3834-2 und EN/ASME-Normen.',
-      UA: 'Виготовляємо вузли технологічних трубопроводів, сталеві конструкції, апарати та теплообмінники відповідно до проєктних вимог та стандартів якості.',
+      PL: 'Zapewniamy pełną obsługę wykonawczą na obiektach przemysłowych – od montażu z prefabrykatów, przez prace modernizacyjne, po uruchomienie instalacji.',
+      EN: 'We provide end-to-end site execution across industrial facilities — from prefabricated assembly and modernization revamps to full plant commissioning.',
+      DE: 'Wir bieten ganzheitliche Baudienstleistungen auf Industrieanlagen – von der Vormontage über Modernisierungsmaßnahmen bis zur Inbetriebnahme.',
+      UA: 'Забезпечуємо повне виконання робіт на промислових об’єктах — від монтажу префабрикованих вузлів до модернізації та запуску в роботу.',
     },
     keyPoints: {
       PL: [
-        'Konstrukcje stalowe, estakady i podpory rurociągowe wg EN 1090 (EXC3)',
-        'Aparaty ciśnieniowe, zbiorniki ciśnieniowe i wymienniki przemysłowe',
-        'Prefabrykacja rurociągów technologicznych (DN15 – DN2400)',
-        'Zabezpieczenia antykorozyjne, śrutowanie i certyfikowane badania NDT',
+        'Montaż obiektowy: instalacja zbiorników, aparatów procesowych, rurociągów oraz ciężkich konstrukcji stalowych.',
+        'Rurociągi przemysłowe: prefabrykacja i montaż rurociągów parowych, technologicznych i przesyłowych ze stali węglowych i kwasoodpornych.',
+        'Rozruchy i asysta techniczna: udział w rozruchach mechanicznych i technologicznych instalacji oraz przeprowadzanie prób ciśnieniowych i funkcjonalnych.',
+        'Postoje i remonty: prace remontowe i modernizacyjne podczas planowanych wyłączeń zakładów.',
+        'Armatura przemysłowa: montaż, przeglądy oraz regeneracja i serwis armatury.',
       ],
       EN: [
-        'Structural steel, pipe racks, and supports certified up to EN 1090 EXC3',
-        'Pressure vessels, storage tanks, and industrial heat exchangers',
-        'Process piping spool fabrication from DN15 up to DN2400',
-        'Surface shot-blasting, multi-layer coating, and 100% NDT inspection',
+        'Field installation: erection of tanks, process vessels, piping, and heavy structural steelwork.',
+        'Industrial piping: shop prefabrication and on-site assembly of steam, process, and transfer pipelines in carbon and stainless steels.',
+        'Commissioning & technical support: active involvement in mechanical and process startups, conducting pressure and functional testing.',
+        'Turnarounds & plant shutdowns: overhaul and revamp works during planned industrial turnaround windows.',
+        'Industrial valves: installation, inspection, reconditioning, and maintenance service.',
       ],
       DE: [
-        'Stahlkonstruktionen, Rohrbrücken und Tragsysteme nach EN 1090 (EXC3)',
-        'Druckbehälter, Reaktorgefäße und industrielle Wärmetauscher',
-        'Vorfertigung technologischer Rohrleitungen von DN15 bis DN2400',
-        'Oberflächenbehandlung, Sandstrahlen und zertifizierte ZfP-Prüfungen',
+        'Baustellenmontage: Aufstellung von Behältern, Prozessapparaten, Rohrleitungen und schweren Stahlbauten.',
+        'Industrierohrleitungen: Vorfertigung und Montage von Dampf-, Prozess- und Förderleitungen aus Kohlenstoff- und Edelstahl.',
+        'Inbetriebnahme & Begleitung: Mitwirkung an mechanischen und verfahrenstechnischen Inbetriebnahmen sowie Druckprüfungen.',
+        'Stillstände & Revisionen: Instandsetzungs- und Modernisierungsarbeiten bei geplanten Werksstillständen.',
+        'Industriearmaturen: Montage, Überholung, Regeneration und Service von Armaturen.',
       ],
       UA: [
-        'Сталеві конструкції, естакади та опори за стандартом EN 1090 (EXC3)',
-        'Апарати високого тиску, ємності та промислові теплообмінники',
-        'Префабрикація трубопроводів діаметром від DN15 до DN2400',
-        'Антикорозійний захист, дробоструминна обробка та неруйнівний контроль NDT',
+        'Об’єктний монтаж: встановлення ємностей, процесних апаратів, трубопроводів та важких металоконструкцій.',
+        'Промислові трубопроводи: префабрикація та монтаж парових, технологічних і магістральних трубопроводів.',
+        'Пусконалагодження та техпідтримка: участь у механічних та технологічних пусках, гідровипробування.',
+        'Зупиночні ремонти: виконання ремонтних та модернізаційних робіт під час планових зупинок заводів.',
+        'Промислова арматура: монтаж, ревізія, регенерація та сервісне обслуговування.',
       ],
     },
-    image: siteImages.zapleczeHall,
+    image: siteImages.ofertaMontazRemonty,
     imageAlt: {
-      PL: 'Prefabrykacja i produkcja aparatury przemysłowej CHEMOROZRUCH',
-      EN: 'Fabrication and manufacturing base CHEMOROZRUCH',
-      DE: 'Vorfertigung und Produktionswerk CHEMOROZRUCH',
-      UA: 'Префабрикація та виробництво CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Kompleksowy montaż, prace remontowe i rozruchy',
+      EN: 'CHEMOROZRUCH – Comprehensive Assembly, Maintenance Overhauls and Commissioning',
+      DE: 'CHEMOROZRUCH – Komplexe Industriemontage, Instandhaltung und Inbetriebnahme',
+      UA: 'CHEMOROZRUCH – Комплексний монтаж, ремонтні роботи та пусконалагодження',
     },
     ctaSubject: {
-      PL: 'Prefabrykacja i produkcja aparatury / rurociągów',
-      EN: 'Fabrication and Manufacturing of Process Equipment',
-      DE: 'Fertigung von Apparaten und Rohrleitungen',
-      UA: 'Виготовлення апаратів та трубопроводів',
+      PL: 'Kompleksowy montaż, prace remontowe i rozruchy',
+      EN: 'Mechanical Assembly, Overhauls and Plant Commissioning',
+      DE: 'Industriemontage, Instandhaltung und Inbetriebnahme',
+      UA: 'Монтаж, ремонтні роботи та пусконалагодження',
     },
   },
   {
-    id: 'montaz',
+    id: 'konstrukcje-stalowe',
     tabLabel: {
-      PL: 'Montaż',
-      EN: 'Installation',
-      DE: 'Montage',
-      UA: 'Монтаж',
+      PL: 'Konstrukcje stalowe',
+      EN: 'Structural Steel',
+      DE: 'Stahlkonstruktionen',
+      UA: 'Сталеві конструкції',
     },
     stageBadge: {
-      PL: 'MONTAŻ PRZEMYSŁOWY',
-      EN: 'MECHANICAL & SITE ASSEMBLY',
-      DE: 'INDUSTRIEMONTAGE & BAUSTELLEN',
-      UA: 'ПРОМИСЛОВИЙ МОНТАЖ',
+      PL: 'KONSTRUKCJE PRZEMYSŁOWE I BUDOWLANE',
+      EN: 'INDUSTRIAL & STRUCTURAL STEEL',
+      DE: 'INDUSTRIELLER & BAULICHER STAHLBAU',
+      UA: 'ПРОМИСЛОВІ ТА БУДІВЕЛЬНІ КОНСТРУКЦІЇ',
     },
     heading: {
-      PL: 'Produkcja i montaż w rękach jednego partnera.',
-      EN: 'Fabrication and field assembly unified under one reliable partner.',
-      DE: 'Fertigung und Industriemontage vereint in einer Hand.',
-      UA: 'Виробництво та монтаж у руках одного надійного партнера.',
+      PL: 'Wytwarzanie i montaż konstrukcji stalowych',
+      EN: 'Fabrication and Erection of Structural Steel',
+      DE: 'Herstellung und Montage von Stahlkonstruktionen',
+      UA: 'Виготовлення та монтаж сталевих конструкцій',
     },
     description: {
-      PL: 'Łączymy własne zaplecze wykonawcze z doświadczeniem montażowym, wspierając realizację instalacji i urządzeń bezpośrednio w zakładach przemysłowych.',
-      EN: 'We merge our manufacturing base with specialized on-site rigging and installation teams, assembling heavy equipment, process systems, and structural framing safely inside operational facilities.',
-      DE: 'Wir verbinden eigene Vorfertigung mit routinierten Montageteams und errichten Prozessanlagen, Großapparate und Rohrleitungssysteme direkt in Industrie- und Chemiebetrieben.',
-      UA: 'Ми поєднуємо власну виробничу базу з великим монтажним досвідом, виконуючи встановлення обладнання та систем безпосередньо на підприємствах.',
+      PL: 'Realizujemy szeroki wachlarz konstrukcji przemysłowych oraz budowlanych, dopasowanych do infrastruktury Zakładu.',
+      EN: 'We manufacture and erect a wide variety of industrial and structural steel frameworks tailored to plant operating conditions.',
+      DE: 'Wir fertigen und montieren ein breites Spektrum an Industrie- und Gewerbestahlbauten, abgestimmt auf die Werkstruktur.',
+      UA: 'Виготовляємо та монтуємо широкий спектр промислових та будівельних металоконструкцій під інфраструктуру підприємства.',
     },
     keyPoints: {
       PL: [
-        'Montaż konstrukcji stalowych hal, estakad i wież technologicznych',
-        'Montaż urządzeń przemysłowych, kolumn, reaktorów i wymienników',
-        'Scalanie i spawanie rurociągów na obiektach chemicznych i rafineryjnych',
-        'Certyfikowana kadra montażowa ze standardami BHP i SCC/VCA',
+        'Hale i obiekty przemysłowe: wytwarzanie i montaż konstrukcji hal produkcyjnych, magazynowych i wiat technologicznych.',
+        'Konstrukcje inżynieryjne: estakady rurociągowe, wieże, pomosty robocze, ciągi komunikacyjne oraz podparcia pod aparaty.',
+        'Montaż i scalanie: sprawny montaż obiektowy z wykorzystaniem własnego nadzoru i sprzętu.',
       ],
       EN: [
-        'Heavy structural steel assembly, pipe trestles, and process towers',
-        'Industrial machinery erection, columns, reactors, and exchangers',
-        'On-site welding and piping tie-ins within chemical/refinery units',
-        'Certified assembly workforce operating under strict EHS/SCC rules',
+        'Halls & industrial facilities: fabrication and assembly of production halls, warehouses, and process shelters.',
+        'Civil & engineering steelwork: pipe bridges, towers, operating platforms, walkways, and vessel supports.',
+        'Field assembly & splicing: efficient site erection utilizing certified in-house supervision and rigging equipment.',
       ],
       DE: [
-        'Montage von Stahltragwerken, Rohrbrücken und Verfahrenstürmen',
-        'Aufstellung von Industriemaschinen, Kolonnen und Reaktionsbehältern',
-        'Baustellenschweißung und Einbindung in Chemie- und Raffinerieanlagen',
-        'Zertifiziertes Montagepersonal mit hohen HSE- und SCC-Standards',
+        'Industriehallen & Bauten: Fertigung und Errichtung von Produktionshallen, Lagerhallen und Technologieüberdachungen.',
+        'Ingenieurbauwerke: Rohrbrücken, Kolonnentürme, Bedienbühnen, Laufstege und Apparatelagerungen.',
+        'Baustellenmontage: zügige Vor-Ort-Montage mit eigener Bauleitung und Hebezeugen.',
       ],
       UA: [
-        'Монтаж сталевих конструкцій, естакад та технологічних веж',
-        'Встановлення промислового обладнання, колон, реакторів та теплообмінників',
-        'Зварювання та підключення трубопроводів на хімічних підприємствах',
-        'Сертифікований персонал з дотриманням найвищих стандартів безпеки',
+        'Промислові цехи та будівлі: виготовлення та монтаж каркасів виробничих цехів, складів та технологічних навісів.',
+        'Інженерні конструкції: трубопровідні естакади, технологічні вежі, робочі майданчики, перехідні містки та опори під апарати.',
+        'Монтаж та укрупнення: оперативне збирання на об’єкті із залученням власного нагляду та спецобладнання.',
       ],
     },
-    image: siteImages.realizacjaRafineria,
+    image: siteImages.ofertaKonstrukcjeStalowe,
     imageAlt: {
-      PL: 'Montaż instalacji i konstrukcji stalowych CHEMOROZRUCH',
-      EN: 'Industrial mechanical assembly CHEMOROZRUCH',
-      DE: 'Industriemontage und Stahlbau CHEMOROZRUCH',
-      UA: 'Промисловий монтаж установок CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Wytwarzanie i montaż konstrukcji stalowych',
+      EN: 'CHEMOROZRUCH – Fabrication and Erection of Structural Steel',
+      DE: 'CHEMOROZRUCH – Herstellung und Montage von Stahlkonstruktionen',
+      UA: 'CHEMOROZRUCH – Виготовлення та монтаж сталевих конструкцій',
     },
     ctaSubject: {
-      PL: 'Montaż konstrukcji stalowych i urządzeń przemysłowych',
-      EN: 'Mechanical Assembly and Structural Installation',
-      DE: 'Industriemontage von Stahlbau und Ausrüstung',
-      UA: 'Монтаж сталевих конструкцій та промислового обладнання',
+      PL: 'Wytwarzanie i montaż konstrukcji stalowych',
+      EN: 'Structural Steel Fabrication and Erection',
+      DE: 'Stahlbau und Industriemontage',
+      UA: 'Виготовлення та монтаж сталевих конструкцій',
     },
   },
   {
-    id: 'uruchomienie',
+    id: 'obrobka-prefabrykacja',
     tabLabel: {
-      PL: 'Uruchomienie',
-      EN: 'Commissioning',
-      DE: 'Inbetriebnahme',
-      UA: 'Пусконалагодження',
+      PL: 'Obróbka i prefabrykacja',
+      EN: 'Machining & Prefabrication',
+      DE: 'Bearbeitung & Vorfertigung',
+      UA: 'Обробка та префабрикація',
     },
     stageBadge: {
-      PL: 'URUCHOMIENIE I WSPARCIE',
-      EN: 'COMMISSIONING & STARTUP SUPPORT',
-      DE: 'INBETRIEBNAHME & BETREUUNG',
-      UA: 'ПУСКОНАЛАГОДЖЕННЯ ТА ПІДТРИМКА',
+      PL: 'OBRÓBKA MECHANICZNA I FORMOWANIE STALI',
+      EN: 'STEEL MACHINING & PLATE FORMING',
+      DE: 'MECHANISCHE BEARBEITUNG & FORMUNG',
+      UA: 'МЕХАНІЧНА ОБРОБКА ТА ФОРМУВАННЯ СТАЛІ',
     },
     heading: {
-      PL: 'Jesteśmy obecni również wtedy, gdy instalacja zaczyna pracować.',
-      EN: 'We remain by your side as the plant comes online.',
-      DE: 'Wir begleiten Sie verlässlich, wenn die Anlage in Betrieb geht.',
-      UA: 'Ми поруч з вами під час запуску установки в роботу.',
+      PL: 'Usługi obróbki i prefabrykacji',
+      EN: 'Steel Machining and Prefabrication Services',
+      DE: 'Mechanische Bearbeitung und Vorfertigungsdienstleistungen',
+      UA: 'Послуги з механічної обробки та префабрикації',
     },
     description: {
-      PL: 'Wspieramy klienta na etapie uruchomienia oraz w rozwiązywaniu zagadnień technicznych pojawiających się podczas wdrażania wykonanych instalacji i urządzeń.',
-      EN: 'We provide technical assistance during cold and hot plant commissioning, addressing engineering and piping adjustments as systems reach operating pressure and temperature.',
-      DE: 'Wir unterstützen den Kunden bei Kalt- und Warminbetriebnahmen und lösen technische Fragen beim Hochfahren der neu installierten Systeme zuverlässig.',
-      UA: 'Забезпечуємо технічну підтримку під час пусконалагоджувальних робіт, оперативно вирішуючи інженерні завдання при виході установки на робочі параметри.',
+      PL: 'Wykorzystujemy własny park maszynowy w Oświęcimiu do świadczenia specjalistycznych usług obróbczych dla stali.',
+      EN: 'We leverage our extensive machinery park in Oświęcim to deliver specialized steel machining and plate processing services.',
+      DE: 'Wir nutzen unseren modernen Maschinenpark in Oświęcim zur Erbringung spezialisierter Stahl- und Blechbearbeitungsdienstleistungen.',
+      UA: 'Використовуємо власний верстатний парк в Освенцимі для надання спеціалізованих послуг з механічної обробки та формування сталі.',
     },
     keyPoints: {
       PL: [
-        'Próby ciśnieniowe (hydrostatyczne i pneumatyczne) pod nadzorem UDT',
-        'Płukanie chemiczne, przedmuchiwanie i pasywacja rurociągów',
-        'Nadzór inżynierski podczas rozruchu technologicznego i prób gorących',
-        'Asysta techniczna i natychmiastowe korekty montażowe na instalacji',
+        'Walcowanie i zwijanie blach: gięcie i kształtowanie elementów walcowych i stożkowych na własnych walcach.',
+        'Cięcie i obróbka ubytkowa: precyzyjne cięcie plazmowe oraz obróbka na wiertarko-frezarkach i giętarkach.',
+        'Przygotowanie krawędzi: obróbka elementów pod procesy spawalnicze.',
       ],
       EN: [
-        'Hydrostatic and pneumatic pressure testing witnessed by notified bodies',
-        'Chemical flushing, blowing, and passivation of process lines',
-        'Engineering oversight during technological startup and hot trials',
-        'On-site technical troubleshooting and prompt mechanical adjustments',
+        'Plate rolling & forming: bending and curving cylindrical and conical shell sections on in-house roll machines.',
+        'Cutting & subtractive machining: high-precision plasma cutting, CNC milling, drilling, and press brake bending.',
+        'Edge preparation: precision beveling and weld seam preparation for high-integrity joints.',
       ],
       DE: [
-        'Hydrostatische und pneumatische Druckprüfungen mit Abnahmebehörden',
-        'Chemisches Spülen, Ausblasen und Passivieren von Rohrleitungen',
-        'Ingenieuraufsicht beim technologischen Hochfahren und Heißlauf',
-        'Technische Assistenz und sofortige Anpassungen vor Ort',
+        'Blecheinrollung & Walzen: Runden und Formen zylindrischer und konischer Schüsse auf eigenen Walzmaschinen.',
+        'Schneiden & Zerspanung: präziser Plasmazuschnitt sowie Bearbeitung auf Bohr-Fräswerken und Abkantpressen.',
+        'Schweißkantenbearbeitung: gezielte Kantenanarbeitung für anspruchsvolle Schweißverbindungen.',
       ],
       UA: [
-        'Гідравлічні та пневматичні випробування під наглядом інспекції',
-        'Хімічне промивання, продувка та пасивація технологічних ліній',
-        'Інженерний нагляд під час технологічного пуску та гарячих випробувань',
-        'Оперативний технічний супровід та налаштування на об’єкті',
+        'Вальцювання та згинання листів: гнуття циліндричних та конічних обичайок на власних вальцях.',
+        'Порізка та механічна обробка: високоточний плазмовий розкрій, обробка на свердлильно-фрезерних верстатах та листогибах.',
+        'Підготовка кромок: зняття фасок та обробка деталей під зварювальні процеси.',
       ],
     },
-    image: siteImages.epcTurnkey,
+    image: siteImages.ofertaObrobkaPrefabrykacja,
     imageAlt: {
-      PL: 'Uruchomienie instalacji przemysłowej CHEMOROZRUCH',
-      EN: 'Plant startup and commissioning support CHEMOROZRUCH',
-      DE: 'Inbetriebnahme von Industrieanlagen CHEMOROZRUCH',
-      UA: 'Пусконалагодження та запуск установки CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Usługi obróbki i prefabrykacji',
+      EN: 'CHEMOROZRUCH – Steel Machining and Prefabrication Services',
+      DE: 'CHEMOROZRUCH – Mechanische Bearbeitung und Vorfertigungsdienstleistungen',
+      UA: 'CHEMOROZRUCH – Послуги з механічної обробки та префабрикації',
     },
     ctaSubject: {
-      PL: 'Wsparcie przy rozruchu i próbach ciśnieniowych',
-      EN: 'Commissioning and Startup Support',
-      DE: 'Inbetriebnahme- und Prüfungsunterstützung',
-      UA: 'Підтримка під час пусконалагодження та випробувань',
+      PL: 'Usługi obróbki i prefabrykacji stali',
+      EN: 'Steel Machining and Prefabrication Services',
+      DE: 'Mechanische Bearbeitung und Stahlvorfertigung',
+      UA: 'Послуги з обробки та префабрикації сталі',
     },
   },
   {
-    id: 'serwis',
+    id: 'zabezpieczenia-antykorozyjne',
     tabLabel: {
-      PL: 'Serwis',
-      EN: 'Maintenance',
-      DE: 'Service',
-      UA: 'Сервіс',
+      PL: 'Zabezpieczenia antykorozyjne',
+      EN: 'Corrosion Protection',
+      DE: 'Korrosionsschutz',
+      UA: 'Антикорозійний захист',
     },
     stageBadge: {
-      PL: 'SERWIS I WSPARCIE TECHNICZNE',
-      EN: 'INDUSTRIAL SERVICE & MAINTENANCE',
-      DE: 'WARTUNG & TECHNISCHER SERVICE',
-      UA: 'СЕРВІС ТА ТЕХНІЧНЕ ОБСЛУГОВУВАННЯ',
+      PL: 'ŚRUTOWANIE I MALOWANIE PRZEMYSŁOWE',
+      EN: 'SHOT-BLASTING & INDUSTRIAL COATING',
+      DE: 'STRAHLENTROSTUNG & INDUSTRIELACKIERUNG',
+      UA: 'ДРОБОСТРУМИННА ОБРОБКА ТА ФАРБУВАННЯ',
     },
     heading: {
-      PL: 'Sprawność również po uruchomieniu.',
-      EN: 'Ensuring operational excellence throughout the lifecycle.',
-      DE: 'Betriebsbereitschaft und Zuverlässigkeit über den gesamten Lebenszyklus.',
-      UA: 'Безперебійна робота обладнання після запуску.',
+      PL: 'Zabezpieczenia antykorozyjne (Śrutowanie i Malowanie)',
+      EN: 'Corrosion Protection (Shot-Blasting & Industrial Coating)',
+      DE: 'Korrosionsschutz (Sandstrahlen & Industrielackierung)',
+      UA: 'Антикорозійний захист (Дробоструминна обробка та фарбування)',
     },
     description: {
-      PL: 'Nasze wsparcie nie musi kończyć się wraz z zakończeniem montażu. Prowadzimy prace serwisowe, remontowe i techniczne związane z eksploatacją instalacji oraz urządzeń przemysłowych.',
-      EN: 'Our partnership extends far beyond installation. We carry out routine maintenance, scheduled inspections, emergency technical response, and plant upkeep to safeguard production continuity.',
-      DE: 'Unsere Begleitung endet nicht mit der Montage. Wir führen planmäßige Wartungen, technische Revisionen und Instandhaltungsarbeiten für einen dauerhaft sicheren Anlagenbetrieb durch.',
-      UA: 'Наша підтримка триває і після завершення монтажу. Ми проводимо сервісне обслуговування, планові огляди та технічний супровід промислового обладнання.',
+      PL: 'Posiadamy własną, wydzieloną infrastrukturę pozwalającą na nakładanie profesjonalnych powłok ochronnych w kontrolowanych warunkach.',
+      EN: 'We operate dedicated climate-controlled facilities enabling the application of certified multi-layer industrial protective coatings.',
+      DE: 'Wir verfügen über eine eigene, abgetrennte Infrastruktur für den professionellen Schutzschichtauftrag unter kontrollierten Umgebungsbedingungen.',
+      UA: 'Маємо власну виділену інфраструктуру для нанесення професійних захисних покриттів у контрольованих виробничих умовах.',
     },
     keyPoints: {
       PL: [
-        'Diagnostyka techniczna, rewizje wewnętrzne aparatów i badania grubości ścianek',
-        'Wymiana wiązek rurkowych, uszczelnień i regeneracja armatury odcinającej',
-        'Bieżące usuwanie nieszczelności i awarii rurociągów procesowych',
-        'Ciągłe umowy serwisowe i stałe wsparcie utrzymania ruchu w zakładach',
+        'Obróbka strumieniowo-ścierna: czyszczenie powierzchni stalowych do wymaganych stopni czystości we własnej komorze śrutowniczej.',
+        'Malowanie przemysłowe: aplikacja powłok malarskich (zestawów epoksydowych, poliuretanowych, żaroodpornych i specjalistycznych) w dedykowanej malarni.',
+        'Zabezpieczenia transportowe: przygotowanie gotowych elementów i konstrukcji do bezpiecznego transportu i magazynowania.',
       ],
       EN: [
-        'Non-destructive testing, vessel internal inspection, and wall thickness measurement',
-        'Tube bundle replacement, re-tubing, gasket overhauls, and valve reconditioning',
-        'Prompt rectification of piping leaks and process equipment faults',
-        'Long-term maintenance frame agreements for industrial plants',
+        'Abrasive blasting: surface preparation to specified cleanliness grades (Sa 2.5 / Sa 3) inside our dedicated blast chamber.',
+        'Industrial coating: spray application of epoxy, polyurethane, heat-resistant, and heavy-duty paint systems.',
+        'Transport preservation: protective packaging and surface preservation for safe transit and prolonged jobsite storage.',
       ],
       DE: [
-        'ZfP-Prüfungen, Inneninspektionen von Behältern und Wanddickenmessungen',
-        'Austausch von Rohrbündeln, Dichtungswechsel und Armaturenüberholung',
-        'Beseitigung von Leckagen und Behebung akuter Rohrleitungsschäden',
-        'Wartungsverträge und kontinuierlicher Instandhaltungsservice',
+        'Druckluftstrahlen: Oberflächenreinigung bis zu den Reinheitsgraden Sa 2,5 / Sa 3 in der firmeneigenen Strahlkammer.',
+        'Industriebeschichtung: Applikation von Epoxid-, Polyurethan-, hitzebeständigen und chemieresistenten Farbsystemen in der Lackiererei.',
+        'Transportschutz: Vorbereitung fertiger Bauteile und Konstruktionen für sicheren Transport und Baustellenlagerung.',
       ],
       UA: [
-        'Технічна діагностика, внутрішній огляд апаратів та вимірювання товщини стінок',
-        'Заміна трубних пучків, ущільнень та відновлення промислової арматури',
-        'Оперативне усунення витоків та ремонт технологічних трубопроводів',
-        'Довгострокові сервісні договори на обслуговування підприємств',
+        'Абразивоструминне очищення: очищення сталевих поверхонь до ступенів Sa 2.5 / Sa 3 у власній дробоструминній камері.',
+        'Промислове фарбування: нанесення епоксидних, поліуретанових, термостійких та хімічно стійких захисних систем у малярній камері.',
+        'Транспортне консервування: підготовка готових вузлів та конструкцій до безпечного транспортування і складування.',
       ],
     },
-    image: siteImages.armaturaValves,
+    image: siteImages.ofertaZabezpieczeniaAntykorozyjne,
     imageAlt: {
-      PL: 'Serwis i wsparcie techniczne instalacji przemysłowych CHEMOROZRUCH',
-      EN: 'Industrial service and plant maintenance CHEMOROZRUCH',
-      DE: 'Instandhaltung und Service von Industrieanlagen CHEMOROZRUCH',
-      UA: 'Сервіс та технічне обслуговування CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Zabezpieczenia antykorozyjne (Śrutowanie i Malowanie)',
+      EN: 'CHEMOROZRUCH – Corrosion Protection (Shot-Blasting and Industrial Coating)',
+      DE: 'CHEMOROZRUCH – Korrosionsschutz (Sandstrahlen und Industrielackierung)',
+      UA: 'CHEMOROZRUCH – Антикорозійний захист (Дробоструминна обробка та фарбування)',
     },
     ctaSubject: {
-      PL: 'Prace serwisowe i obsługa utrzymania ruchu',
-      EN: 'Plant Maintenance and Technical Service',
-      DE: 'Wartungsservice und Instandhaltung',
-      UA: 'Сервісне обслуговування та технічна підтримка',
+      PL: 'Zabezpieczenia antykorozyjne, śrutowanie i malowanie',
+      EN: 'Corrosion Protection and Industrial Painting',
+      DE: 'Korrosionsschutz und Industrielackierung',
+      UA: 'Антикорозійний захист та фарбування',
     },
   },
   {
-    id: 'awarie',
+    id: 'kontrola-jakosci-qaqc',
     tabLabel: {
-      PL: 'Awarie',
-      EN: 'Emergency Repairs',
-      DE: 'Havariedienst',
-      UA: 'Аварії',
+      PL: 'Standard jakości (QA/QC)',
+      EN: 'Quality Standards (QA/QC)',
+      DE: 'Qualitätsstandards (QA/QC)',
+      UA: 'Стандарти якості (QA/QC)',
     },
     stageBadge: {
-      PL: 'SERWIS AWARYJNY I SZYBKA REAKCJA',
-      EN: 'EMERGENCY SERVICE & RAPID RESPONSE',
-      DE: 'HAVARIEDIENST & SCHNELLE REAKTION',
-      UA: 'АВАРІЙНИЙ СЕРВІС ТА ШВИДКЕ РЕАГУВАННЯ',
+      PL: 'NADZÓR INŻYNIERYJNY I PROCEDURY DOZOROWE',
+      EN: 'ENGINEERING SUPERVISION & NOTIFIED INSPECTIONS',
+      DE: 'INGENIEURÜBERWACHUNG & PRÜFVERFAHREN',
+      UA: 'ІНЖЕНЕРНИЙ НАГЛЯД ТА ПРОЦЕДУРИ ДОЗОРУ',
     },
     heading: {
-      PL: 'Gdy produkcja nie może czekać.',
-      EN: 'When production cannot afford to wait.',
-      DE: 'Wenn die Produktion nicht warten kann.',
-      UA: 'Коли виробництво не може чекати.',
+      PL: 'Standard jakości i procedury dozorowe (QA/QC)',
+      EN: 'Quality Standards and Inspection Procedures (QA/QC)',
+      DE: 'Qualitätsstandards und Überwachungsverfahren (QA/QC)',
+      UA: 'Стандарти якості та наглядові процедури (QA/QC)',
     },
     description: {
-      PL: 'W przypadku awarii liczy się czas. Zespół CHEMOROZRUCH może podjąć interwencję bezpośrednio w zakładzie klienta, zdiagnozować problem i przeprowadzić niezbędne prace techniczne, aby możliwie szybko przywrócić sprawność instalacji lub urządzenia i ograniczyć przestój produkcji.',
-      EN: 'In the event of a failure, time is critical. The CHEMOROZRUCH technical team can intervene directly at the client’s plant, diagnose the issue, and execute necessary technical works to restore installation functionality as quickly as possible and minimize production downtime.',
-      DE: 'Im Havariefall zählt jede Minute. Das Team von CHEMOROZRUCH kann direkt im Kundenbetrieb intervenieren, das Problem diagnostizieren und die erforderlichen technischen Arbeiten durchführen, um die Betriebsbereitschaft der Anlage oder des Geräts schnellstmöglich wiederherzustellen und Stillstandszeiten zu begrenzen.',
-      UA: 'У разі аварії час має вирішальне значення. Команда CHEMOROZRUCH може здійснити виїзд безпосередньо на об’єкт замовника, діагностувати проблему та виконати необхідні технічні роботи, щоб якнайшвидше відновити працездатність установки чи обладнання та обмежити простій виробництва.',
+      PL: 'Każdy realizowany przez nas projekt jest objęty bezkompromisowym nadzorem inżynieryjnym, stanowiącym gwarancję bezpiecznego odbioru przez jednostki dozorowe.',
+      EN: 'Every project we execute is governed by rigorous engineering oversight, ensuring seamless inspection approval by notified statutory bodies.',
+      DE: 'Jedes von uns durchgeführte Projekt unterliegt einer kompromisslosen ingenieurtechnischen Überwachung zur garantierten Abnahme durch Prüforganisationen.',
+      UA: 'Кожен реалізований нами проєкт перебуває під суворим інженерним контролем, що гарантує успішне прийняття органами технічного нагляду.',
     },
     keyPoints: {
       PL: [
-        'Szybka reakcja',
-        'Wsparcie techniczne na miejscu',
-        'Diagnostyka problemu',
-        'Prace naprawcze',
+        'Nadzór spawalniczy: bezpośrednia kontrola procesów przez Głównego Spawalnika (IWE/EWE).',
+        'Badania nieniszczące (NDT): pełna weryfikacja spoin (VT, PT, MT, UT, RT) w ramach realizowanych zleceń.',
+        'Kompletacja dokumentacji: opracowanie pełnej dokumentacji jakościowej (Inspection Book) ze spójną historią materiałową (Świadectwa odbioru 3.1) i kwalifikacjami technologii spawania (WPS/WPQR).',
       ],
       EN: [
-        'Rapid response',
-        'On-site technical support',
-        'Problem diagnostics',
-        'Repair works',
+        'Welding supervision: direct process control by an in-house International/European Welding Engineer (IWE/EWE).',
+        'Non-destructive testing (NDT): comprehensive joint inspection (VT, PT, MT, UT, RT) across all project workflows.',
+        'Documentation compilation: complete quality dossier (Inspection Book) with 3.1 material certificates and qualified WPS/WPQR procedures.',
       ],
       DE: [
-        'Schnelle Reaktionsbereitschaft',
-        'Technischer Vor-Ort-Einsatz',
-        'Problem- und Fehlerdiagnose',
-        'Reparatur- und Instandsetzungsarbeiten',
+        'Schweißaufsicht: direkte Prozessüberwachung durch den verantwortlichen Schweißfachingenieur (IWE/EWE).',
+        'Zerstörungsfreie Prüfungen (ZfP): vollständige Nahtprüfung (VT, PT, MT, UT, RT) im Rahmen der Auftragsabwicklung.',
+        'Dokumentationserstellung: vollständiges Übergabedossier (Inspection Book) mit 3.1-Zeugnissen und qualifizierten WPS/WPQR-Verfahren.',
       ],
       UA: [
-        'Швидке реагування',
-        'Технічна підтримка на місці',
-        'Діагностика проблеми',
-        'Ремонтні роботи',
+        'Зварювальний нагляд: безпосередній контроль процесів головним зварником (IWE/EWE).',
+        'Неруйнівний контроль (NDT): повна верифікація швів методами VT, PT, MT, UT, RT у рамках замовлень.',
+        'Комплектація документації: оформлення повного паспорта якості (Inspection Book) із сертифікатами 3.1 та кваліфікаціями WPS/WPQR.',
       ],
     },
-    image: siteImages.rurociagiPipes,
+    image: siteImages.ofertaKontrolaJakosciQaqc,
     imageAlt: {
-      PL: 'Serwis awaryjny i diagnostyka instalacji przemysłowych CHEMOROZRUCH',
-      EN: 'Emergency industrial service and diagnostics CHEMOROZRUCH',
-      DE: 'Havariedienst und Anlagendiagnose CHEMOROZRUCH',
-      UA: 'Аварійний сервіс та діагностика установок CHEMOROZRUCH',
+      PL: 'CHEMOROZRUCH – Standard jakości i procedury dozorowe (QA/QC)',
+      EN: 'CHEMOROZRUCH – Quality Standards and Inspection Procedures (QA/QC)',
+      DE: 'CHEMOROZRUCH – Qualitätsstandards und Überwachungsverfahren (QA/QC)',
+      UA: 'CHEMOROZRUCH – Стандарти якості та наглядові процедури (QA/QC)',
     },
     ctaSubject: {
-      PL: 'Pilna interwencja techniczna / awaria instalacji',
-      EN: 'Emergency Breakdown Intervention / Rapid Service',
-      DE: 'Dringender technischer Einsatz / Havariedienst',
-      UA: 'Терміновий виїзд / аварійний ремонт установки',
-    },
-  },
-  {
-    id: 'modernizacje',
-    tabLabel: {
-      PL: 'Modernizacje',
-      EN: 'Revamps',
-      DE: 'Modernisierung',
-      UA: 'Модернізація',
-    },
-    stageBadge: {
-      PL: 'REMONTY I MODERNIZACJE',
-      EN: 'REVAMPS & TURNAROUND OVERHAULS',
-      DE: 'GENERALREPARATUREN & MODERNISIERUNG',
-      UA: 'РЕМОНТИ ТА МОДЕРНІЗАЦІЯ',
-    },
-    heading: {
-      PL: 'Nowe możliwości dla istniejących instalacji.',
-      EN: 'Unlocking new performance for existing industrial assets.',
-      DE: 'Neue Leistungsfähigkeit für bestehende Industrieanlagen.',
-      UA: 'Нові можливості для діючих промислових установок.',
-    },
-    description: {
-      PL: 'Realizujemy specjalistyczne prace remontowe oraz modernizacje instalacji przemysłowych, pomagając dostosowywać istniejącą infrastrukturę do aktualnych potrzeb technicznych i produkcyjnych.',
-      EN: 'We perform specialized revamps, retrofits, and scheduled turnaround overhauls, adapting existing chemical, power, and refining infrastructure to higher efficiency and updated emission/safety standards.',
-      DE: 'Wir führen spezialisierte Generalreparaturen, Stillstandsüberholungen und Modernisierungen durch, um bestehende Anlagen an neue Umwelt- und Produktionsanforderungen anzupassen.',
-      UA: 'Виконуємо комплексні ремонтні та модернізаційні роботи, адаптуючи діючу інфраструктуру до сучасних вимог енергоефективності та продуктивності.',
-    },
-    keyPoints: {
-      PL: [
-        'Specjalistyczne prace remontowe podczas planowych postojów technologicznych (Turnaround)',
-        'Remont i modernizacja instalacji przemysłowych bez zakłócania pracy sąsiednich jednostek',
-        'Modernizacja instalacji przemysłowych pod kątem wydajności i norm środowiskowych',
-        'Wymiana wyeksploatowanych węzłów rurociągowych, aparatów i konstrukcji nośnych',
-      ],
-      EN: [
-        'Turnaround management and time-critical maintenance during scheduled shutdowns',
-        'Retrofitting and upgrading process units without disrupting adjacent production lines',
-        'Revamping industrial installations for increased throughput and environmental standards',
-        'Replacing fatigued piping circuits, aged vessels, and structural steel supports',
-      ],
-      DE: [
-        'Planmäßige Stillstandsarbeiten (Turnarounds) mit straffem Terminmanagement',
-        'Umbau und Modernisierung ohne Unterbrechung benachbarter Betriebseinheiten',
-        'Modernisierung von Industrieanlagen für höhere Leistung und Umweltstandards',
-        'Austausch verschlissener Rohrleitungsabschnitte, Apparate und Tragwerke',
-      ],
-      UA: [
-        'Спеціалізовані ремонтні роботи під час планових технологічних зупинок (Turnaround)',
-        'Модернізація діючих технологічних ліній без зупинки суміжних виробництв',
-        'Оновлення промислових установок для підвищення продуктивності та екологічності',
-        'Заміна зношених ділянок трубопроводів, технологічних апаратів та опорних конструкцій',
-      ],
-    },
-    image: siteImages.remontyOverhaul,
-    imageAlt: {
-      PL: 'Remonty i modernizacja instalacji przemysłowych CHEMOROZRUCH',
-      EN: 'Revamps and turnaround overhauls CHEMOROZRUCH',
-      DE: 'Generalreparaturen und Anlagenmodernisierung CHEMOROZRUCH',
-      UA: 'Ремонти та модернізація промислових установок CHEMOROZRUCH',
-    },
-    ctaSubject: {
-      PL: 'Remont i modernizacja instalacji przemysłowych',
-      EN: 'Plant Revamp and Turnaround Modernization',
-      DE: 'Modernisierung und Stillstandsreparatur von Anlagen',
-      UA: 'Модернізація та капітальний ремонт установок',
+      PL: 'Standard jakości i procedury dozorowe (QA/QC)',
+      EN: 'Quality Standards and QA/QC Procedures',
+      DE: 'Qualitätsstandards und Prüfverfahren QA/QC',
+      UA: 'Стандарти якості та наглядові процедури',
     },
   },
 ];
@@ -489,12 +407,12 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
   currentLang,
   onOpenInquiry,
 }) => {
-  const [activeTabId, setActiveTabId] = useState<string>('projektowanie');
-  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+  const [activeTabId, setActiveTabId] = useState<string>(COMPETENCE_TABS[0].id);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const tabRailRef = useRef<HTMLDivElement>(null);
-  const tabButtonsRef = useRef<Record<string, HTMLButtonElement | null>>({});
+  const tabButtonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
-  const activeTab = COMPETENCE_TABS.find((t) => t.id === activeTabId) || COMPETENCE_TABS[0];
+  const activeTab = COMPETENCE_TABS.find((tab) => tab.id === activeTabId) || COMPETENCE_TABS[0];
 
   const handleTabChange = (tabId: string) => {
     if (tabId === activeTabId) return;
@@ -530,48 +448,46 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
   const sectionIntro = {
     eyebrow: {
-      PL: 'KOMPLEKSOWE WSPARCIE PRZEMYSŁU',
-      EN: 'COMPREHENSIVE INDUSTRIAL PARTNERSHIP',
-      DE: 'GANZHEITLICHE INDUSTRIEUNTERSTÜTZUNG',
-      UA: 'КОМПЛЕКСНА ПІДТРИМКА ПРОМИСЛОВОСТІ',
+      PL: 'ZAKRES USŁUG I MOŻLIWOŚCI',
+      EN: 'SERVICES & TECHNICAL SCOPE',
+      DE: 'LEISTUNGSSPEKTRUM & KAPAZITÄTEN',
+      UA: 'ОБСЯГ ПОСЛУГ ТА МОЖЛИВОСТІ',
     },
     heading: {
-      PL: 'Więcej niż wykonawca.',
-      EN: 'More than a contractor.',
-      DE: 'Mehr als ein reiner Auftragnehmer.',
-      UA: 'Більше, ніж просто підрядник.',
+      PL: 'Oferta',
+      EN: 'Offer',
+      DE: 'Angebot',
+      UA: 'Послуги',
     },
     intro: {
-      PL: 'Łączymy kompetencje inżynieryjne, produkcyjne, montażowe i serwisowe. Dzięki temu możemy wspierać klienta na różnych etapach inwestycji — od przygotowania rozwiązania po jego późniejszą eksploatację i modernizację.',
-      EN: 'We integrate engineering, fabrication, assembly, and maintenance competencies. This enables us to support industrial clients across all investment phases — from technical solution concept through to operation and modernization.',
-      DE: 'Wir bündeln Ingenieurwesen, Vorfertigung, Montage und Service. Dadurch unterstützen wir unsere Kunden über den gesamten Lebenszyklus — von der Lösungskonzeption bis zur Instandhaltung und Modernisierung.',
-      UA: 'Ми об’єднуємо інженерні, виробничі, монтажні та сервісні компетенції. Це дозволяє нам підтримувати замовника на всіх етапах інвестицій — від розробки рішення до експлуатації та модернізації.',
+      PL: 'Kompleksowa realizacja inwestycji przemysłowych – od wytwarzania aparatury i konstrukcji, przez montaż obiektowy i modernizacje, po specjalistyczne usługi warsztatowe i procedury odbiorowe.',
+      EN: 'Comprehensive execution of industrial projects — from equipment fabrication and steel structures to on-site assembly, workshop processing, and regulatory inspection procedures.',
+      DE: 'Ganzheitliche Realisierung industrieller Investitionen – von Apparate- und Stahlbau über Montage und Instandhaltung bis hin zu Fertigungsdienstleistungen und Abnahmeverfahren.',
+      UA: 'Комплексна реалізація промислових проєктів — від виготовлення апаратів та конструкцій до монтажу, ремонту, механічної обробки та процедур нагляду.',
     },
     inquireBtn: {
-      PL: 'Skonsultuj etap z inżynierem',
-      EN: 'Consult this stage with our engineer',
-      DE: 'Diesen Schritt mit einem Ingenieur besprechen',
+      PL: 'Skonsultuj zakres z inżynierem',
+      EN: 'Consult scope with our engineer',
+      DE: 'Diesen Leistungsumfang anfragen',
       UA: 'Проконсультуватись з інженером',
     },
     scopeTitle: {
-      PL: 'Kluczowy zakres kompetencji:',
-      EN: 'Key competency scope:',
-      DE: 'Zentrale Leistungsschwerpunkte:',
-      UA: 'Ключовий обсяг компетенцій:',
-    },
-    swipeHint: {
-      PL: 'Przesuń, aby zobaczyć kolejne etapy →',
-      EN: 'Swipe to view further stages →',
-      DE: 'Wischen für weitere Etappen →',
-      UA: 'Проведіть, щоб побачити інші етапи →',
+      PL: 'Zakres usług:',
+      EN: 'Scope of services:',
+      DE: 'Leistungsumfang:',
+      UA: 'Обсяг послуг:',
     },
   };
 
   return (
     <section
-      id="kompetencje"
+      id="competencies-section"
       className="relative w-full bg-[#FAF9F5] text-slate-900 py-16 sm:py-24 lg:py-28 overflow-hidden border-t border-slate-200"
     >
+      {/* Target anchor points for legacy or direct URL hash routing */}
+      <div id="oferta" className="relative -top-24 pointer-events-none" />
+      <div id="kompetencje" className="relative -top-24 pointer-events-none" />
+
       {/* Background Subtle Technical Gridlines */}
       <div className="absolute inset-0 pointer-events-none opacity-25 select-none">
         <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
@@ -584,7 +500,7 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
       <div className="relative max-w-6xl mx-auto px-5 sm:px-8 lg:px-10">
         
-        {/* 1. SECTION INTRODUCTION (Concise, authoritative, no wall of text) */}
+        {/* 1. SECTION INTRODUCTION (Concise, authoritative, semantic H2 title: Oferta) */}
         <div className="max-w-3xl mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/70 text-red-700 text-xs font-mono font-bold tracking-widest uppercase mb-3.5">
             <Compass className="w-3.5 h-3.5" />
@@ -609,7 +525,7 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
               ref={tabRailRef}
               role="tablist"
               aria-label={sectionIntro.heading[currentLang]}
-              className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-4 sm:px-6 lg:px-8"
+              className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-3 sm:px-6 lg:px-8"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {COMPETENCE_TABS.map((tab, idx) => {
@@ -625,17 +541,14 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => handleTabChange(tab.id)}
                     onKeyDown={(e) => handleKeyDown(e, idx)}
-                    className={`relative flex items-center justify-center whitespace-nowrap py-4 sm:py-5 px-4 sm:px-6 min-h-[48px] text-sm sm:text-base font-semibold tracking-tight transition-all duration-200 cursor-pointer select-none ${
+                    className={`relative flex items-center justify-center whitespace-nowrap py-4 sm:py-5 px-3 sm:px-5 min-h-[48px] text-xs sm:text-sm lg:text-base font-semibold tracking-tight transition-all duration-200 cursor-pointer select-none ${
                       isActive
                         ? 'text-slate-950 font-bold'
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    <span className="font-poppins flex items-center gap-1.5">
-                      {tab.id === 'awarie' && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#E31E24] inline-block" />
-                      )}
-                      <span>{tab.tabLabel[currentLang]}</span>
+                    <span className="font-poppins">
+                      {tab.tabLabel[currentLang]}
                     </span>
 
                     {/* Active Tab Accent Line */}
@@ -651,7 +564,7 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
             <div className="sm:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FCFBF8] to-transparent pointer-events-none" />
           </div>
 
-          {/* B. TAB CONTENT AREA (LEFT 45% Text | RIGHT 55% Large Photography) */}
+          {/* B. TAB CONTENT AREA (LEFT 50% Text | RIGHT 50% Large Photography) */}
           <div
             id={`competence-panel-${activeTab.id}`}
             role="tabpanel"
@@ -664,8 +577,8 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
-              {/* LEFT 45% (5 cols on lg, 6 cols on xl) — Typography & Competencies */}
-              <div className="lg:col-span-5 flex flex-col justify-between">
+              {/* LEFT COLUMN (6 cols on lg) — Typography & Competencies */}
+              <div className="lg:col-span-6 flex flex-col justify-between">
                 <div>
                   {/* Stage Number & Badge */}
                   <span className="inline-block text-xs font-mono font-bold tracking-widest uppercase text-red-600 mb-3">
@@ -673,26 +586,42 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
                   </span>
 
                   {/* Heading */}
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight leading-snug font-poppins mb-4">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight leading-snug font-poppins mb-4 whitespace-pre-line">
                     {activeTab.heading[currentLang]}
                   </h3>
 
-                  {/* Suggested Concise Copy */}
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal mb-6">
+                  {/* Concise Copy */}
+                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal mb-6">
                     {activeTab.description[currentLang]}
                   </p>
 
-                  {/* 2-4 Verified Competence Bullet Points */}
-                  <div className="space-y-2.5 pt-2 border-t border-slate-100 mb-8">
-                    <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
+                  {/* Scope of Services */}
+                  <div className="space-y-3 pt-3 border-t border-slate-100 mb-8">
+                    <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1.5">
                       {sectionIntro.scopeTitle[currentLang]}
                     </span>
-                    {activeTab.keyPoints[currentLang].map((point, pIdx) => (
-                      <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
-                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0" />
-                        <span className="leading-snug">{point}</span>
-                      </div>
-                    ))}
+                    {activeTab.keyPoints[currentLang].map((point, pIdx) => {
+                      const colonIndex = point.indexOf(':');
+                      const hasColon = colonIndex !== -1;
+                      const titlePart = hasColon ? point.slice(0, colonIndex + 1) : '';
+                      const descPart = hasColon ? point.slice(colonIndex + 1) : point;
+
+                      return (
+                        <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                          <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            {hasColon ? (
+                              <>
+                                <span className="font-semibold text-slate-950">{titlePart}</span>
+                                <span className="text-slate-700">{descPart}</span>
+                              </>
+                            ) : (
+                              <span className="text-slate-700">{point}</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -710,19 +639,21 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
               </div>
 
-              {/* RIGHT 55% (7 cols on lg, 6 cols on xl) — Large Industrial Photography */}
-              <div className="lg:col-span-7">
+              {/* RIGHT COLUMN (6 cols on lg) — Industrial Photography */}
+              <div className="lg:col-span-6">
                 <div className="aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-xs group">
                   <img
                     src={activeTab.image}
                     alt={activeTab.imageAlt[currentLang]}
+                    width={1200}
+                    height={800}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                 </div>
                 <p className="mt-2.5 text-xs text-slate-500 font-normal">
-                  {activeTab.heading[currentLang]}
+                  {activeTab.heading[currentLang].replace('\n', ' ')}
                 </p>
               </div>
 
@@ -731,12 +662,11 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
         </div>
 
-        {/* 3. SEO HIDDEN SEMANTIC FALLBACK (Ensures all 6 tabs remain indexable by search crawlers) */}
+        {/* 3. SEO SEMANTIC FALLBACK (Ensures all 6 services remain 100% crawlable & indexable by search bots) */}
         <div className="sr-only">
           {COMPETENCE_TABS.map((t) => (
             <article key={`seo-${t.id}`}>
-              <h4>{t.stageBadge[currentLang]} - {t.tabLabel[currentLang]}</h4>
-              <p>{t.heading[currentLang]}</p>
+              <h3>{t.heading[currentLang]}</h3>
               <p>{t.description[currentLang]}</p>
               <ul>
                 {t.keyPoints[currentLang].map((pt, idx) => (

@@ -23,14 +23,14 @@ const NAV_SECTIONS: NavSectionItem[] = [
     label: { PL: 'Oferta', EN: 'Offer', DE: 'Angebot', UA: 'Послуги' },
   },
   {
-    id: 'certificates',
-    targetId: 'certyfikaty-jakosc',
-    label: { PL: 'Certyfikaty', EN: 'Certificates', DE: 'Zertifikate', UA: 'Сертифікати' },
-  },
-  {
     id: 'realizations',
     targetId: 'realizacje',
     label: { PL: 'Realizacje', EN: 'Realizations', DE: 'Referenzen', UA: 'Об’єкти' },
+  },
+  {
+    id: 'certificates',
+    targetId: 'certyfikaty-jakosc',
+    label: { PL: 'Certyfikaty', EN: 'Certificates', DE: 'Zertifikate', UA: 'Сертифікати' },
   },
   {
     id: 'contact',

@@ -20,15 +20,23 @@ import cloud1 from './images/clouds/cloud_alpha_1.png';
 import cloud2 from './images/clouds/cloud_alpha_2.png';
 import cloud3 from './images/clouds/cloud_alpha_3.png';
 
-// Discovery / Overview Section
+// Discovery / Overview Section (/public/images/o-firmie/ for easy file replacement)
+const discoveryAboutWebp = '/images/o-firmie/chemorozruch-kim-jestesmy.webp';
+const discoveryProjectsWebp = '/images/o-firmie/chemorozruch-co-realizujemy.webp';
+const discoveryIndustriesWebp = '/images/o-firmie/chemorozruch-branze-przemyslowe.webp';
+const discoveryCapabilitiesWebp = '/images/o-firmie/chemorozruch-zaplecze-techniczne.webp';
 import discoveryAbout from './images/chemorozruch_discovery_about_1787215366069.jpg';
-import discoveryAboutWebp from './images/chemorozruch_discovery_about_1787215366069.webp';
 import discoveryProjects from './images/chemorozruch_discovery_projects_1787215380859.jpg';
-import discoveryProjectsWebp from './images/chemorozruch_discovery_projects_1787215380859.webp';
 import discoveryIndustries from './images/chemorozruch_discovery_industries_1787215393375.jpg';
-import discoveryIndustriesWebp from './images/chemorozruch_discovery_industries_1787215393375.webp';
 import discoveryCapabilities from './images/chemorozruch_discovery_capabilities_1787215407176.jpg';
-import discoveryCapabilitiesWebp from './images/chemorozruch_discovery_capabilities_1787215407176.webp';
+
+// Offer Section (/public/images/oferta/ for easy file replacement)
+const ofertaAparatyZbiornikiWebp = '/images/oferta/chemorozruch-aparaty-zbiorniki.webp';
+const ofertaMontazRemontyWebp = '/images/oferta/chemorozruch-montaz-remonty-rozruchy.webp';
+const ofertaKonstrukcjeStaloweWebp = '/images/oferta/chemorozruch-konstrukcje-stalowe.webp';
+const ofertaObrobkaPrefabrykacjaWebp = '/images/oferta/chemorozruch-obrobka-prefabrykacja.webp';
+const ofertaZabezpieczeniaAntykorozyjneWebp = '/images/oferta/chemorozruch-zabezpieczenia-antykorozyjne.webp';
+const ofertaKontrolaJakosciQaqcWebp = '/images/oferta/chemorozruch-kontrola-jakosci-qaqc.webp';
 
 // Competencies & Technical Capabilities
 import aparatyApparatus from './images/chemorozruch_aparaty_apparatus_1787215779610.jpg';
@@ -105,6 +113,14 @@ export const siteImages = {
   discoveryIndustriesJpg: discoveryIndustries,
   discoveryCapabilities: discoveryCapabilitiesWebp || discoveryCapabilities,
   discoveryCapabilitiesJpg: discoveryCapabilities,
+
+  // Offer / Oferta (6 main pillars)
+  ofertaAparatyZbiorniki: ofertaAparatyZbiornikiWebp,
+  ofertaMontazRemonty: ofertaMontazRemontyWebp,
+  ofertaKonstrukcjeStalowe: ofertaKonstrukcjeStaloweWebp,
+  ofertaObrobkaPrefabrykacja: ofertaObrobkaPrefabrykacjaWebp,
+  ofertaZabezpieczeniaAntykorozyjne: ofertaZabezpieczeniaAntykorozyjneWebp,
+  ofertaKontrolaJakosciQaqc: ofertaKontrolaJakosciQaqcWebp,
 
   // Competencies
   aparatyApparatus: aparatyApparatusWebp || aparatyApparatus,

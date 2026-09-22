@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X, ShieldCheck, FileText, ArrowLeft, Printer, Building2, Mail, Phone } from 'lucide-react';
 import { ChemorozruchLogo } from './ChemorozruchLogo';
+import { COMPANY_DATA } from '../data/companyData';
 
 export type LegalDocType = 'rodo' | 'sygnalisci' | 'polityka-prywatnosci' | null;
 
@@ -76,7 +77,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, docType, onClose
               </div>
               <div>
                 <span className="font-poppins font-black text-xs sm:text-sm tracking-tight text-slate-950 block leading-tight">
-                  CHEMOROZRUCH Sp. z o.o.
+                  {COMPANY_DATA.legalCompanyName.value}
                 </span>
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">
                   DOKUMENTACJA PRAWNA I COMPLIANCE
@@ -120,7 +121,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, docType, onClose
         <div className="flex-shrink-0 px-6 sm:px-8 py-3.5 bg-slate-100/90 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 font-mono">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Dokument zatwierdzony przez Dział Prawny CHEMOROZRUCH Sp. z o.o.</span>
+            <span>Dokument zatwierdzony przez Dział Prawny {COMPANY_DATA.legalCompanyName.value}</span>
           </div>
           <button
             type="button"
@@ -160,20 +161,20 @@ const RodoLegalText: React.FC = () => (
       </h2>
       <p className="text-sm sm:text-base leading-relaxed">
         Administratorem Państwa danych osobowych jest{' '}
-        <strong>Przedsiębiorstwo Budowy i Napraw Aparatury Chemicznej i Przemysłowej „CHEMOROZRUCH” Spółka z o.o.</strong> z siedzibą w Oświęcimiu, ul. Chemików 1, 32-600 Oświęcim, wpisana do rejestru przedsiębiorców Krajowego Rejestru Sądowego pod numerem KRS: 0000088880, NIP: 549-000-24-41, REGON: 070440360 (dalej: „Administrator” lub „Spółka”).
+        <strong>{COMPANY_DATA.legalCompanyName.value}</strong> z siedzibą w Oświęcimiu, {COMPANY_DATA.registeredAddress.value.streetAddress}, {COMPANY_DATA.registeredAddress.value.postalCode} {COMPANY_DATA.registeredAddress.value.city}, wpisana do rejestru przedsiębiorców Krajowego Rejestru Sądowego pod numerem KRS: {COMPANY_DATA.KRS.value}, NIP: {COMPANY_DATA.NIP.formatted || COMPANY_DATA.NIP.value}, REGON: {COMPANY_DATA.REGON.value} (dalej: „Administrator” lub „Spółka”).
       </p>
       <div className="bg-slate-100/80 p-4 rounded-xl text-sm space-y-1.5 border border-slate-200/60 font-mono">
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-slate-600" />
-          <span>Siedziba: ul. Chemików 1, 32-600 Oświęcim, Polska</span>
+          <span>Siedziba: {COMPANY_DATA.registeredAddress.value.fullString}</span>
         </div>
         <div className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-slate-600" />
-          <span>Kontakt w sprawach ochrony danych: <a href="mailto:rodo@chemorozruch.pl" className="text-red-600 font-bold hover:underline">rodo@chemorozruch.pl</a> / <a href="mailto:biuro@chemorozruch.pl" className="text-red-600 hover:underline">biuro@chemorozruch.pl</a></span>
+          <span>Kontakt w sprawach ochrony danych: <a href={`mailto:${COMPANY_DATA.rodoEmail.value}`} className="text-red-600 font-bold hover:underline">{COMPANY_DATA.rodoEmail.value}</a> / <a href={`mailto:${COMPANY_DATA.generalEmail.value}`} className="text-red-600 hover:underline">{COMPANY_DATA.generalEmail.value}</a></span>
         </div>
         <div className="flex items-center gap-2">
           <Phone className="w-4 h-4 text-slate-600" />
-          <span>Telefon: +48 33 847 43 00</span>
+          <span>Telefon: {COMPANY_DATA.mainPhone.formatted || COMPANY_DATA.mainPhone.value}</span>
         </div>
       </div>
     </section>
@@ -348,7 +349,7 @@ const SygnalisciLegalText: React.FC = () => (
         4. Dedykowane Kanały Zgłoszeń Wewnętrznych
       </h2>
       <p className="text-sm sm:text-base">
-        W celu zagwarantowania pełnej poufności i bezpieczeństwa, CHEMOROZRUCH Sp. z o.o. ustanawia następujące niezależne kanały przyjmowania zgłoszeń:
+        W celu zagwarantowania pełnej poufności i bezpieczeństwa, {COMPANY_DATA.legalCompanyName.value} ustanawia następujące niezależne kanały przyjmowania zgłoszeń:
       </p>
 
       <div className="space-y-3">
@@ -359,8 +360,8 @@ const SygnalisciLegalText: React.FC = () => (
           </div>
           <p className="text-slate-700">
             Wiadomość e-mail na dedykowany, poufny adres skrzynki Koordynatora ds. Naruszeń:{' '}
-            <a href="mailto:sygnalisci@chemorozruch.pl" className="text-red-600 font-bold hover:underline">
-              sygnalisci@chemorozruch.pl
+            <a href={`mailto:${COMPANY_DATA.sygnalisciEmail.value}`} className="text-red-600 font-bold hover:underline">
+              {COMPANY_DATA.sygnalisciEmail.value}
             </a>
           </p>
         </div>
@@ -371,8 +372,8 @@ const SygnalisciLegalText: React.FC = () => (
             <span>Kanał pocztowy (tradycyjny):</span>
           </div>
           <p className="text-slate-700 font-mono text-xs leading-relaxed">
-            CHEMOROZRUCH Sp. z o.o.<br />
-            ul. Chemików 1, 32-600 Oświęcim<br />
+            {COMPANY_DATA.legalCompanyName.value}<br />
+            {COMPANY_DATA.registeredAddress.value.streetAddress}, {COMPANY_DATA.registeredAddress.value.postalCode} {COMPANY_DATA.registeredAddress.value.city}<br />
             z dopiskiem na kopercie: <strong>„ZGŁOSZENIE NARUSZENIA – POUFNE DO RĄK WŁASNYCH KOORDYNATORA DS. NARUSZEŃ”</strong>
           </p>
         </div>
@@ -447,7 +448,7 @@ const PrivacyLegalText: React.FC = () => (
         1. Informacje Ogólne
       </h2>
       <p className="text-sm sm:text-base leading-relaxed">
-        Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazywanych przez Użytkowników w związku z korzystaniem z serwisu internetowego CHEMOROZRUCH Sp. z o.o.
+        Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych przekazywanych przez Użytkowników w związku z korzystaniem z serwisu internetowego {COMPANY_DATA.legalCompanyName.value}
       </p>
     </section>
 

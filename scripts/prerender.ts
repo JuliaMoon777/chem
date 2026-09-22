@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { COMPANY_DATA } from '../src/data/companyData';
+import { COMPANY_DATA, getSafeOrganizationJsonLd } from '../src/data/companyData';
 import { SERVICE_PAGES_DATA, ServicePageData } from '../src/data/servicePagesData';
 import { Language, translations } from '../src/types';
 
@@ -87,83 +87,7 @@ function buildRoutes(): RouteDefinition[] {
     const structuredData = {
       '@context': 'https://schema.org',
       '@graph': [
-        {
-          '@type': 'Organization',
-          '@id': `${BASE_URL}/#organization`,
-          name: COMPANY_DATA.legalName,
-          alternateName: COMPANY_DATA.brandName,
-          url: `${BASE_URL}/`,
-          logo: `${BASE_URL}/images/chemorozruch_plant_topdown_1787214324065.jpg`,
-          description: 'Inżynieria i wykonawstwo przemysłowe: konstrukcje stalowe, aparaty ciśnieniowe, montaż instalacji przemysłowych oraz remonty technologiczne.',
-          telephone: COMPANY_DATA.contacts.generalHQ.phone,
-          email: COMPANY_DATA.contacts.generalHQ.email,
-          foundingDate: `${COMPANY_DATA.foundingYear}`,
-          vatID: COMPANY_DATA.vatId,
-          taxID: COMPANY_DATA.nip,
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
-            addressLocality: COMPANY_DATA.registeredAddress.city,
-            postalCode: COMPANY_DATA.registeredAddress.postalCode,
-            addressCountry: 'PL',
-          },
-          location: [
-            {
-              '@type': 'Place',
-              name: `${COMPANY_DATA.brandName} – Siedziba Główna Oświęcim`,
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
-                addressLocality: COMPANY_DATA.registeredAddress.city,
-                postalCode: COMPANY_DATA.registeredAddress.postalCode,
-                addressCountry: 'PL',
-              },
-              geo: {
-                '@type': 'GeoCoordinates',
-                latitude: COMPANY_DATA.coordinates.oswiecimHQ.lat,
-                longitude: COMPANY_DATA.coordinates.oswiecimHQ.lng,
-              },
-              telephone: COMPANY_DATA.contacts.generalHQ.phone,
-            },
-            {
-              '@type': 'Place',
-              name: `${COMPANY_DATA.brandName} – Oddział Płock`,
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: COMPANY_DATA.plockBranchAddress.streetAddress,
-                addressLocality: COMPANY_DATA.plockBranchAddress.city,
-                postalCode: COMPANY_DATA.plockBranchAddress.postalCode,
-                addressCountry: 'PL',
-              },
-              geo: {
-                '@type': 'GeoCoordinates',
-                latitude: COMPANY_DATA.coordinates.plockBranch.lat,
-                longitude: COMPANY_DATA.coordinates.plockBranch.lng,
-              },
-              telephone: COMPANY_DATA.contacts.plockBranch.phone,
-            },
-          ],
-          department: [
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.tendering.department,
-              email: COMPANY_DATA.contacts.tendering.email,
-              telephone: COMPANY_DATA.contacts.tendering.phone,
-            },
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.management.department,
-              email: COMPANY_DATA.contacts.management.email,
-              telephone: COMPANY_DATA.contacts.management.phone,
-            },
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.plockBranch.department,
-              email: COMPANY_DATA.contacts.plockBranch.email,
-              telephone: COMPANY_DATA.contacts.plockBranch.phone,
-            },
-          ],
-        },
+        getSafeOrganizationJsonLd(),
       ],
     };
 
@@ -176,11 +100,11 @@ function buildRoutes(): RouteDefinition[] {
         (item) => `
         <article class="discovery-item">
           <h3>${item.title}</h3>
-          <p class="tagline"><strong>${item.tagline}</strong></p>
+          ${item.tagline ? `<p class="tagline"><strong>${item.tagline}</strong></p>` : ''}
           <p>${item.description}</p>
-          <ul>
-            ${item.bulletPoints.map((bp) => `<li>${bp}</li>`).join('')}
-          </ul>
+          ${item.listIntro ? `<p><strong>${item.listIntro}</strong></p>` : ''}
+          ${item.bulletPoints && item.bulletPoints.length > 0 ? `<ul>${item.bulletPoints.map((bp) => `<li>${bp}</li>`).join('')}</ul>` : ''}
+          ${item.closingText ? `<p>${item.closingText}</p>` : ''}
         </article>
       `
       )
@@ -252,8 +176,8 @@ function buildRoutes(): RouteDefinition[] {
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#company-discovery-section">${t.footer.columns.navLinks.about}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#competencies-section">${t.footer.columns.navLinks.competencies}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#facilities-section">${t.footer.columns.navLinks.facilities}</a>
-            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#certificates-section">${t.footer.columns.navLinks.certificates}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#realizations-section">${t.footer.columns.navLinks.realizations}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#certificates-section">${t.footer.columns.navLinks.certificates}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#locations-section">${t.footer.columns.navLinks.locations}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#kontakt-cta">${t.footer.columns.navLinks.contact}</a>
           </nav>
@@ -390,11 +314,9 @@ function buildRoutes(): RouteDefinition[] {
             description: meta.description,
             provider: {
               '@type': 'Organization',
-              name: COMPANY_DATA.legalName,
-              url: BASE_URL,
-              foundingDate: `${COMPANY_DATA.foundingYear}`,
-              taxID: COMPANY_DATA.nip,
-              vatID: COMPANY_DATA.vatId,
+              '@id': `${BASE_URL}/#organization`,
+              name: COMPANY_DATA.brandName.value,
+              url: `${BASE_URL}/`,
             },
             areaServed: ['Polska', 'Niemcy', 'Unia Europejska'],
             serviceType: meta.h1,

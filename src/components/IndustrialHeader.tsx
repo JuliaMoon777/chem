@@ -57,7 +57,7 @@ export const IndustrialHeader: React.FC<IndustrialHeaderProps> = ({
           </div>
         </div>
 
-        {/* Center: Desktop Quick Section Navigation (O firmie, Oferta, Certyfikaty, Realizacje, Kontakt) */}
+        {/* Center: Desktop Quick Section Navigation (O firmie, Oferta, Realizacje, Certyfikaty, Kontakt) */}
         <nav
           aria-label="Główna nawigacja"
           className="hidden lg:flex items-center gap-1 xl:gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200/70 shadow-xs"
@@ -65,8 +65,8 @@ export const IndustrialHeader: React.FC<IndustrialHeaderProps> = ({
           {[
             { id: 'company-discovery-section', label: { PL: 'O firmie', EN: 'About', DE: 'Über uns', UA: 'Про нас' } },
             { id: 'competencies-section', label: { PL: 'Oferta', EN: 'Offer', DE: 'Angebot', UA: 'Послуги' } },
-            { id: 'certyfikaty-jakosc', label: { PL: 'Certyfikaty', EN: 'Certificates', DE: 'Zertifikate', UA: 'Сертифікати' } },
             { id: 'realizacje', label: { PL: 'Realizacje', EN: 'Realizations', DE: 'Referenzen', UA: 'Об’єкти' } },
+            { id: 'certyfikaty-jakosc', label: { PL: 'Certyfikaty', EN: 'Certificates', DE: 'Zertifikate', UA: 'Сертифікати' } },
             { id: 'kontakt-cta', label: { PL: 'Kontakt', EN: 'Contact', DE: 'Kontakt', UA: 'Контакти' } },
           ].map((item) => (
             <a
@@ -120,7 +120,7 @@ export const IndustrialHeader: React.FC<IndustrialHeaderProps> = ({
             })}
           </nav>
 
-          {/* One CTA button: Wyślij zapytanie */}
+          {/* One CTA button: Formularz kontaktowy */}
           <button
             id="header-inquiry-btn"
             onClick={onOpenInquiry}

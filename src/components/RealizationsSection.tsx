@@ -1,9 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Language, translations, RealizationProjectItem } from '../types';
-
-gsap.registerPlugin(ScrollTrigger);
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  MapPin,
+  Tag,
+} from 'lucide-react';
+import { Language, translations } from '../types';
+import { REALIZATIONS_GALLERY, RealizationGalleryItem } from '../data/realizationsData';
 
 interface RealizationsSectionProps {
   currentLang: Language;
@@ -11,115 +16,94 @@ interface RealizationsSectionProps {
 
 export const RealizationsSection: React.FC<RealizationsSectionProps> = ({ currentLang }) => {
   const t = translations[currentLang].realizations;
-  const projects: RealizationProjectItem[] = t.projects;
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
-  const [activeProjectIndex, setActiveProjectIndex] = useState<number>(0);
-  const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
+  const items = REALIZATIONS_GALLERY;
 
-  // References
-  const sectionRef = useRef<HTMLElement>(null);
-  const introEyebrowRef = useRef<HTMLDivElement>(null);
-  const introHeadingRef = useRef<HTMLHeadingElement>(null);
-  const introSupportingRef = useRef<HTMLParagraphElement>(null);
-  const tabRailRef = useRef<HTMLDivElement>(null);
-  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+  };
 
-  // Simple, non-intrusive entrance animation on scroll into view
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+  }, []);
+
+  const showPrev = useCallback(() => {
+    setLightboxIndex((prev) => {
+      if (prev === null) return null;
+      return prev === 0 ? items.length - 1 : prev - 1;
+    });
+  }, [items.length]);
+
+  const showNext = useCallback(() => {
+    setLightboxIndex((prev) => {
+      if (prev === null) return null;
+      return prev === items.length - 1 ? 0 : prev + 1;
+    });
+  }, [items.length]);
+
+  // Lock body scroll while lightbox is open and handle keyboard events
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (lightboxIndex === null) return;
 
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current || prefersReducedMotion) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
-      const introTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 85%',
-          once: true,
-        },
-      });
-
-      if (introEyebrowRef.current) {
-        introTl.fromTo(
-          introEyebrowRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-        );
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowLeft') {
+        showPrev();
+      } else if (e.key === 'ArrowRight') {
+        showNext();
       }
-      if (introHeadingRef.current) {
-        introTl.fromTo(
-          introHeadingRef.current,
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-          '-=0.3'
-        );
-      }
-      if (introSupportingRef.current) {
-        introTl.fromTo(
-          introSupportingRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-          '-=0.3'
-        );
-      }
-    }, sectionRef);
+    };
 
-    return () => ctx.revert();
-  }, [currentLang]);
+    window.addEventListener('keydown', handleKeyDown);
 
-  // Keep active index in bounds if language changes
-  const activeIndex = Math.min(activeProjectIndex, Math.max(0, projects.length - 1));
-  const activeProject = projects[activeIndex] || projects[0];
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lightboxIndex, closeLightbox, showPrev, showNext]);
 
-  const handleSelectTab = (index: number, e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setActiveProjectIndex(index);
-
-    // Scroll only the horizontal tab rail container if the tab is partially offscreen
-    const buttonEl = tabButtonRefs.current[index];
-    const railEl = tabRailRef.current;
-    if (buttonEl && railEl) {
-      const buttonLeft = buttonEl.offsetLeft;
-      const buttonWidth = buttonEl.offsetWidth;
-      const railWidth = railEl.offsetWidth;
-      const scrollTarget = buttonLeft - railWidth / 2 + buttonWidth / 2;
-      railEl.scrollTo({ left: Math.max(0, scrollTarget), behavior: 'smooth' });
-    }
+  // Touch gesture handlers for mobile swipe in Lightbox
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, currentIndex: number) => {
-    let targetIndex = currentIndex;
-    if (e.key === 'ArrowRight') {
-      targetIndex = (currentIndex + 1) % projects.length;
-    } else if (e.key === 'ArrowLeft') {
-      targetIndex = (currentIndex - 1 + projects.length) % projects.length;
-    } else if (e.key === 'Home') {
-      targetIndex = 0;
-    } else if (e.key === 'End') {
-      targetIndex = projects.length - 1;
-    } else {
-      return;
-    }
-    e.preventDefault();
-    handleSelectTab(targetIndex);
-    tabButtonRefs.current[targetIndex]?.focus();
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
   };
 
-  const handleToggleDetails = (id: string) => {
-    setExpandedProjectId((prev) => (prev === id ? null : id));
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      showNext();
+    } else if (isRightSwipe) {
+      showPrev();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
   };
+
+  const currentItem: RealizationGalleryItem | null =
+    lightboxIndex !== null ? items[lightboxIndex] : null;
 
   return (
     <section
       id="realizacje"
-      ref={sectionRef}
-      className="relative w-full bg-[#F7F7F3] text-slate-900 overflow-hidden py-16 sm:py-20 lg:py-24"
+      className="relative w-full bg-[#F7F7F3] text-slate-900 overflow-hidden py-16 sm:py-20 lg:py-24 border-t border-slate-200/80"
     >
       {/* Background Subtle Architectural Grid lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-30 select-none">
+      <div className="absolute inset-0 pointer-events-none opacity-25 select-none">
         <div className="max-w-7xl mx-auto h-full px-6 sm:px-8 lg:px-12 flex justify-between">
           <div className="w-px h-full bg-slate-300/40" />
           <div className="w-px h-full bg-slate-300/25 hidden md:block" />
@@ -128,212 +112,260 @@ export const RealizationsSection: React.FC<RealizationsSectionProps> = ({ curren
         </div>
       </div>
 
-      {/* Main Container */}
       <div className="relative max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
-        {/* 1. INTRO (Clean, Airy Editorial Header) */}
-        <div className="max-w-3xl mb-8 lg:mb-10">
-          <div ref={introEyebrowRef} className="mb-3">
-            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
+        {/* 1. INTRO (Clean, Editorial Header) */}
+        <div className="max-w-3xl mb-10 sm:mb-12 lg:mb-14">
+          <div className="mb-3">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-red-600 uppercase">
               {t.eyebrow}
             </span>
           </div>
 
-          <h2
-            ref={introHeadingRef}
-            className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-slate-950 tracking-tight leading-[1.15]"
-          >
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-slate-950 tracking-tight leading-[1.15]">
             {t.heading}
           </h2>
 
-          <p
-            ref={introSupportingRef}
-            className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-relaxed"
-          >
+          <p className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
             {t.supporting}
           </p>
         </div>
 
-        {/* 2. CATEGORY TABS RAIL (Fully interactive, horizontally swipeable on mobile, no page jumps) */}
-        <div className="mb-8 lg:mb-10 pb-2 border-b border-slate-200/90">
-          <div
-            ref={tabRailRef}
-            role="tablist"
-            aria-label={t.eyebrow}
-            className="flex items-center gap-3 sm:gap-6 lg:gap-8 overflow-x-auto scrollbar-none py-1 -mx-2 px-2"
-            style={{ WebkitOverflowScrolling: 'touch' }}
-          >
-            {projects.map((proj, idx) => {
-              const isActive = idx === activeIndex;
+        {/* 2. GALLERY GRID (8 High-Quality Slots with Aspect Ratio & Lazy Loading) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {items.map((item, index) => {
+            const hasTitle = Boolean(item.title[currentLang]);
+            const hasCategory = Boolean(item.category[currentLang]);
+            const hasLocation = Boolean(item.location[currentLang]);
+            const numLabel = String(index + 1).padStart(2, '0');
 
-              return (
-                <button
-                  key={proj.id}
-                  ref={(el) => { tabButtonRefs.current[idx] = el; }}
-                  role="tab"
-                  type="button"
-                  id={`project-tab-${proj.id}`}
-                  aria-selected={isActive}
-                  aria-controls={`project-panel-${proj.id}`}
-                  tabIndex={isActive ? 0 : -1}
-                  onClick={(e) => handleSelectTab(idx, e)}
-                  onKeyDown={(e) => handleKeyDown(e, idx)}
-                  className="flex-shrink-0 group flex flex-col gap-2.5 text-left cursor-pointer pb-2 transition-all outline-none"
-                >
-                  {/* Tab Progress / Active Line */}
-                  <div className="relative w-full min-w-[120px] sm:min-w-[150px] lg:min-w-0 h-[2px] bg-slate-200 overflow-hidden rounded-full">
-                    <div
-                      className={`h-full transition-all duration-300 ease-out ${
-                        isActive
-                          ? 'bg-red-600 w-full'
-                          : 'w-0 bg-transparent group-hover:w-full group-hover:bg-slate-300'
-                      }`}
-                    />
-                  </div>
+            return (
+              <div
+                key={item.id}
+                id={`gallery-item-${item.id}`}
+                onClick={() => openLightbox(index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openLightbox(index);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Otwórz zdjęcie ${numLabel}`}
+                className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-slate-900 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+              >
+                {/* Image Container with Fixed Aspect Ratio */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-800">
+                  <img
+                    src={item.src}
+                    alt={item.alt[currentLang] || `Realizacja ${numLabel}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
 
-                  {/* Tab Label */}
-                  <div className="flex items-center text-[11px] sm:text-xs font-mono">
-                    <span
-                      className={`uppercase tracking-wider whitespace-nowrap transition-colors duration-200 ${
-                        isActive
-                          ? 'text-slate-950 font-bold'
-                          : 'text-slate-500 group-hover:text-slate-800 font-medium'
-                      }`}
-                    >
-                      {proj.category}
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity duration-300" />
+
+                  {/* Number Badge (Top-Left) */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="font-mono text-[11px] font-semibold text-white/95 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 tracking-wider">
+                      {numLabel}
                     </span>
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* 3. ACTIVE PROJECT TABPANEL (Unified Responsive Showcase, ~40% Info / ~60% Image) */}
-        <div
-          role="tabpanel"
-          id={`project-panel-${activeProject.id}`}
-          aria-labelledby={`project-tab-${activeProject.id}`}
-          className="relative w-full"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-start">
-            {/* Project Info Column (~5 Cols on desktop, full width on mobile) */}
-            <div className="lg:col-span-5 xl:col-span-5 min-h-[280px] flex flex-col justify-between">
-              <div key={activeProject.id} className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
-                {/* Category & Location */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-[11px] font-mono tracking-wider uppercase text-red-600 font-semibold px-2.5 py-1 rounded bg-red-50/80 border border-red-200/60">
-                    {activeProject.category}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                    <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>{activeProject.location}</span>
-                  </div>
-                </div>
-
-                {/* Project Title */}
-                <h3 className="text-xl sm:text-2xl xl:text-3xl font-bold text-slate-950 tracking-tight leading-snug">
-                  {activeProject.title}
-                </h3>
-
-                {/* Summary Text */}
-                <p className="text-sm xl:text-base text-slate-600 font-normal leading-relaxed">
-                  {activeProject.summary}
-                </p>
-
-                {/* Expandable Technical Details */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleDetails(activeProject.id)}
-                    className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-slate-900 hover:text-red-600 transition-colors py-1 cursor-pointer"
-                  >
-                    <span>
-                      {expandedProjectId === activeProject.id
-                        ? t.hideDetails
-                        : t.expandDetails}
-                    </span>
-                  </button>
-
-                  {/* Expandable Details Box */}
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-out ${
-                      expandedProjectId === activeProject.id
-                        ? 'max-h-72 opacity-100 mt-3'
-                        : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <div className="p-4 rounded-xl bg-white border border-slate-200/90 text-xs space-y-2.5 shadow-xs">
-                      <div>
-                        <span className="font-mono text-[10px] uppercase text-slate-400 block mb-0.5">
-                          {t.scopeLabel}
-                        </span>
-                        <span className="text-slate-700 leading-relaxed block font-sans">
-                          {activeProject.details.scope}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                        <div>
-                          <span className="font-mono text-[10px] uppercase text-slate-400 block mb-0.5">
-                            {t.industryLabel}
-                          </span>
-                          <span className="text-slate-900 font-medium truncate block font-sans">
-                            {activeProject.details.industry}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-mono text-[10px] uppercase text-slate-400 block mb-0.5">
-                            {t.yearLabel}
-                          </span>
-                          <span className="text-slate-900 font-medium block font-sans">
-                            {activeProject.details.year}
-                          </span>
-                        </div>
-                      </div>
+                  {/* Zoom Action Icon (Top-Right on hover) */}
+                  <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+                    <div className="w-8 h-8 rounded-lg bg-white/90 text-slate-900 flex items-center justify-center shadow-md">
+                      <Maximize2 className="w-4 h-4" />
                     </div>
                   </div>
+
+                  {/* Optional Metadata Overlay (Bottom) - Appears dynamically when populated */}
+                  {(hasTitle || hasCategory || hasLocation) && (
+                    <div className="absolute bottom-0 inset-x-0 p-4 z-10 space-y-1 text-white">
+                      {hasCategory && (
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-red-400 font-semibold block">
+                          {item.category[currentLang]}
+                        </span>
+                      )}
+                      {hasTitle && (
+                        <h3 className="text-sm font-bold leading-tight line-clamp-1">
+                          {item.title[currentLang]}
+                        </h3>
+                      )}
+                      {hasLocation && (
+                        <p className="text-[11px] text-slate-300 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span>{item.location[currentLang]}</span>
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-
-            {/* Dominant Image Column (~7 Cols on desktop, full width on mobile) */}
-            <div className="lg:col-span-7 xl:col-span-7">
-              <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-200 shadow-md border border-slate-200/90 group">
-                {projects.map((proj, idx) => {
-                  const isCurrent = idx === activeIndex;
-
-                  return (
-                    <div
-                      key={proj.id}
-                      className={`absolute inset-0 transition-all duration-500 ease-out ${
-                        isCurrent
-                          ? 'opacity-100 scale-100 z-10 pointer-events-auto'
-                          : 'opacity-0 scale-[1.015] z-0 pointer-events-none'
-                      }`}
-                    >
-                      <img
-                        src={proj.image}
-                        alt={proj.title}
-                        loading={idx === 0 ? 'eager' : 'lazy'}
-                        className="w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-[1.02]"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-              {/* Subtle external caption */}
-              <p className="mt-2.5 text-xs text-slate-500 font-normal">
-                {activeProject.title} – {activeProject.location}
-              </p>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         {/* Transition Divider Line */}
         <div className="w-full h-px bg-slate-200/80 mt-12 sm:mt-16" />
       </div>
+
+      {/* 3. LIGHTBOX MODAL */}
+      {lightboxIndex !== null && currentItem && (
+        <div
+          id="realizations-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Podgląd realizacji"
+          onClick={closeLightbox}
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 animate-[fadeIn_0.2s_ease-out]"
+        >
+          {/* Top Bar (Counter & Close) */}
+          <div
+            className="w-full max-w-7xl mx-auto flex items-center justify-between text-white z-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-xs sm:text-sm tracking-widest text-slate-400 uppercase font-medium">
+                {String(lightboxIndex + 1).padStart(2, '0')} /{' '}
+                {String(items.length).padStart(2, '0')}
+              </span>
+              <span className="hidden sm:inline text-xs text-slate-500 font-mono">
+                | CHEMOROZRUCH
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="hidden md:inline text-[11px] text-slate-400 font-mono mr-2">
+                [ESC] Zamknij | [← / →] Nawigacja
+              </span>
+              <button
+                type="button"
+                id="lightbox-close-btn"
+                onClick={closeLightbox}
+                aria-label="Zamknij podgląd"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Main Visual Center (Prev, Image, Next) */}
+          <div
+            className="relative flex-1 w-full max-w-6xl mx-auto flex items-center justify-center my-2 sm:my-4"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Prev Button */}
+            <button
+              type="button"
+              id="lightbox-prev-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                showPrev();
+              }}
+              aria-label="Poprzednie zdjęcie"
+              className="absolute left-0 sm:left-2 lg:-left-12 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white border border-white/10 flex items-center justify-center transition-all cursor-pointer shadow-lg outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Active Image Box */}
+            <div className="relative max-h-[70vh] sm:max-h-[75vh] w-full flex items-center justify-center select-none">
+              <img
+                key={currentItem.id}
+                src={currentItem.src}
+                alt={currentItem.alt[currentLang] || `Realizacja ${lightboxIndex + 1}`}
+                decoding="async"
+                className="max-h-[70vh] sm:max-h-[75vh] max-w-[90vw] sm:max-w-[85vw] object-contain rounded-xl shadow-2xl border border-white/10"
+              />
+            </div>
+
+            {/* Next Button */}
+            <button
+              type="button"
+              id="lightbox-next-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                showNext();
+              }}
+              aria-label="Następne zdjęcie"
+              className="absolute right-0 sm:right-2 lg:-right-12 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white border border-white/10 flex items-center justify-center transition-all cursor-pointer shadow-lg outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Bottom Bar: Metadata / Thumbnails */}
+          <div
+            className="w-full max-w-4xl mx-auto z-20 text-center space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Optional Title/Description if provided */}
+            {(currentItem.title[currentLang] ||
+              currentItem.category[currentLang] ||
+              currentItem.location[currentLang] ||
+              currentItem.description[currentLang]) && (
+              <div className="bg-slate-900/80 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4 text-left max-w-2xl mx-auto">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  {currentItem.category[currentLang] && (
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-red-400 font-semibold px-2 py-0.5 rounded bg-red-950/50 border border-red-800/40">
+                      {currentItem.category[currentLang]}
+                    </span>
+                  )}
+                  {currentItem.location[currentLang] && (
+                    <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
+                      <MapPin className="w-3 h-3 text-slate-500" />
+                      {currentItem.location[currentLang]}
+                    </span>
+                  )}
+                </div>
+                {currentItem.title[currentLang] && (
+                  <h4 className="text-sm sm:text-base font-bold text-white">
+                    {currentItem.title[currentLang]}
+                  </h4>
+                )}
+                {currentItem.description[currentLang] && (
+                  <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                    {currentItem.description[currentLang]}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Thumbnail Navigation Strip */}
+            <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 scrollbar-none max-w-full">
+              {items.map((item, idx) => {
+                const isActive = idx === lightboxIndex;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setLightboxIndex(idx)}
+                    aria-label={`Przejdź do zdjęcia ${idx + 1}`}
+                    className={`relative w-12 h-9 sm:w-14 sm:h-10 rounded-md overflow-hidden shrink-0 transition-all cursor-pointer border ${
+                      isActive
+                        ? 'border-red-500 ring-2 ring-red-500/50 scale-105 opacity-100'
+                        : 'border-white/10 opacity-50 hover:opacity-80'
+                    }`}
+                  >
+                    <img
+                      src={item.src}
+                      alt={`Miniatura ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

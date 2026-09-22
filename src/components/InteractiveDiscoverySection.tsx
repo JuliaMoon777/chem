@@ -203,38 +203,61 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <div className="pl-0 sm:pl-10 space-y-4">
-                        {/* Tagline */}
-                        <p className="font-poppins font-semibold text-sm sm:text-base text-slate-800 leading-snug">
-                          {item.tagline}
-                        </p>
+                      <div className="pl-0 sm:pl-10 space-y-3.5 sm:space-y-4">
+                        {/* Optional Tagline */}
+                        {item.tagline && (
+                          <p className="font-poppins font-semibold text-sm sm:text-base text-slate-800 leading-snug">
+                            {item.tagline}
+                          </p>
+                        )}
 
-                        {/* Description */}
-                        <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed">
-                          {item.description}
-                        </p>
+                        {/* Description / Main paragraph */}
+                        {item.description && (
+                          <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed">
+                            {item.description}
+                          </p>
+                        )}
+
+                        {/* Optional List Intro */}
+                        {item.listIntro && (
+                          <p className="text-sm sm:text-base text-slate-800 font-medium pt-1">
+                            {item.listIntro}
+                          </p>
+                        )}
 
                         {/* Verified Features / Bullet Points */}
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-                          {item.bulletPoints.map((bullet, bIdx) => (
-                            <li
-                              key={bIdx}
-                              className="flex items-center gap-2 text-xs sm:text-sm text-slate-800"
-                            >
-                              <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0" />
-                              <span>{bullet}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        {item.bulletPoints && item.bulletPoints.length > 0 && (
+                          <ul className="space-y-2.5 pt-1">
+                            {item.bulletPoints.map((bullet, bIdx) => (
+                              <li
+                                key={bIdx}
+                                className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 leading-relaxed"
+                              >
+                                <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                                <span>{bullet}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        {/* Optional Closing Paragraph */}
+                        {item.closingText && (
+                          <p className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed pt-1.5">
+                            {item.closingText}
+                          </p>
+                        )}
 
                         {/* Mobile Image preview if expanded on mobile */}
                         <div className="block lg:hidden pt-4">
-                          <div className="w-full h-56 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-slate-200">
+                          <div className="w-full h-56 sm:h-64 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-slate-200 aspect-[16/10]">
                             <img
                               src={item.image}
                               alt={item.imageAlt}
-                              className="w-full h-full object-cover"
+                              width={800}
+                              height={500}
                               loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                           <p className="mt-2 text-xs text-slate-500 font-normal">
@@ -254,7 +277,7 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
             ref={imageContainerRef}
             className="hidden lg:block lg:col-span-5 sticky top-32"
           >
-            <div className="relative w-full h-[520px] rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.05)]">
+            <div className="relative w-full h-[520px] rounded-2xl overflow-hidden bg-slate-200 border border-slate-200/90 shadow-[0_12px_40px_rgba(0,0,0,0.05)] aspect-[4/3]">
               {/* Parallax inner container */}
               <div
                 ref={imageParallaxRef}
@@ -276,8 +299,11 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                       <img
                         src={item.image}
                         alt={item.imageAlt}
-                        className="w-full h-full object-cover"
+                        width={1200}
+                        height={800}
                         loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
                         draggable={false}
                       />
                     </div>
@@ -288,7 +314,8 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
             {/* Subtle caption outside the image */}
             <div className="mt-3 px-1">
               <p className="text-xs text-slate-500 font-normal">
-                {currentItem.title} – {currentItem.tagline}
+                {currentItem.title}
+                {currentItem.tagline ? ` – ${currentItem.tagline}` : ''}
               </p>
             </div>
           </div>

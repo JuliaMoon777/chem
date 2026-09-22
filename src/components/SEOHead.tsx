@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Language } from '../types';
-import { COMPANY_DATA } from '../data/companyData';
+import { COMPANY_DATA, getSafeOrganizationJsonLd } from '../data/companyData';
 
 export interface SEOProps {
   title: string;
@@ -81,7 +81,7 @@ export const SEOHead: React.FC<SEOProps> = ({
     setMetaTag('property', 'og:url', canonicalUrl);
     setMetaTag('property', 'og:type', ogType);
     setMetaTag('property', 'og:image', ogImage);
-    setMetaTag('property', 'og:site_name', COMPANY_DATA.brandName);
+    setMetaTag('property', 'og:site_name', COMPANY_DATA.brandName.value);
     
     const localeMap: Record<Language, string> = {
       PL: 'pl_PL',
@@ -129,83 +129,7 @@ export const SEOHead: React.FC<SEOProps> = ({
     const jsonLdData: any = {
       '@context': 'https://schema.org',
       '@graph': [
-        {
-          '@type': 'Organization',
-          '@id': 'https://chemorozruch.pl/#organization',
-          name: COMPANY_DATA.legalName,
-          alternateName: COMPANY_DATA.brandName,
-          url: 'https://chemorozruch.pl/',
-          logo: 'https://chemorozruch.pl/images/chemorozruch_plant_topdown_1787214324065.jpg',
-          description: 'Inżynieria i wykonawstwo przemysłowe: konstrukcje stalowe, aparaty ciśnieniowe, montaż instalacji przemysłowych oraz remonty technologiczne.',
-          telephone: COMPANY_DATA.contacts.generalHQ.phone,
-          email: COMPANY_DATA.contacts.generalHQ.email,
-          foundingDate: `${COMPANY_DATA.foundingYear}`,
-          vatID: COMPANY_DATA.vatId,
-          taxID: COMPANY_DATA.nip,
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
-            addressLocality: COMPANY_DATA.registeredAddress.city,
-            postalCode: COMPANY_DATA.registeredAddress.postalCode,
-            addressCountry: 'PL',
-          },
-          location: [
-            {
-              '@type': 'Place',
-              name: `${COMPANY_DATA.brandName} – Siedziba Główna Oświęcim`,
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: COMPANY_DATA.registeredAddress.streetAddress,
-                addressLocality: COMPANY_DATA.registeredAddress.city,
-                postalCode: COMPANY_DATA.registeredAddress.postalCode,
-                addressCountry: 'PL',
-              },
-              geo: {
-                '@type': 'GeoCoordinates',
-                latitude: COMPANY_DATA.coordinates.oswiecimHQ.lat,
-                longitude: COMPANY_DATA.coordinates.oswiecimHQ.lng,
-              },
-              telephone: COMPANY_DATA.contacts.generalHQ.phone,
-            },
-            {
-              '@type': 'Place',
-              name: `${COMPANY_DATA.brandName} – Oddział Płock`,
-              address: {
-                '@type': 'PostalAddress',
-                streetAddress: COMPANY_DATA.plockBranchAddress.streetAddress,
-                addressLocality: COMPANY_DATA.plockBranchAddress.city,
-                postalCode: COMPANY_DATA.plockBranchAddress.postalCode,
-                addressCountry: 'PL',
-              },
-              geo: {
-                '@type': 'GeoCoordinates',
-                latitude: COMPANY_DATA.coordinates.plockBranch.lat,
-                longitude: COMPANY_DATA.coordinates.plockBranch.lng,
-              },
-              telephone: COMPANY_DATA.contacts.plockBranch.phone,
-            },
-          ],
-          department: [
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.tendering.department,
-              email: COMPANY_DATA.contacts.tendering.email,
-              telephone: COMPANY_DATA.contacts.tendering.phone,
-            },
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.management.department,
-              email: COMPANY_DATA.contacts.management.email,
-              telephone: COMPANY_DATA.contacts.management.phone,
-            },
-            {
-              '@type': 'ContactPoint',
-              contactType: COMPANY_DATA.contacts.plockBranch.department,
-              email: COMPANY_DATA.contacts.plockBranch.email,
-              telephone: COMPANY_DATA.contacts.plockBranch.phone,
-            },
-          ],
-        },
+        getSafeOrganizationJsonLd(),
       ],
     };
 

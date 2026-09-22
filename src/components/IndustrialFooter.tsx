@@ -12,12 +12,18 @@ interface IndustrialFooterProps {
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
   onOpenLegal?: (doc: 'rodo' | 'sygnalisci' | 'polityka-prywatnosci') => void;
+  onNavigateNews?: () => void;
+  onNavigateCareers?: () => void;
+  onNavigateService?: (slug: string) => void;
 }
 
 export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
   currentLang,
   onLanguageChange,
   onOpenLegal,
+  onNavigateNews,
+  onNavigateCareers,
+  onNavigateService,
 }) => {
   const t = translations[currentLang].footer;
   const languages: Language[] = ['PL', 'EN', 'DE', 'UA'];
@@ -142,7 +148,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-poppins font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-tight">
-                {COMPANY_DATA.brandName}
+                {COMPANY_DATA.brandName.value}
               </span>
               <span className="text-xs text-slate-500 font-medium tracking-wide">
                 {t.companySub}
@@ -233,7 +239,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
             </div>
           </div>
 
-          {/* COLUMN 2: NAWIGACJA — CZĘŚĆ 1 */}
+          {/* COLUMN 2: NAWIGACJA GŁÓWNA */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {t.columns.navTitle}
@@ -261,28 +267,38 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
               </a>
 
               <a
-                href="#tech-facilities-section"
-                onClick={(e) => scrollToSection(e, 'tech-facilities-section')}
-                className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors"
+                href="/aktualnosci/"
+                onClick={(e) => {
+                  if (onNavigateNews) {
+                    e.preventDefault();
+                    onNavigateNews();
+                  }
+                }}
+                className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors font-medium"
               >
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
-                  {t.columns.navLinks.facilities}
+                  {currentLang === 'PL' ? 'Aktualności' : currentLang === 'EN' ? 'News' : currentLang === 'DE' ? 'Aktuelles' : 'Новини'}
                 </span>
               </a>
 
               <a
-                href="#process-section"
-                onClick={(e) => scrollToSection(e, 'process-section')}
-                className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors"
+                href="/kariera/"
+                onClick={(e) => {
+                  if (onNavigateCareers) {
+                    e.preventDefault();
+                    onNavigateCareers();
+                  }
+                }}
+                className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors font-medium"
               >
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
-                  {t.columns.navLinks.process}
+                  {currentLang === 'PL' ? 'Kariera' : currentLang === 'EN' ? 'Careers' : currentLang === 'DE' ? 'Karriere' : 'Кар’єра'}
                 </span>
               </a>
             </nav>
           </div>
 
-          {/* COLUMN 3: NAWIGACJA — CZĘŚĆ 2 / REALIZACJE & ODDZIAŁY */}
+          {/* COLUMN 3: STRUKTURA / REALIZACJE & ODDZIAŁY */}
           <div className="lg:col-span-3 space-y-3">
             <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
               {currentLang === 'PL' ? 'STRUKTURA' : currentLang === 'EN' ? 'PORTFOLIO' : currentLang === 'DE' ? 'STRUKTUR' : 'ПОРТФОЛІО'}
@@ -290,8 +306,8 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
             <nav className="flex flex-col space-y-2.5 text-sm">
               <a
-                href="#realizations-section"
-                onClick={(e) => scrollToSection(e, 'realizations-section')}
+                href="#realizacje"
+                onClick={(e) => scrollToSection(e, 'realizacje')}
                 className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors"
               >
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
@@ -300,8 +316,8 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
               </a>
 
               <a
-                href="#certificates-quality-section"
-                onClick={(e) => scrollToSection(e, 'certificates-quality-section')}
+                href="#certyfikaty-jakosc"
+                onClick={(e) => scrollToSection(e, 'certyfikaty-jakosc')}
                 className="group inline-flex items-center text-slate-700 hover:text-red-600 transition-colors"
               >
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
@@ -459,7 +475,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
         >
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
             <span>
-              © {new Date().getFullYear()} {COMPANY_DATA.brandName} • {COMPANY_DATA.legalName}
+              © {new Date().getFullYear()} {COMPANY_DATA.brandName.value} • {COMPANY_DATA.legalCompanyName.value}
             </span>
             <span>•</span>
             <span>{t.allRightsReserved}</span>

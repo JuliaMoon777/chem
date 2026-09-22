@@ -4,8 +4,8 @@ import { IndustrialHeader } from './IndustrialHeader';
 import { IndustrialHeroParallax } from './IndustrialHeroParallax';
 import { AnimatedNumbersSection } from './AnimatedNumbersSection';
 import { InteractiveDiscoverySection } from './InteractiveDiscoverySection';
+import { TrustedBySection } from './TrustedBySection';
 import { CompetenciesSection } from './CompetenciesSection';
-import { TechFacilitiesSection } from './TechFacilitiesSection';
 import { RealizationsSection } from './RealizationsSection';
 import { CertificatesSection } from './CertificatesSection';
 import { LocationsSection } from './LocationsSection';
@@ -18,6 +18,8 @@ interface ParallaxSiteProps {
   currentLang?: Language;
   onLanguageChange?: (lang: Language) => void;
   onNavigateService?: (slug: string) => void;
+  onNavigateNews?: () => void;
+  onNavigateCareers?: () => void;
   onOpenLegal?: (doc: LegalDocType) => void;
 }
 
@@ -25,6 +27,8 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
   currentLang: externalLang,
   onLanguageChange: externalOnLanguageChange,
   onNavigateService,
+  onNavigateNews,
+  onNavigateCareers,
   onOpenLegal: externalOnOpenLegal,
 }) => {
   const [internalLang, setInternalLang] = useState<Language>('PL');
@@ -98,10 +102,7 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
         onOpenInquiry={(subj) => handleOpenInquiry(subj)}
       />
 
-      {/* 6. FOURTH PART — ZAPLECZE TECHNOLOGICZNE (Editorial composition, dominant image, supporting equipment & click reveals) */}
-      <TechFacilitiesSection currentLang={currentLang} />
-
-      {/* 7. FIFTH PART — REALIZACJE (Cinematic project showcase, one dominant project at a time, scroll transitions & minimal info) */}
+      {/* 6. FOURTH PART — REALIZACJE (Cinematic project showcase, one dominant project at a time, scroll transitions & minimal info) */}
       <RealizationsSection currentLang={currentLang} />
 
       {/* 8. SIXTH PART — CERTYFIKATY / JAKOŚĆ (Editorial standards index, calm rhythm, animated dividers & expand details) */}
@@ -121,6 +122,8 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
         currentLang={currentLang}
         onLanguageChange={handleLanguageChange}
         onOpenLegal={(doc) => handleOpenLegalDoc(doc)}
+        onNavigateNews={onNavigateNews}
+        onNavigateCareers={onNavigateCareers}
       />
 
       {/* 12. GLOBAL FLOATING NAVIGATION CAPSULE (Translucent organic dock on desktop / pill & sheet on mobile) */}

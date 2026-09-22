@@ -4,6 +4,13 @@ import { ParallaxSite } from './components/ParallaxSite';
 import { ServiceLandingPage } from './components/ServiceLandingPage';
 import { LegalDocType, LegalModal } from './components/LegalModal';
 import { SEOHead } from './components/SEOHead';
+import { NewsListPage } from './components/cms/NewsListPage';
+import { NewsDetailPage } from './components/cms/NewsDetailPage';
+import { CareersListPage } from './components/cms/CareersListPage';
+import { CareersDetailPage } from './components/cms/CareersDetailPage';
+import { AdminLoginModal } from './components/cms/AdminLoginModal';
+import { AdminPanel } from './components/cms/AdminPanel';
+import { cmsService } from './services/cmsService';
 
 // 1. New Dedicated SEO Landing Pages (Target keywords & organic visibility)
 const SERVICE_ROUTES: Record<string, string> = {
@@ -13,7 +20,7 @@ const SERVICE_ROUTES: Record<string, string> = {
   'montaz-urzadzen-przemyslowych': 'montaz-urzadzen-przemyslowych',
 };
 
-// 2. Verified Legal Document Direct Routes (Must remain functional, accessible, directly addressable)
+// 2. Verified Legal Document Direct Routes
 const LEGAL_ROUTES: Record<string, LegalDocType> = {
   'rodo': 'rodo',
   'sygnalisci': 'sygnalisci',
@@ -29,14 +36,22 @@ const CONFIRMED_LEGACY_REDIRECTS: Record<string, string> = {
   '/kontakt': 'kontakt-cta',
 };
 
+type ViewRoute =
+  | { type: 'home' }
+  | { type: 'service'; slug: string }
+  | { type: 'news-list' }
+  | { type: 'news-detail'; slug: string }
+  | { type: 'careers-list' }
+  | { type: 'careers-detail'; slug: string }
+  | { type: 'admin' };
+
 /**
- * Parses pathname and returns the active language, service slug, legal doc, and raw slug.
+ * Parses pathname and returns the active language, route type, and optional legal doc.
  */
 function parseUrl(pathname: string, search: string): {
   lang: Language;
-  serviceSlug?: string;
+  route: ViewRoute;
   legalDoc?: LegalDocType;
-  rawSlug?: string;
 } {
   const parts = pathname.split('/').filter(Boolean);
   let lang: Language = 'PL';
@@ -66,15 +81,40 @@ function parseUrl(pathname: string, search: string): {
     }
   }
 
-  const rawSlug = parts[0];
-  const serviceSlug = rawSlug && SERVICE_ROUTES[rawSlug] ? SERVICE_ROUTES[rawSlug] : undefined;
-  const legalDoc = rawSlug && LEGAL_ROUTES[rawSlug] ? LEGAL_ROUTES[rawSlug] : undefined;
+  const firstSlug = parts[0] || '';
+  const secondSlug = parts[1] || '';
 
-  return { lang, serviceSlug, legalDoc, rawSlug };
+  // Legal docs check
+  const legalDoc = firstSlug && LEGAL_ROUTES[firstSlug] ? LEGAL_ROUTES[firstSlug] : undefined;
+
+  // Route matching
+  if (firstSlug === 'admin' || firstSlug === 'panel') {
+    return { lang, route: { type: 'admin' }, legalDoc };
+  }
+
+  if (firstSlug === 'aktualnosci') {
+    if (secondSlug) {
+      return { lang, route: { type: 'news-detail', slug: secondSlug }, legalDoc };
+    }
+    return { lang, route: { type: 'news-list' }, legalDoc };
+  }
+
+  if (firstSlug === 'kariera') {
+    if (secondSlug) {
+      return { lang, route: { type: 'careers-detail', slug: secondSlug }, legalDoc };
+    }
+    return { lang, route: { type: 'careers-list' }, legalDoc };
+  }
+
+  if (firstSlug && SERVICE_ROUTES[firstSlug]) {
+    return { lang, route: { type: 'service', slug: SERVICE_ROUTES[firstSlug] }, legalDoc };
+  }
+
+  return { lang, route: { type: 'home' }, legalDoc };
 }
 
 /**
- * Builds localized canonical path (e.g., '/', '/en/', '/konstrukcje-stalowe/', '/rodo')
+ * Builds localized canonical path
  */
 export function buildLocalizedPath(slug: string | undefined, lang: Language): string {
   const prefix = lang === 'PL' ? '' : lang === 'UA' ? '/uk' : `/${lang.toLowerCase()}`;
@@ -82,25 +122,39 @@ export function buildLocalizedPath(slug: string | undefined, lang: Language): st
     return prefix === '' ? '/' : `${prefix}/`;
   }
   const cleanSlug = slug.replace(/^\//, '').replace(/\/$/, '');
-  // For legal routes, we don't necessarily enforce trailing slash; for services and home we use trailing slash
   const isLegal = cleanSlug === 'rodo' || cleanSlug === 'sygnalisci' || cleanSlug === 'polityka-prywatnosci';
-  const path = `${prefix}/${cleanSlug}${isLegal ? '' : '/'}`;
-  return path;
+  return `${prefix}/${cleanSlug}${isLegal ? '' : '/'}`;
 }
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('PL');
-  const [activeServiceSlug, setActiveServiceSlug] = useState<string | undefined>(undefined);
+  const [currentRoute, setCurrentRoute] = useState<ViewRoute>({ type: 'home' });
   const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType>(null);
+
+  // Admin state
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
+  // Check initial auth on mount
+  useEffect(() => {
+    cmsService.checkSession().then((auth) => {
+      setIsAdminLoggedIn(auth.isAuthenticated);
+    });
+  }, []);
 
   // Sync state with current location
   const handleLocationChange = useCallback(() => {
     const { pathname, search, hash } = window.location;
-    const { lang, serviceSlug, legalDoc } = parseUrl(pathname, search);
+    const { lang, route, legalDoc } = parseUrl(pathname, search);
 
     setCurrentLang(lang);
-    setActiveServiceSlug(serviceSlug);
+    setCurrentRoute(route);
     setActiveLegalDoc(legalDoc || null);
+
+    // If navigated to /admin and not logged in, open login modal
+    if (route.type === 'admin' && !isAdminLoggedIn) {
+      setIsAdminModalOpen(true);
+    }
 
     // Check confirmed client-side legacy redirect fallbacks
     const cleanPath = pathname.replace(/\/$/, '') || '/';
@@ -117,7 +171,7 @@ export default function App() {
         document.getElementById(hashId)?.scrollIntoView({ behavior: 'smooth' });
       }, 200);
     }
-  }, []);
+  }, [isAdminLoggedIn]);
 
   useEffect(() => {
     handleLocationChange();
@@ -125,9 +179,23 @@ export default function App() {
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, [handleLocationChange]);
 
-  // Language switch handler: Preserves the active page, service, or legal doc while updating localized path
+  // Language switch handler
   const handleLanguageChange = (newLang: Language) => {
-    const slug = activeServiceSlug || (activeLegalDoc ? activeLegalDoc : undefined);
+    let slug: string | undefined;
+    if (activeLegalDoc) {
+      slug = activeLegalDoc;
+    } else if (currentRoute.type === 'service') {
+      slug = currentRoute.slug;
+    } else if (currentRoute.type === 'news-list') {
+      slug = 'aktualnosci';
+    } else if (currentRoute.type === 'news-detail') {
+      slug = `aktualnosci/${currentRoute.slug}`;
+    } else if (currentRoute.type === 'careers-list') {
+      slug = 'kariera';
+    } else if (currentRoute.type === 'careers-detail') {
+      slug = `kariera/${currentRoute.slug}`;
+    }
+
     const targetPath = buildLocalizedPath(slug, newLang);
     window.history.pushState({}, '', targetPath);
     setCurrentLang(newLang);
@@ -138,7 +206,7 @@ export default function App() {
     const targetPath = buildLocalizedPath(undefined, currentLang);
     const fullUrl = hash ? `${targetPath}#${hash}` : targetPath;
     window.history.pushState({}, '', fullUrl);
-    setActiveServiceSlug(undefined);
+    setCurrentRoute({ type: 'home' });
     setActiveLegalDoc(null);
     if (hash) {
       setTimeout(() => {
@@ -149,16 +217,73 @@ export default function App() {
     }
   };
 
-  // Service landing page navigation handler
+  // Service navigation handler
   const handleNavigateService = (slug: string) => {
     const targetPath = buildLocalizedPath(slug, currentLang);
     window.history.pushState({}, '', targetPath);
-    setActiveServiceSlug(slug);
+    setCurrentRoute({ type: 'service', slug });
     setActiveLegalDoc(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Legal document open handler
+  // News navigation handlers
+  const handleNavigateNewsList = () => {
+    const targetPath = buildLocalizedPath('aktualnosci', currentLang);
+    window.history.pushState({}, '', targetPath);
+    setCurrentRoute({ type: 'news-list' });
+    setActiveLegalDoc(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigateNewsDetail = (slug: string) => {
+    const targetPath = buildLocalizedPath(`aktualnosci/${slug}`, currentLang);
+    window.history.pushState({}, '', targetPath);
+    setCurrentRoute({ type: 'news-detail', slug });
+    setActiveLegalDoc(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Careers navigation handlers
+  const handleNavigateCareersList = () => {
+    const targetPath = buildLocalizedPath('kariera', currentLang);
+    window.history.pushState({}, '', targetPath);
+    setCurrentRoute({ type: 'careers-list' });
+    setActiveLegalDoc(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigateCareerDetail = (slug: string) => {
+    const targetPath = buildLocalizedPath(`kariera/${slug}`, currentLang);
+    window.history.pushState({}, '', targetPath);
+    setCurrentRoute({ type: 'careers-detail', slug });
+    setActiveLegalDoc(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Admin triggers
+  const handleOpenAdminLogin = () => {
+    if (isAdminLoggedIn) {
+      window.history.pushState({}, '', '/admin/');
+      setCurrentRoute({ type: 'admin' });
+    } else {
+      setIsAdminModalOpen(true);
+    }
+  };
+
+  const handleAdminLoginSuccess = () => {
+    setIsAdminLoggedIn(true);
+    setIsAdminModalOpen(false);
+    window.history.pushState({}, '', '/admin/');
+    setCurrentRoute({ type: 'admin' });
+  };
+
+  const handleAdminLogout = async () => {
+    await cmsService.logout();
+    setIsAdminLoggedIn(false);
+    handleNavigateHome();
+  };
+
+  // Legal document open/close
   const handleOpenLegal = (doc: LegalDocType) => {
     if (doc) {
       const targetPath = buildLocalizedPath(doc, currentLang);
@@ -167,18 +292,23 @@ export default function App() {
     }
   };
 
-  // Legal document close handler
   const handleCloseLegal = () => {
     setActiveLegalDoc(null);
-    // If the URL was on a legal path, return smoothly to the current parent/homepage
     const { pathname } = window.location;
     if (pathname.includes('/rodo') || pathname.includes('/sygnalisci') || pathname.includes('/polityka-prywatnosci')) {
-      const homePath = buildLocalizedPath(activeServiceSlug, currentLang);
+      let baseSlug: string | undefined;
+      if (currentRoute.type === 'service') baseSlug = currentRoute.slug;
+      else if (currentRoute.type === 'news-list') baseSlug = 'aktualnosci';
+      else if (currentRoute.type === 'news-detail') baseSlug = `aktualnosci/${currentRoute.slug}`;
+      else if (currentRoute.type === 'careers-list') baseSlug = 'kariera';
+      else if (currentRoute.type === 'careers-detail') baseSlug = `kariera/${currentRoute.slug}`;
+
+      const homePath = buildLocalizedPath(baseSlug, currentLang);
       window.history.pushState({}, '', homePath);
     }
   };
 
-  // Homepage SEO meta titles based on language
+  // Homepage SEO meta titles
   const homepageTitles: Record<Language, string> = {
     PL: 'Konstrukcje stalowe i instalacje przemysłowe | CHEMOROZRUCH',
     EN: 'Industrial Steel Structures & Process Piping Assembly | CHEMOROZRUCH',
@@ -193,7 +323,6 @@ export default function App() {
     UA: 'CHEMOROZRUCH здійснює виготовлення металоконструкцій, монтаж промислового обладнання, апаратів високого тиску та ремонти.',
   };
 
-  // Legal document SEO meta
   const legalMeta: Record<string, { title: string; desc: string }> = {
     rodo: {
       title: 'RODO - Klauzula Informacyjna | CHEMOROZRUCH Sp. z o.o.',
@@ -214,7 +343,7 @@ export default function App() {
   return (
     <>
       {/* 1. SEO Head for Homepage / Legal Doc Routes */}
-      {!activeServiceSlug && (
+      {currentRoute.type === 'home' && (
         <SEOHead
           title={
             activeLegalDoc && legalMeta[activeLegalDoc]
@@ -238,29 +367,101 @@ export default function App() {
       )}
 
       {/* 2. Primary Route Rendering */}
-      {activeServiceSlug ? (
+      {currentRoute.type === 'admin' && isAdminLoggedIn ? (
+        <AdminPanel
+          onLogout={handleAdminLogout}
+          onNavigatePublic={(path) => {
+            if (path.startsWith('/aktualnosci/')) {
+              handleNavigateNewsDetail(path.replace('/aktualnosci/', ''));
+            } else if (path.startsWith('/kariera/')) {
+              handleNavigateCareerDetail(path.replace('/kariera/', ''));
+            } else {
+              handleNavigateHome();
+            }
+          }}
+        />
+      ) : currentRoute.type === 'service' ? (
         <ServiceLandingPage
-          slug={activeServiceSlug}
+          slug={currentRoute.slug}
           currentLang={currentLang}
           onLanguageChange={handleLanguageChange}
           onNavigateHome={handleNavigateHome}
           onNavigateService={handleNavigateService}
+        />
+      ) : currentRoute.type === 'news-list' ? (
+        <NewsListPage
+          currentLang={currentLang}
+          onLanguageChange={handleLanguageChange}
+          onNavigateHome={handleNavigateHome}
+          onNavigateService={handleNavigateService}
+          onNavigateNewsDetail={handleNavigateNewsDetail}
+          onNavigateCareers={handleNavigateCareersList}
+          onOpenLegal={handleOpenLegal}
+          onOpenAdminLogin={handleOpenAdminLogin}
+        />
+      ) : currentRoute.type === 'news-detail' ? (
+        <NewsDetailPage
+          slug={currentRoute.slug}
+          currentLang={currentLang}
+          onLanguageChange={handleLanguageChange}
+          onNavigateHome={handleNavigateHome}
+          onNavigateNewsList={handleNavigateNewsList}
+          onNavigateCareersList={handleNavigateCareersList}
+          onNavigateService={handleNavigateService}
+          onOpenLegal={handleOpenLegal}
+        />
+      ) : currentRoute.type === 'careers-list' ? (
+        <CareersListPage
+          currentLang={currentLang}
+          onLanguageChange={handleLanguageChange}
+          onNavigateHome={handleNavigateHome}
+          onNavigateCareerDetail={handleNavigateCareerDetail}
+          onNavigateNews={handleNavigateNewsList}
+          onNavigateService={handleNavigateService}
+          onOpenLegal={handleOpenLegal}
+          onOpenAdminLogin={handleOpenAdminLogin}
+        />
+      ) : currentRoute.type === 'careers-detail' ? (
+        <CareersDetailPage
+          slug={currentRoute.slug}
+          currentLang={currentLang}
+          onLanguageChange={handleLanguageChange}
+          onNavigateHome={handleNavigateHome}
+          onNavigateCareersList={handleNavigateCareersList}
+          onNavigateNewsList={handleNavigateNewsList}
+          onNavigateService={handleNavigateService}
+          onOpenLegal={handleOpenLegal}
         />
       ) : (
         <ParallaxSite
           currentLang={currentLang}
           onLanguageChange={handleLanguageChange}
           onNavigateService={handleNavigateService}
+          onNavigateNews={handleNavigateNewsList}
+          onNavigateCareers={handleNavigateCareersList}
           onOpenLegal={handleOpenLegal}
         />
       )}
 
-      {/* 3. Direct Legal Modal (Opens immediately on direct /rodo, /sygnalisci visits) */}
+      {/* 3. Direct Legal Modal */}
       <LegalModal
         isOpen={activeLegalDoc !== null}
         docType={activeLegalDoc}
         onClose={handleCloseLegal}
       />
+
+      {/* 4. Admin Login Modal (Hidden trigger / /admin route) */}
+      <AdminLoginModal
+        isOpen={isAdminModalOpen}
+        onClose={() => {
+          setIsAdminModalOpen(false);
+          if (currentRoute.type === 'admin' && !isAdminLoggedIn) {
+            handleNavigateHome();
+          }
+        }}
+        onLoginSuccess={handleAdminLoginSuccess}
+      />
     </>
   );
 }
+
