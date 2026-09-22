@@ -427,7 +427,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({ currentLan
         
         {/* 1. SECTION HEADER (Spacious, clean typographic hierarchy) */}
         <div ref={headerRef} className="max-w-3xl mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/70 text-red-700 text-xs font-mono font-bold tracking-widest uppercase mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/70 text-red-700 text-xs font-semibold tracking-[0.2em] uppercase mb-4 font-sans">
             <Briefcase className="w-3.5 h-3.5" />
             <span>{labels.eyebrow[currentLang]}</span>
           </div>

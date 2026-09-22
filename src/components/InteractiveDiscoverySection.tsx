@@ -24,7 +24,7 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
   const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const t = translations[currentLang].discovery;
-  const currentItem = t.items.find((item) => item.id === activeId) || t.items[0];
+  const staticItem = t.items[0];
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -246,24 +246,6 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                             {item.closingText}
                           </p>
                         )}
-
-                        {/* Mobile Image preview if expanded on mobile */}
-                        <div className="block lg:hidden pt-4">
-                          <div className="w-full h-56 sm:h-64 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 bg-slate-200 aspect-[16/10]">
-                            <img
-                              src={item.image}
-                              alt={item.imageAlt}
-                              width={800}
-                              height={500}
-                              loading="lazy"
-                              decoding="async"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <p className="mt-2 text-xs text-slate-500 font-normal">
-                            {item.title}
-                          </p>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -272,7 +254,7 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
             })}
           </div>
 
-          {/* Right Column: Desktop Dynamic One-Image Visual with Parallax & Crossfade (5 cols) */}
+          {/* Right Column: Desktop Static One-Image Visual with Parallax (5 cols) */}
           <div
             ref={imageContainerRef}
             className="hidden lg:block lg:col-span-5 sticky top-32"
@@ -283,39 +265,23 @@ export const InteractiveDiscoverySection: React.FC<InteractiveDiscoverySectionPr
                 ref={imageParallaxRef}
                 className="absolute inset-0 w-full h-[112%] -top-[6%] will-change-transform"
               >
-                {/* Dynamic Image Crossfading Layer */}
-                {t.items.map((item) => {
-                  const isVisible = activeId ? activeId === item.id : item.id === 'about';
-
-                  return (
-                    <div
-                      key={item.id}
-                      className={`absolute inset-0 w-full h-full transition-all duration-700 ease-out ${
-                        isVisible
-                          ? 'opacity-100 scale-100 z-10'
-                          : 'opacity-0 scale-[1.03] z-0 pointer-events-none'
-                      }`}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.imageAlt}
-                        width={1200}
-                        height={800}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                      />
-                    </div>
-                  );
-                })}
+                <img
+                  src={staticItem.image}
+                  alt={staticItem.imageAlt}
+                  width={1200}
+                  height={800}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
               </div>
             </div>
             {/* Subtle caption outside the image */}
             <div className="mt-3 px-1">
               <p className="text-xs text-slate-500 font-normal">
-                {currentItem.title}
-                {currentItem.tagline ? ` – ${currentItem.tagline}` : ''}
+                {staticItem.title}
+                {staticItem.tagline ? ` – ${staticItem.tagline}` : ''}
               </p>
             </div>
           </div>

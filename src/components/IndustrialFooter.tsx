@@ -188,7 +188,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
           
           {/* COLUMN 1: KONTAKT (Main Verified Details from COMPANY_DATA) */}
           <div className="lg:col-span-4 space-y-3.5 pr-0 lg:pr-6">
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase block mb-3 font-sans">
               {t.columns.contactTitle}
             </span>
 
@@ -241,7 +241,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
           {/* COLUMN 2: NAWIGACJA GŁÓWNA */}
           <div className="lg:col-span-3 space-y-3">
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase block mb-3 font-sans">
               {t.columns.navTitle}
             </span>
 
@@ -300,7 +300,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
           {/* COLUMN 3: STRUKTURA / REALIZACJE & ODDZIAŁY */}
           <div className="lg:col-span-3 space-y-3">
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase block mb-3 font-sans">
               {currentLang === 'PL' ? 'STRUKTURA' : currentLang === 'EN' ? 'PORTFOLIO' : currentLang === 'DE' ? 'STRUKTUR' : 'ПОРТФОЛІО'}
             </span>
 
@@ -349,7 +349,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
 
           {/* COLUMN 4: INFORMACJE & LEGAL */}
           <div className="lg:col-span-2 space-y-3">
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase block mb-3">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase block mb-3 font-sans">
               {t.columns.infoTitle}
             </span>
 
@@ -410,7 +410,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
         {/* SEO SERVICE LANDING PAGES INTERNAL LINKING (Clean Localized URLs) */}
         <div className="py-6 sm:py-8 border-b border-slate-200/60">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <span className="text-[11px] font-mono font-bold tracking-[0.18em] text-slate-400 uppercase">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase font-sans">
               {currentLang === 'PL' ? 'SPECJALIZACJE PRZEMYSŁOWE:' : currentLang === 'EN' ? 'INDUSTRIAL SPECIALIZATIONS:' : currentLang === 'DE' ? 'INDUSTRIELLE SPEZIALISIERUNGEN:' : 'ПРОМИСЛОВІ СПЕЦІАЛІЗАЦІЇ:'}
             </span>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-700">

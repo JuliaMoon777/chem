@@ -123,7 +123,7 @@ export const CareersListPage: React.FC<CareersListPageProps> = ({
 
         {/* Hero Section */}
         <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/60 text-red-600 text-xs font-semibold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200/60 text-red-600 text-xs font-semibold uppercase tracking-[0.2em] mb-4 font-sans">
             <Briefcase className="w-3.5 h-3.5" />
             <span>Rekrutacja i Rozwój</span>
           </div>

@@ -153,7 +153,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({ currentLang 
         <div ref={headerRef} className="max-w-3xl mb-12 sm:mb-16 lg:mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200/80 shadow-2xs mb-4">
             <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-slate-700 uppercase">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-slate-600 uppercase">
               {t.eyebrow}
             </span>
           </div>

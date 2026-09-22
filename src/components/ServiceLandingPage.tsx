@@ -158,7 +158,7 @@ export const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({
             {/* Contact CTA */}
             <a
               href={`mailto:${COMPANY_DATA.contacts.tendering.email}?subject=${encodeURIComponent(`Zapytanie ofertowe: ${breadcrumb.current}`)}`}
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-red-600 text-white font-poppins font-bold text-xs uppercase tracking-wider shadow-sm hover:bg-red-700 hover:shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:bg-red-700 hover:shadow-md transition-all cursor-pointer"
             >
               <Mail className="w-3.5 h-3.5 hidden xs:block" />
               <span>{navTranslations.getQuote}</span>
@@ -218,7 +218,7 @@ export const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({
             <div className="flex flex-wrap items-center gap-4">
               <a
                 href={`mailto:${COMPANY_DATA.contacts.tendering.email}?subject=${encodeURIComponent(`Zapytanie ofertowe: ${breadcrumb.current}`)}`}
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-poppins font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               >
                 <span>{cta.btnText}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -524,7 +524,7 @@ export const ServiceLandingPage: React.FC<ServiceLandingPageProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href={`mailto:${COMPANY_DATA.contacts.tendering.email}?subject=${encodeURIComponent(`Zapytanie ofertowe: ${breadcrumb.current}`)}`}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-poppins font-bold text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 transition-all cursor-pointer"
             >
               <Mail className="w-4 h-4" />
               <span>{COMPANY_DATA.contacts.tendering.email}</span>

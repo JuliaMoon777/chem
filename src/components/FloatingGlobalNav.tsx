@@ -201,7 +201,7 @@ export const FloatingGlobalNav: React.FC<FloatingGlobalNavProps> = ({ currentLan
             aria-label="Menu nawigacji"
           >
             {/* Header of Dock */}
-            <div className="flex items-center justify-between px-3 pt-1 pb-2 mb-1.5 border-b border-slate-200/80 text-[10px] font-mono font-bold tracking-[0.2em] text-slate-400 uppercase">
+            <div className="flex items-center justify-between px-3 pt-1 pb-2 mb-1.5 border-b border-slate-200/80 text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase font-sans">
               <span>SZYBKIE MENU</span>
               <button
                 type="button"
@@ -268,7 +268,7 @@ export const FloatingGlobalNav: React.FC<FloatingGlobalNavProps> = ({ currentLan
 
           {/* Active section label snippet */}
           <div className="flex flex-col text-left">
-            <span className="text-[9px] font-mono font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
+            <span className="text-[9px] font-semibold tracking-[0.18em] text-slate-400 uppercase leading-none font-sans">
               {isOpen ? 'ZAMKNIJ' : 'MENU'}
             </span>
             <span className="text-xs font-semibold text-slate-800 tracking-tight leading-tight transition-colors group-hover:text-red-600">
@@ -364,7 +364,7 @@ export const FloatingGlobalNav: React.FC<FloatingGlobalNavProps> = ({ currentLan
             {/* Top Sheet Grab Handle */}
             <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
 
-            <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/80 text-xs font-mono font-bold tracking-[0.2em] text-slate-400 uppercase">
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/80 text-xs font-semibold tracking-[0.2em] text-slate-400 uppercase font-sans">
               <span>SZYBKA NAWIGACJA</span>
               <button
                 type="button"

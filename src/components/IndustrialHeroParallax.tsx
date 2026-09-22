@@ -346,7 +346,7 @@ export const IndustrialHeroParallax: React.FC<IndustrialHeroParallaxProps> = ({
               <button
                 id="hero-primary-cta-btn"
                 onClick={onExploreClick}
-                className="group inline-flex items-center justify-center gap-2.5 min-h-[44px] px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-orange-500 text-white font-poppins font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                className="group inline-flex items-center justify-center gap-2.5 min-h-[44px] px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-orange-500 text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/45 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
               >
                 <span>{t.hero.ctaBtn}</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />

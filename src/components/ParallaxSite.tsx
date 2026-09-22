@@ -90,11 +90,14 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
       {/* 3. FIRST PART — ANIMATED COMPANY NUMBERS (Verified facts, smooth counter reveal & engineering lines) */}
       <AnimatedNumbersSection currentLang={currentLang} />
 
-      {/* 4. SECOND PART — INTERACTIVE COMPANY DISCOVERY / O FIRMIE (Editorial accordion & dynamic single image) */}
+      {/* 4. SECOND PART — INTERACTIVE COMPANY DISCOVERY / O FIRMIE (Editorial accordion & single image) */}
       <InteractiveDiscoverySection
         currentLang={currentLang}
         onOpenInquiry={() => handleOpenInquiry()}
       />
+
+      {/* 4.5. ZAUFALI NAM — TRUSTED BY */}
+      <TrustedBySection currentLang={currentLang} />
 
       {/* 5. THIRD PART — NASZE KOMPETENCJE / OFERTA (Asymmetric visual storytelling & sticky image synchronization) */}
       <CompetenciesSection
