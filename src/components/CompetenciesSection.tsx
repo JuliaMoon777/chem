@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { ArrowRight, CheckCircle2, Compass } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Compass } from 'lucide-react';
 import { Language } from '../types';
 import siteImages from '../assets/images';
 
@@ -409,20 +409,84 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 }) => {
   const [activeTabId, setActiveTabId] = useState<string>(COMPETENCE_TABS[0].id);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const tabRailRef = useRef<HTMLDivElement>(null);
   const tabButtonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
   const activeTab = COMPETENCE_TABS.find((tab) => tab.id === activeTabId) || COMPETENCE_TABS[0];
 
-  const handleTabChange = (tabId: string) => {
-    if (tabId === activeTabId) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveTabId(tabId);
-      setIsTransitioning(false);
-    }, 150);
+  const updateScrollState = useCallback(() => {
+    const rail = tabRailRef.current;
+    if (!rail) return;
+    const { scrollLeft, scrollWidth, clientWidth } = rail;
+    const hasOverflow = scrollWidth > clientWidth + 3;
+    setCanScrollLeft(hasOverflow && scrollLeft > 4);
+    setCanScrollRight(hasOverflow && scrollLeft + clientWidth < scrollWidth - 4);
+  }, []);
 
-    // Ensure active tab button scrolls into view horizontally on mobile
+  useEffect(() => {
+    const rail = tabRailRef.current;
+    if (!rail) return;
+
+    updateScrollState();
+
+    const handleScroll = () => {
+      updateScrollState();
+    };
+
+    rail.addEventListener('scroll', handleScroll, { passive: true });
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        updateScrollState();
+      });
+      resizeObserver.observe(rail);
+    }
+
+    window.addEventListener('resize', updateScrollState, { passive: true });
+
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(() => {
+        updateScrollState();
+      });
+    }
+
+    // Secondary delayed checks after DOM settle
+    const settleTimer1 = setTimeout(updateScrollState, 50);
+    const settleTimer2 = setTimeout(updateScrollState, 250);
+
+    return () => {
+      rail.removeEventListener('scroll', handleScroll);
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('resize', updateScrollState);
+      clearTimeout(settleTimer1);
+      clearTimeout(settleTimer2);
+    };
+  }, [updateScrollState]);
+
+  useEffect(() => {
+    const timer = setTimeout(updateScrollState, 80);
+    return () => clearTimeout(timer);
+  }, [currentLang, activeTabId, updateScrollState]);
+
+  const handleScrollLeft = () => {
+    const rail = tabRailRef.current;
+    if (!rail) return;
+    const scrollAmount = Math.max(200, Math.round(rail.clientWidth * 0.45));
+    rail.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  };
+
+  const handleScrollRight = () => {
+    const rail = tabRailRef.current;
+    if (!rail) return;
+    const scrollAmount = Math.max(200, Math.round(rail.clientWidth * 0.45));
+    rail.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  };
+
+  const handleTabChange = (tabId: string) => {
+    // Ensure clicked tab button scrolls into view horizontally without vertical jump
     const btn = tabButtonsRef.current[tabId];
     if (btn && tabRailRef.current) {
       const rail = tabRailRef.current;
@@ -434,6 +498,13 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
         behavior: 'smooth',
       });
     }
+
+    if (tabId === activeTabId) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveTabId(tabId);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -519,14 +590,34 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
         {/* 2. MAIN LARGE TABBED CARD */}
         <div className="rounded-3xl bg-white border border-slate-200/90 shadow-[0_12px_40px_rgba(15,23,42,0.04)] overflow-hidden">
           
-          {/* A. EDITORIAL TAB BAR (Clean horizontal rail with active red underline indicator) */}
+          {/* A. EDITORIAL TAB BAR (Clean horizontal rail with active red underline indicator & scroll controls) */}
           <div className="relative border-b border-slate-200 bg-[#FCFBF8]">
+            {/* Left navigation arrow & soft gradient fade */}
+            {canScrollLeft && (
+              <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pl-2 sm:pl-3 pointer-events-none transition-opacity duration-200">
+                <div className="absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-[#FCFBF8] via-[#FCFBF8]/95 to-transparent pointer-events-none" />
+                <button
+                  type="button"
+                  onClick={handleScrollLeft}
+                  aria-label="Poprzednie kategorie oferty"
+                  className="relative z-10 pointer-events-auto flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white text-slate-700 hover:text-red-600 border border-slate-200/90 hover:border-red-300 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95 cursor-pointer backdrop-blur-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-1"
+                >
+                  <ChevronLeft className="w-5 h-5 transition-transform duration-150" />
+                </button>
+              </div>
+            )}
+
+            {/* Horizontal Tabs Rail */}
             <div
               ref={tabRailRef}
               role="tablist"
               aria-label={sectionIntro.heading[currentLang]}
-              className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-3 sm:px-6 lg:px-8"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="flex items-center overflow-x-auto no-scrollbar scroll-smooth px-4 sm:px-8 lg:px-10"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                scrollSnapType: 'x proximity',
+              }}
             >
               {COMPETENCE_TABS.map((tab, idx) => {
                 const isActive = tab.id === activeTabId;
@@ -541,7 +632,7 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => handleTabChange(tab.id)}
                     onKeyDown={(e) => handleKeyDown(e, idx)}
-                    className={`relative flex items-center justify-center whitespace-nowrap py-4 sm:py-5 px-3 sm:px-5 min-h-[48px] text-xs sm:text-sm lg:text-base font-semibold tracking-tight transition-all duration-200 cursor-pointer select-none ${
+                    className={`relative flex items-center justify-center whitespace-nowrap py-4 sm:py-5 px-3 sm:px-5 min-h-[48px] text-xs sm:text-sm lg:text-base font-semibold tracking-tight transition-all duration-200 cursor-pointer select-none snap-center ${
                       isActive
                         ? 'text-slate-950 font-bold'
                         : 'text-slate-500 hover:text-slate-800'
@@ -553,15 +644,27 @@ export const CompetenciesSection: React.FC<CompetenciesSectionProps> = ({
 
                     {/* Active Tab Accent Line */}
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#E31E24] shadow-[0_-1px_4px_rgba(227,30,36,0.3)]" />
+                      <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#DC143C] shadow-[0_-1px_4px_rgba(220,20,60,0.3)]" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Mobile Scroll Indicator Fade */}
-            <div className="sm:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FCFBF8] to-transparent pointer-events-none" />
+            {/* Right navigation arrow & soft gradient fade */}
+            {canScrollRight && (
+              <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pr-2 sm:pr-3 pointer-events-none transition-opacity duration-200">
+                <div className="absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-[#FCFBF8] via-[#FCFBF8]/95 to-transparent pointer-events-none" />
+                <button
+                  type="button"
+                  onClick={handleScrollRight}
+                  aria-label="Następne kategorie oferty"
+                  className="relative z-10 pointer-events-auto flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white text-slate-700 hover:text-red-600 border border-slate-200/90 hover:border-red-300 shadow-sm hover:shadow-md transition-all duration-200 active:scale-95 cursor-pointer backdrop-blur-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-1"
+                >
+                  <ChevronRight className="w-5 h-5 transition-transform duration-150" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* B. TAB CONTENT AREA (LEFT 50% Text | RIGHT 50% Large Photography) */}

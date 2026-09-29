@@ -63,7 +63,7 @@ export const CareersDetailPage: React.FC<CareersDetailPageProps> = ({
       <IndustrialHeader
         currentLang={currentLang}
         onLanguageChange={onLanguageChange}
-        onOpenInquiry={() => onNavigateHome('kontakt-cta')}
+        onOpenInquiry={() => onNavigateHome('kontakt')}
         onNavigateHome={() => onNavigateHome()}
       />
 
@@ -222,11 +222,11 @@ export const CareersDetailPage: React.FC<CareersDetailPageProps> = ({
                     </a>
 
                     <a
-                      href="tel:+48338430081"
+                      href="tel:+48604163594"
                       className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all border border-slate-700"
                     >
                       <Phone className="w-4 h-4" />
-                      <span>Zadzwoń: +48 33 843 00 81</span>
+                      <span>Zadzwoń: 604 163 594</span>
                     </a>
                   </div>
 

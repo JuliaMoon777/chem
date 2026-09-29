@@ -424,31 +424,46 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({ currentLang 
                         </div>
 
                         {/* Contact Information (Phone & Email) */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className={`grid grid-cols-1 ${branch.phone ? 'sm:grid-cols-2' : ''} gap-3`}>
                           {/* Phone Link */}
-                          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
-                            <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
-                              {t.phoneLabel}
-                            </span>
-                            <a
-                              href={`tel:${branch.phone.replace(/\s+/g, '')}`}
-                              className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors"
-                            >
-                              <Phone className="w-3.5 h-3.5 text-red-600" />
-                              <span>{branch.phone}</span>
-                            </a>
-                          </div>
+                          {branch.phone && (
+                            <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1.5">
+                              <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
+                                {t.phoneLabel}
+                              </span>
+                              <div>
+                                <span className="text-[11px] text-slate-500 font-mono block">Sekretariat Zarządu:</span>
+                                <a
+                                  href="tel:+48338423920"
+                                  className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors"
+                                >
+                                  <Phone className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+                                  <span>(0-33) 842-39-20</span>
+                                </a>
+                              </div>
+                              <div className="pt-0.5">
+                                <span className="text-[11px] text-slate-500 font-mono block">tel.:</span>
+                                <a
+                                  href="tel:+48604163594"
+                                  className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors"
+                                >
+                                  <Phone className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+                                  <span>604 163 594</span>
+                                </a>
+                              </div>
+                            </div>
+                          )}
 
                           {/* Email Link */}
-                          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
+                          <div className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
                             <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 uppercase block mb-1">
                               {t.emailLabel}
                             </span>
                             <a
                               href={`mailto:${branch.email}`}
-                              className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors truncate"
+                              className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors truncate pt-1"
                             >
-                              <Mail className="w-3.5 h-3.5 text-red-600" />
+                              <Mail className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
                               <span className="truncate">{branch.email}</span>
                             </a>
                           </div>

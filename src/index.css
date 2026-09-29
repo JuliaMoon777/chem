@@ -1,9 +1,19 @@
 @import "tailwindcss";
 
 @theme {
+  --color-brand-red: #DC143C;
+  --color-brand-red-hover: #b80e30;
+  --color-red-600: #DC143C;
+  --color-red-700: #b80e30;
+  --color-red-500: #e6234b;
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+:root {
+  --brand-red: #DC143C;
+  --brand-red-hover: #b80e30;
 }
 
 @layer base {

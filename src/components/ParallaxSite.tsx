@@ -9,7 +9,6 @@ import { CompetenciesSection } from './CompetenciesSection';
 import { RealizationsSection } from './RealizationsSection';
 import { CertificatesSection } from './CertificatesSection';
 import { LocationsSection } from './LocationsSection';
-import { ContactCTASection } from './ContactCTASection';
 import { IndustrialFooter } from './IndustrialFooter';
 import { FloatingGlobalNav } from './FloatingGlobalNav';
 import { LegalModal, LegalDocType } from './LegalModal';
@@ -52,7 +51,7 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
   };
 
   const handleOpenInquiry = (subject?: string) => {
-    const target = document.getElementById('kontakt-cta');
+    const target = document.getElementById('kontakt');
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -113,12 +112,6 @@ export const ParallaxSite: React.FC<ParallaxSiteProps> = ({
 
       {/* 9. SEVENTH PART — LOKALIZACJE / ODDZIAŁY (Interactive Google Maps, Oświęcim HQ & Płock branch) */}
       <LocationsSection currentLang={currentLang} />
-
-      {/* 10. EIGHTH PART — KONTAKT (Editorial department-based direct contacts & company information) */}
-      <ContactCTASection
-        currentLang={currentLang}
-        onOpenLegal={(doc) => handleOpenLegalDoc(doc)}
-      />
 
       {/* 11. FINAL PART — FOOTER (Editorial light ending, brand identity, language switcher, 4 columns, legal triggers) */}
       <IndustrialFooter

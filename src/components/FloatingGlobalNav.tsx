@@ -34,7 +34,7 @@ const NAV_SECTIONS: NavSectionItem[] = [
   },
   {
     id: 'contact',
-    targetId: 'kontakt-cta',
+    targetId: 'kontakt',
     label: { PL: 'Kontakt', EN: 'Contact', DE: 'Kontakt', UA: 'Контакти' },
   },
 ];
@@ -232,7 +232,7 @@ export const FloatingGlobalNav: React.FC<FloatingGlobalNavProps> = ({ currentLan
                       <span
                         className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                           isActive
-                            ? 'bg-red-600 scale-125 shadow-[0_0_8px_rgba(220,38,38,0.5)]'
+                            ? 'bg-red-600 scale-125 shadow-[0_0_8px_rgba(220,20,60,0.5)]'
                             : 'bg-slate-300 group-hover:bg-slate-400'
                         }`}
                       />
@@ -395,7 +395,7 @@ export const FloatingGlobalNav: React.FC<FloatingGlobalNavProps> = ({ currentLan
                       <span
                         className={`w-2 h-2 rounded-full transition-all ${
                           isActive
-                            ? 'bg-red-600 scale-125 shadow-[0_0_8px_rgba(220,38,38,0.6)]'
+                            ? 'bg-red-600 scale-125 shadow-[0_0_8px_rgba(220,20,60,0.6)]'
                             : 'bg-slate-300'
                         }`}
                       />

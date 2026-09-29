@@ -26,7 +26,7 @@ export const AdminCareerForm: React.FC<AdminCareerFormProps> = ({
   const [offer, setOffer] = useState(initialData?.offer || '');
   const [applicationInfo, setApplicationInfo] = useState(
     initialData?.application_information ||
-      '<p>Aplikacje (CV) prosimy przesyłać na adres: <strong>kadry@chemorozruch.pl</strong> lub kontaktować się pod numerem: <strong>+48 33 843 00 81</strong>.</p>'
+      '<p>Aplikacje (CV) prosimy przesyłać na adres: <strong>kadry@chemorozruch.pl</strong> lub kontaktować się pod numerem: <strong>604 163 594</strong>.</p>'
   );
   const [publicationDate, setPublicationDate] = useState(
     initialData?.publication_date || new Date().toISOString().split('T')[0]

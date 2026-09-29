@@ -33,7 +33,7 @@ const CONFIRMED_LEGACY_REDIRECTS: Record<string, string> = {
   '/oferta': 'competencies-section',
   '/certyfikaty': 'certificates-section',
   '/realizacje': 'realizations-section',
-  '/kontakt': 'kontakt-cta',
+  '/kontakt': 'kontakt',
 };
 
 type ViewRoute =

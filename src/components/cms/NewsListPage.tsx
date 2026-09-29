@@ -98,7 +98,7 @@ export const NewsListPage: React.FC<NewsListPageProps> = ({
       <IndustrialHeader
         currentLang={currentLang}
         onLanguageChange={onLanguageChange}
-        onOpenInquiry={() => onNavigateHome('kontakt-cta')}
+        onOpenInquiry={() => onNavigateHome('kontakt')}
         onNavigateHome={() => onNavigateHome()}
       />
 

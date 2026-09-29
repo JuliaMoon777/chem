@@ -72,7 +72,7 @@ export const NewsDetailPage: React.FC<NewsDetailPageProps> = ({
       <IndustrialHeader
         currentLang={currentLang}
         onLanguageChange={onLanguageChange}
-        onOpenInquiry={() => onNavigateHome('kontakt-cta')}
+        onOpenInquiry={() => onNavigateHome('kontakt')}
         onNavigateHome={() => onNavigateHome()}
       />
 

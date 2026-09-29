@@ -179,7 +179,7 @@ function buildRoutes(): RouteDefinition[] {
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#realizations-section">${t.footer.columns.navLinks.realizations}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#certificates-section">${t.footer.columns.navLinks.certificates}</a>
             <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#locations-section">${t.footer.columns.navLinks.locations}</a>
-            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#kontakt-cta">${t.footer.columns.navLinks.contact}</a>
+            <a href="${meta.prefix ? `/${meta.prefix}` : '/'}#kontakt">${t.footer.columns.navLinks.contact}</a>
           </nav>
         </header>
         <main>
@@ -252,18 +252,13 @@ function buildRoutes(): RouteDefinition[] {
               ${branchesHtml}
             </div>
           </section>
-
-          <section id="kontakt-cta">
-            <h2>${t.contactCTA.heading}</h2>
-            <p>${t.contactCTA.supporting}</p>
-            <p><strong>${COMPANY_DATA.legalName}</strong></p>
-            <p>Siedziba: ${COMPANY_DATA.operationalAddress.fullString}</p>
-            <p>Oddział Płock: ${COMPANY_DATA.plockBranchAddress.fullString}</p>
-            <p>NIP: ${COMPANY_DATA.nipFormatted} | REGON: ${COMPANY_DATA.regon} | KRS: ${COMPANY_DATA.krs}</p>
-            <p>Telefon: ${COMPANY_DATA.contacts.generalHQ.phone} | Email: ${COMPANY_DATA.contacts.generalHQ.email}</p>
-          </section>
         </main>
-        <footer>
+        <footer id="kontakt">
+          <p><strong>${COMPANY_DATA.legalName}</strong></p>
+          <p>Siedziba: ${COMPANY_DATA.operationalAddress.fullString}</p>
+          <p>Oddział Płock: ${COMPANY_DATA.plockBranchAddress.fullString}</p>
+          <p>NIP: ${COMPANY_DATA.nipFormatted} | REGON: ${COMPANY_DATA.regon} | KRS: ${COMPANY_DATA.krs}</p>
+          <p>Sekretariat Zarządu: (0-33) 842-39-20 | tel.: 604 163 594 | Email: biuro@chemorozruch.pl</p>
           <p>© ${new Date().getFullYear()} ${COMPANY_DATA.legalName}. ${t.footer.allRightsReserved}</p>
           <p>
             <a href="/rodo">${t.footer.columns.rodo}</a> |
@@ -348,7 +343,7 @@ function buildRoutes(): RouteDefinition[] {
             <div class="logo"><a href="/${prefix}">${COMPANY_DATA.brandName}</a></div>
             <nav aria-label="Nawigacja">
               <a href="/${prefix}">${service.breadcrumbs[langKey]?.home || 'Strona główna'}</a>
-              <a href="/${prefix}#kontakt-cta">${service.cta[langKey]?.btnText || 'Zapytanie ofertowe'}</a>
+              <a href="/${prefix}#kontakt">${service.cta[langKey]?.btnText || 'Zapytanie ofertowe'}</a>
             </nav>
           </header>
           <main class="service-page-container">

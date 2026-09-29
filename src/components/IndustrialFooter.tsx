@@ -187,7 +187,7 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
         >
           
           {/* COLUMN 1: KONTAKT (Main Verified Details from COMPANY_DATA) */}
-          <div className="lg:col-span-4 space-y-3.5 pr-0 lg:pr-6">
+          <div id="kontakt" className="lg:col-span-4 space-y-3.5 pr-0 lg:pr-6 scroll-mt-24">
             <span className="text-[11px] font-semibold tracking-[0.2em] text-slate-400 uppercase block mb-3 font-sans">
               {t.columns.contactTitle}
             </span>
@@ -201,22 +201,38 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
                   {COMPANY_DATA.registeredAddress.fullString}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Zakład / Warsztat: {COMPANY_DATA.operationalAddress.streetAddress}, {COMPANY_DATA.operationalAddress.city}
+                  Oddział: {COMPANY_DATA.plockAddress.fullString}
                 </p>
               </div>
 
-              <div className="pt-0.5">
-                <span className="text-xs font-mono text-slate-400 block mb-0.5">
-                  {currentLang === 'PL' ? 'Telefon Centrala' : currentLang === 'EN' ? 'HQ Phone' : currentLang === 'DE' ? 'Telefon Zentrale' : 'Телефон'}
-                </span>
-                <a
-                  href={`tel:${COMPANY_DATA.contacts.generalHQ.phoneClean}`}
-                  className="group inline-flex items-center gap-1 text-slate-900 font-bold hover:text-red-600 transition-colors"
-                >
-                  <span className="transition-transform duration-200 group-hover:translate-x-1">
-                    {COMPANY_DATA.contacts.generalHQ.phone}
+              <div className="pt-0.5 space-y-2">
+                <div>
+                  <span className="text-xs font-mono text-slate-400 block mb-0.5">
+                    {currentLang === 'PL' ? 'Sekretariat Zarządu' : currentLang === 'EN' ? 'Executive Secretariat' : currentLang === 'DE' ? 'Vorstandssekretariat' : 'Секретаріат'}
                   </span>
-                </a>
+                  <a
+                    href="tel:+48338423920"
+                    className="group inline-flex items-center gap-1 text-slate-900 font-bold hover:text-red-600 transition-colors"
+                  >
+                    <span className="transition-transform duration-200 group-hover:translate-x-1">
+                      (0-33) 842-39-20
+                    </span>
+                  </a>
+                </div>
+
+                <div>
+                  <span className="text-xs font-mono text-slate-400 block mb-0.5">
+                    {currentLang === 'PL' ? 'tel.:' : currentLang === 'EN' ? 'Phone:' : currentLang === 'DE' ? 'Tel.:' : 'Тел.:'}
+                  </span>
+                  <a
+                    href="tel:+48604163594"
+                    className="group inline-flex items-center gap-1 text-slate-900 font-bold hover:text-red-600 transition-colors"
+                  >
+                    <span className="transition-transform duration-200 group-hover:translate-x-1">
+                      604 163 594
+                    </span>
+                  </a>
+                </div>
               </div>
 
               <div>
@@ -336,8 +352,8 @@ export const IndustrialFooter: React.FC<IndustrialFooterProps> = ({
               </a>
 
               <a
-                href="#kontakt-cta"
-                onClick={(e) => scrollToSection(e, 'kontakt-cta')}
+                href="#kontakt"
+                onClick={(e) => scrollToSection(e, 'kontakt')}
                 className="group inline-flex items-center text-slate-900 font-bold hover:text-red-600 transition-colors pt-0.5"
               >
                 <span className="transition-transform duration-200 group-hover:translate-x-1">

@@ -100,7 +100,7 @@ export const CareersListPage: React.FC<CareersListPageProps> = ({
       <IndustrialHeader
         currentLang={currentLang}
         onLanguageChange={onLanguageChange}
-        onOpenInquiry={() => onNavigateHome('kontakt-cta')}
+        onOpenInquiry={() => onNavigateHome('kontakt')}
         onNavigateHome={() => onNavigateHome()}
       />
 

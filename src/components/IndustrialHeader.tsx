@@ -67,7 +67,7 @@ export const IndustrialHeader: React.FC<IndustrialHeaderProps> = ({
             { id: 'competencies-section', label: { PL: 'Oferta', EN: 'Offer', DE: 'Angebot', UA: 'Послуги' } },
             { id: 'realizacje', label: { PL: 'Realizacje', EN: 'Realizations', DE: 'Referenzen', UA: 'Об’єкти' } },
             { id: 'certyfikaty-jakosc', label: { PL: 'Certyfikaty', EN: 'Certificates', DE: 'Zertifikate', UA: 'Сертифікати' } },
-            { id: 'kontakt-cta', label: { PL: 'Kontakt', EN: 'Contact', DE: 'Kontakt', UA: 'Контакти' } },
+            { id: 'kontakt', label: { PL: 'Kontakt', EN: 'Contact', DE: 'Kontakt', UA: 'Контакти' } },
           ].map((item) => (
             <a
               key={item.id}
@@ -124,7 +124,7 @@ export const IndustrialHeader: React.FC<IndustrialHeaderProps> = ({
           <button
             id="header-inquiry-btn"
             onClick={onOpenInquiry}
-            className="group relative inline-flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs lg:text-sm font-semibold tracking-wide text-white min-h-[38px] sm:min-h-[42px] px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-orange-500 hover:from-red-700 hover:to-orange-600 shadow-sm shadow-red-500/20 hover:shadow-md hover:shadow-red-500/30 transition-all duration-200 cursor-pointer active:scale-[0.98] whitespace-nowrap"
+            className="group relative inline-flex items-center justify-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs lg:text-sm font-semibold tracking-wide text-white min-h-[38px] sm:min-h-[42px] px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-full bg-red-600 hover:bg-red-700 shadow-sm shadow-red-600/20 hover:shadow-md hover:shadow-red-600/30 transition-all duration-200 cursor-pointer active:scale-[0.98] whitespace-nowrap"
           >
             <span>{t.header.inquiryBtn}</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-white/80 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 hidden xs:inline-block" />

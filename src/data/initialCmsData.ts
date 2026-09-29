@@ -84,7 +84,7 @@ export const INITIAL_CAREERS: CareerItem[] = [
       </ul>
     `,
     application_information: `
-      <p>Osoby zainteresowane prosimy o przesłanie CV na adres e-mail: <strong>kadry@chemorozruch.pl</strong> z dopiskiem w tytule: <em>„Monter – Rekrutacja”</em> lub kontakt telefoniczny z Działem Kadr: <strong>+48 33 843 00 81</strong>.</p>
+      <p>Osoby zainteresowane prosimy o przesłanie CV na adres e-mail: <strong>kadry@chemorozruch.pl</strong> z dopiskiem w tytule: <em>„Monter – Rekrutacja”</em> lub kontakt telefoniczny z Działem Kadr: <strong>604 163 594</strong>.</p>
     `,
     publication_date: '2026-03-01',
     created_at: '2026-03-01T09:00:00.000Z',
